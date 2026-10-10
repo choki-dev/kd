@@ -1,0 +1,370 @@
+/* ==========================================================================
+   KD Global — global styles (design tokens, base, layout, buttons, helpers)
+   Source of truth: src/assets/brand/KG_GLOBAL_BRANDING_GUIDELINE.pdf (Brand Guidelines 2026).
+   Brand palette (Modern · Calm · Professional) from logo/Modern Teal Color Palette Board.png:
+     Charcoal  #2d2d2d  text, headers, icons, strong accents
+     Deep Teal #0b3d4a  navigation, buttons, highlights
+     Teal      #167a8a  links, active states, important elements
+     Blue Gray #a7b8c2  backgrounds, sections, subtle elements (+ tints)
+   Mobile-first; breakpoints 576 / 768 / 992 / 1200px.
+   ========================================================================== */
+
+:root {
+  /* Brand colours */
+  --charcoal: #2d2d2d;
+  --primary: #0b3d4a; /* Deep Teal */
+  --primary-600: #165264;
+  --accent: #167a8a; /* Teal */
+  --accent-tint: #a3dce3; /* lightest teal tint — accents on dark backgrounds */
+  --bluegray: #a7b8c2; /* Misty Horizon: soft panels, dividers, graphics */
+  --morning-haze: #e5eaeb; /* cards, panels and layered surfaces */
+  --cloud-mist: #f2f6f7; /* main page background */
+
+  /* Roles */
+  --text: var(--charcoal);
+  --muted: #5f6b72; /* charcoal/blue-gray mix, 5.6:1 on white */
+  --soft: var(--morning-haze); /* panels, tinted sections, icon circles */
+  --soft-2: #d3dcdf; /* Morning Haze, one step deeper: stronger fills */
+  --white: #fff;
+  --line: var(--morning-haze);
+
+  /* Type (guideline §05): primary = Aeonik (General Sans stands in until licensed files are supplied);
+     Playfair Display = one editorial serif moment per page; Parisienne = one short script accent per page.
+     Montserrat is the logo font only and is never typed. Brand weights: 300 / 400 / 500 / 700. */
+  --font: var(--font-primary), system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-display-serif: var(--font-serif), Georgia, serif;
+  --font-display-script: var(--font-script), cursive;
+
+  /* Shape & depth (deep-teal tinted shadows) */
+  --radius: 18px;
+  --radius-sm: 12px;
+  --shadow: 0 10px 30px rgba(11, 61, 74, 0.08);
+  --shadow-lg: 0 20px 50px rgba(11, 61, 74, 0.16);
+
+  /* Layout */
+  --container: 1200px;
+  --gutter: 16px;
+  --section: 72px;
+  --header-h: 76px;
+
+  --ease: cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+@media (min-width: 768px) {
+  :root {
+    --gutter: 24px;
+    --section: 96px;
+  }
+}
+@media (min-width: 1200px) {
+  :root {
+    --section: 120px;
+    --header-h: 88px;
+  }
+}
+
+/* ---------- Base ---------- */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font);
+  font-size: 16px;
+  line-height: 1.65;
+  color: var(--text);
+  background: var(--cloud-mist); /* Cloud Mist: main page background */
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button,
+input,
+select {
+  font: inherit;
+  color: inherit;
+}
+
+button {
+  cursor: pointer;
+  background: none;
+  border: 0;
+  padding: 0;
+}
+
+h1,
+h2,
+h3,
+h4,
+p {
+  margin: 0;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-weight: 500;
+  line-height: 1.2;
+  color: var(--primary);
+}
+
+ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
+::selection {
+  background: var(--accent);
+  color: var(--white);
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.skip-link {
+  position: absolute;
+  left: 16px;
+  top: -60px;
+  z-index: 200;
+  padding: 10px 18px;
+  border-radius: 999px;
+  background: var(--accent);
+  color: var(--white);
+  font-weight: 500;
+  transition: top 0.2s;
+}
+.skip-link:focus {
+  top: 16px;
+}
+
+/* ---------- Layout ---------- */
+.container {
+  width: 100%;
+  max-width: calc(var(--container) + var(--gutter) * 2);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+.section {
+  padding-block: var(--section);
+}
+
+.section-head {
+  max-width: 640px;
+  margin: 0 auto 40px;
+  text-align: center;
+}
+@media (min-width: 992px) {
+  .section-head {
+    margin-bottom: 56px;
+  }
+}
+
+.section-title {
+  font-size: clamp(26px, 2vw + 16px, 38px);
+  font-weight: 700;
+  letter-spacing: -0.015em;
+}
+
+/* Brand accent bar under centred section titles: the four logo colours, as in the arc mark */
+.section-head .section-title::after {
+  content: "";
+  display: block;
+  width: 72px;
+  height: 4px;
+  margin: 18px auto 0;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--charcoal) 0 25%, var(--primary) 25% 50%, var(--accent) 50% 75%, var(--bluegray) 75% 100%);
+}
+
+.section-subtitle {
+  margin-top: 12px;
+  color: var(--muted);
+  font-size: 16px;
+}
+
+/* Small uppercase label, spaced like the "COMMERCE & SERVICES" line of the logo */
+.eyebrow {
+  display: inline-block;
+  color: var(--accent);
+  font-weight: 500;
+  font-size: 13px;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+
+/* ---------- Buttons ---------- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: 52px;
+  padding: 0 30px;
+  border-radius: 999px;
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 1;
+  white-space: nowrap;
+  transition:
+    background-color 0.3s var(--ease),
+    color 0.3s var(--ease),
+    border-color 0.3s var(--ease),
+    transform 0.3s var(--ease);
+}
+.btn:active {
+  transform: translateY(1px);
+}
+
+/* Global Tide = buttons (guideline: "the signature accent: buttons, links, highlights, icons"); Deep Horizon on hover */
+.btn-primary {
+  background: var(--accent);
+  color: var(--white);
+}
+.btn-primary:hover {
+  background: var(--primary);
+}
+
+.btn-dark {
+  background: var(--primary);
+  color: var(--white);
+}
+.btn-dark:hover {
+  background: var(--accent);
+}
+
+/* Circle icon button (slider arrows) */
+.circle-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  border: 1px solid var(--line);
+  background: var(--white);
+  color: var(--primary);
+  transition:
+    background-color 0.3s var(--ease),
+    color 0.3s var(--ease),
+    border-color 0.3s var(--ease);
+}
+.circle-btn:hover {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--white);
+}
+.circle-btn:disabled {
+  opacity: 0.4;
+  pointer-events: none;
+}
+
+/* ---------- Card badges (tour + retreat cards) ---------- */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 5px 10px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1;
+  color: var(--white);
+}
+.badge-accent {
+  background: var(--accent);
+}
+.badge-glass {
+  background: rgba(11, 61, 74, 0.55);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+
+/* ---------- Scroll reveal ---------- */
+/* Hidden only when JS is running (html.js), so content is always visible without JS */
+.js [data-reveal] {
+  opacity: 0;
+  transform: translateY(28px);
+  transition:
+    opacity 0.8s var(--ease),
+    transform 0.8s var(--ease);
+  transition-delay: var(--reveal-delay, 0ms);
+}
+.js [data-reveal].is-visible {
+  opacity: 1;
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  .js [data-reveal] {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* ---------- Secondary brand fonts (guideline §05) ---------- */
+/* Playfair Display: one editorial headline or pull quote per page, in Deep Horizon, at larger sizes */
+.serif-title {
+  font-family: var(--font-display-serif);
+  font-weight: 600;
+  letter-spacing: -0.005em;
+  color: var(--primary);
+}
+/* Parisienne: one short greeting/tagline per page, display size only, Global Tide; never body text or all caps */
+.script-accent {
+  display: inline-block;
+  font-family: var(--font-display-script);
+  font-size: clamp(30px, 1.6vw + 22px, 44px);
+  font-weight: 400;
+  line-height: 1.1;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--accent);
+  margin-bottom: 6px;
+}

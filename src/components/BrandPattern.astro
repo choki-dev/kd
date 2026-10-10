@@ -1,0 +1,43 @@
+---
+// KD Global brand pattern (Brand Guidelines 2026 — cover and section pages): the logo-mark bands as a graphic.
+// Geometry measured from the guideline: identical circles of radius R, tangent to the top edge, each shifted right
+// by R/4. Painted back to front over a Misty Horizon field: gap, Global Tide, gap, Deep Horizon, gap, Charcoal.
+// With `animate`, the bands start stacked behind the charcoal circle and fan out when an ancestor gets .is-visible
+// (the site's scroll-reveal class) — "One origin. Many destinations." Without JS they're simply fanned out.
+interface Props {
+  class?: string;
+  animate?: boolean;
+}
+
+const { class: className, animate = false } = Astro.props;
+
+const R = 100;
+const step = R / 4;
+// Front (index 0) to back; drawn in reverse so the charcoal circle ends up on top
+const bands = ["var(--charcoal)", "var(--morning-haze)", "var(--primary)", "var(--morning-haze)", "var(--accent)", "var(--morning-haze)"];
+---
+
+<svg class:list={["brand-pattern", className, { "is-animated": animate }]} viewBox="0 0 230 150" preserveAspectRatio="xMinYMin slice" aria-hidden="true" focusable="false">
+  <rect width="230" height="150" fill="var(--bluegray)"></rect>
+  {
+    [...bands.keys()].reverse().map((i) => (
+      <circle class="band" cx={i * step} cy={R} r={R} fill={bands[i]} style={`--shift:${i * step};--i:${i}`} />
+    ))
+  }
+</svg>
+
+<style>
+  .brand-pattern {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+  .band {
+    transition: transform 1.1s var(--ease);
+    transition-delay: calc(var(--i) * 90ms + 150ms);
+  }
+  /* Collapsed to a single origin until the surrounding element is revealed (only when JS can reveal it) */
+  :global(.js [data-reveal]:not(.is-visible)) .is-animated .band {
+    transform: translateX(calc(var(--shift) * -1px));
+  }
+</style>

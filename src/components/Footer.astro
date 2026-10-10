@@ -1,0 +1,243 @@
+---
+import Icon from "./Icon.astro";
+import Logo from "./Logo.astro";
+import { footerLinks, legalLinks, site, socials } from "../data/home";
+
+const year = new Date().getFullYear();
+---
+
+<footer id="contact" class="footer">
+  <div class="container">
+    <!-- Top row -->
+    <div class="footer-top">
+      <Logo variant="white" />
+      <div class="follow">
+        <span>Follow us:</span>
+        <ul>
+          {
+            socials.map((s) => (
+              <li>
+                <a href={s.href} class="social" aria-label={s.label}>
+                  <Icon name={s.icon} size={16} />
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+    </div>
+
+    <div class="footer-cols">
+      <!-- Contact -->
+      <div>
+        <h2 class="footer-title">Contact us</h2>
+        <ul class="contact-list">
+          <li>
+            <span class="sq"><Icon name="building" size={20} /></span>
+            <span><small>Office address</small>{site.address}</span>
+          </li>
+          <li>
+            <span class="sq"><Icon name="phone" size={20} /></span>
+            <span><small>Booking numbers</small><a href={`tel:${site.phone.replace(/[^\d+]/g, "")}`}>{site.phone}</a><a href={`tel:${site.phoneAlt.replace(/[^\d+]/g, "")}`}>{site.phoneAlt}</a></span>
+          </li>
+          <li>
+            <span class="sq"><Icon name="mail" size={20} /></span>
+            <span><small>Email</small><a href={`mailto:${site.email}`}>{site.email}</a></span>
+          </li>
+        </ul>
+      </div>
+
+      <!-- About links -->
+      <nav aria-labelledby="footer-about">
+        <h2 class="footer-title" id="footer-about">About us</h2>
+        <div class="link-cols">
+          {
+            footerLinks.map((col) => (
+              <ul class="links">
+                {col.map((l) => (
+                  <li>
+                    <a href={l.href}>
+                      <Icon name="chevron-right" size={14} /> {l.label}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            ))
+          }
+        </div>
+      </nav>
+
+    </div>
+  </div>
+
+  <div class="footer-bottom">
+    <div class="container bottom-inner">
+      <p>© {year} {site.name}. All rights reserved.</p>
+      <ul class="legal">
+        {
+          legalLinks.map((l) => (
+            <li>
+              <a href="#">{l}</a>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .footer {
+    background: var(--primary);
+    color: rgba(255, 255, 255, 0.72);
+    font-size: 15px;
+  }
+  .footer-top {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    padding-block: 56px 40px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  }
+  .follow {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    color: var(--white);
+    font-weight: 500;
+  }
+  .follow ul {
+    display: flex;
+    gap: 10px;
+  }
+  .social {
+    display: grid;
+    place-items: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: var(--white);
+    transition:
+      background-color 0.25s,
+      border-color 0.25s;
+  }
+  .social:hover {
+    background: var(--accent);
+    border-color: var(--accent);
+  }
+
+  .footer-cols {
+    display: grid;
+    gap: 44px;
+    padding-block: 56px;
+  }
+  @media (min-width: 768px) {
+    .footer-cols {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+  @media (min-width: 1200px) {
+    .footer-cols {
+      grid-template-columns: 1fr 1.3fr;
+      gap: 80px;
+    }
+  }
+  .footer-title {
+    margin-bottom: 24px;
+    font-size: 22px;
+    color: var(--white);
+  }
+
+  .contact-list {
+    display: grid;
+    gap: 18px;
+  }
+  .contact-list li {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .sq {
+    display: grid;
+    place-items: center;
+    width: 50px;
+    height: 50px;
+    flex-shrink: 0;
+    border-radius: 12px;
+    background: var(--primary-600);
+    color: var(--accent-tint);
+  }
+  .contact-list small {
+    display: block;
+    color: var(--bluegray);
+    font-size: 13px;
+  }
+  .contact-list a,
+  .contact-list span {
+    color: var(--white);
+  }
+  .contact-list a:hover {
+    color: var(--accent-tint);
+  }
+  .contact-list span > a {
+    display: block; /* two phone numbers stack */
+  }
+
+  .link-cols {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+  .links {
+    display: grid;
+    gap: 12px;
+  }
+  .links a {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition:
+      color 0.25s,
+      transform 0.25s;
+  }
+  .links a:hover {
+    color: var(--accent-tint);
+    transform: translateX(4px);
+  }
+  .links :global(svg) {
+    color: var(--accent-tint);
+  }
+
+  /* Charcoal bottom bar — "Dark + Teal" combination from the brand board */
+  .footer-bottom {
+    background: var(--charcoal);
+  }
+  .bottom-inner {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding-block: 24px;
+    font-size: 14px;
+  }
+  .legal {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 22px;
+  }
+  .legal li + li {
+    position: relative;
+  }
+  .legal li + li::before {
+    content: "·";
+    position: absolute;
+    left: -14px;
+  }
+  .legal a:hover {
+    color: var(--accent-tint);
+  }
+</style>

@@ -1,0 +1,142 @@
+---
+import { Image } from "astro:assets";
+import { destinations } from "../data/home";
+
+// Image size per tile shape
+const sizes = {
+  punakha: { w: 760, h: 1080 },
+  trongsa: { w: 760, h: 1080 },
+  thimphu: { w: 1200, h: 620 },
+  bumthang: { w: 600, h: 600 },
+  paro: { w: 600, h: 600 },
+} as const;
+---
+
+<section id="destinations" class="section destinations" aria-labelledby="dest-title">
+  <div class="container">
+    <header class="section-head" data-reveal>
+      <span class="script-accent">Explore the valleys</span>
+      <h2 id="dest-title" class="section-title">Discover Bhutan's most beloved places</h2>
+    </header>
+
+    <ul class="bento">
+      {
+        destinations.map((d, i) => (
+          <li class={`tile tile-${d.area}`} data-reveal style={`--reveal-delay:${i * 80}ms`}>
+            <a href={`/destinations#${d.area}`} class="tile-link" aria-label={`${d.name} — ${d.tours} tours`}>
+              <Image
+                src={d.image}
+                alt={d.alt}
+                width={sizes[d.area].w}
+                height={sizes[d.area].h}
+                widths={[360, 560, sizes[d.area].w]}
+                sizes="(min-width: 992px) 33vw, (min-width: 576px) 50vw, 100vw"
+                loading="lazy"
+                class="tile-img"
+              />
+              <span class="tile-label">
+                <strong>{d.name}</strong>
+                <span>{d.tours} {d.tours === 1 ? "Tour" : "Tours"}</span>
+              </span>
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</section>
+
+<style>
+  .bento {
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-auto-rows: 260px;
+    gap: 16px;
+  }
+  @media (min-width: 576px) {
+    .bento {
+      grid-template-columns: repeat(2, 1fr);
+      grid-template-areas:
+        "punakha thimphu"
+        "punakha bumthang"
+        "trongsa paro"
+        "trongsa .";
+      grid-auto-rows: 240px;
+    }
+    .tile-punakha { grid-area: punakha; }
+    .tile-thimphu { grid-area: thimphu; }
+    .tile-bumthang { grid-area: bumthang; }
+    .tile-paro { grid-area: paro; }
+    .tile-trongsa { grid-area: trongsa; }
+  }
+  @media (min-width: 576px) and (max-width: 991.98px) {
+    /* fill the empty cell: London spans the last two rows */
+    .bento {
+      grid-template-areas:
+        "punakha thimphu"
+        "punakha bumthang"
+        "trongsa paro"
+        "trongsa paro";
+    }
+  }
+  @media (min-width: 992px) {
+    .bento {
+      grid-template-columns: 1fr 1fr 1fr 1fr;
+      grid-template-areas:
+        "punakha thimphu thimphu trongsa"
+        "punakha bumthang paro trongsa";
+      grid-auto-rows: 280px;
+      gap: 24px;
+    }
+  }
+  @media (min-width: 1200px) {
+    .bento {
+      grid-auto-rows: 300px;
+      gap: 30px;
+    }
+  }
+
+  .tile-link {
+    position: relative;
+    display: block;
+    height: 100%;
+    overflow: hidden;
+    border-radius: 20px;
+  }
+  .tile-link :global(.tile-img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.8s var(--ease);
+  }
+  .tile-link:hover :global(.tile-img),
+  .tile-link:focus-visible :global(.tile-img) {
+    transform: scale(1.07);
+  }
+  .tile-label {
+    position: absolute;
+    inset: auto 14px 14px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 14px 20px;
+    border-radius: 14px;
+    background: var(--white);
+    color: var(--primary);
+    transition:
+      background-color 0.3s,
+      color 0.3s;
+  }
+  .tile-link:hover .tile-label {
+    background: var(--accent);
+    color: var(--white);
+  }
+  .tile-label strong {
+    font-size: 20px;
+    font-weight: 500;
+  }
+  .tile-label span {
+    font-size: 15px;
+  }
+</style>

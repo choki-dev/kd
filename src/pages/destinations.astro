@@ -1,0 +1,281 @@
+---
+// Destinations page: one alternating photo/text row per valley. Content in src/data/destinations.ts.
+// "View tours" links open the Tours page filtered by that place (?place=<name>).
+import { Image } from "astro:assets";
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Header from "../components/Header.astro";
+import PageHero from "../components/PageHero.astro";
+import CtaBand from "../components/CtaBand.astro";
+import Footer from "../components/Footer.astro";
+import BackToTop from "../components/BackToTop.astro";
+import Icon from "../components/Icon.astro";
+import { tours } from "../data/home";
+import { destinationList, destinationsPage } from "../data/destinations";
+
+const { hero, intro, cta } = destinationsPage;
+const toursIn = (place: string) => tours.filter((t) => t.places.includes(place)).length;
+---
+
+<BaseLayout title={destinationsPage.meta.title} description={destinationsPage.meta.description}>
+  <Header />
+  <main id="main">
+    <PageHero {...hero} crumb="Destinations" />
+
+    <section class="section dest" aria-labelledby="dest-intro">
+      <div class="container">
+        <header class="section-head" data-reveal>
+          <h2 id="dest-intro" class="section-title">{intro.title}</h2>
+          <p class="section-subtitle">{intro.subtitle}</p>
+        </header>
+
+        <!-- Quick jump -->
+        <nav class="jump" aria-label="Jump to a destination" data-reveal>
+          <ul>
+            {
+              destinationList.map((d) => (
+                <li>
+                  <a href={`#${d.id}`}>
+                    <Icon name="map-pin" size={15} /> {d.name}
+                  </a>
+                </li>
+              ))
+            }
+          </ul>
+        </nav>
+
+        <!-- One row per destination, photo side alternating -->
+        <div class="rows">
+          {
+            destinationList.map((d, i) => {
+              const count = toursIn(d.name);
+              return (
+                <article id={d.id} class:list={["row", { "row-flip": i % 2 === 1 }]} aria-labelledby={`${d.id}-title`}>
+                  <div class="row-media" data-reveal>
+                    <Image src={d.image} alt={d.alt} width={760} height={570} widths={[380, 560, 760]} sizes="(min-width: 992px) 560px, 92vw" loading={i === 0 ? "eager" : "lazy"} class="row-img" />
+                    <span class="badge badge-accent row-badge">{d.region}</span>
+                  </div>
+                  <div class="row-text" data-reveal style="--reveal-delay:120ms">
+                    <span class="eyebrow">{String(i + 1).padStart(2, "0")} · {d.region}</span>
+                    <h2 id={`${d.id}-title`} class="row-title">{d.name}</h2>
+                    <p class="row-tagline">{d.tagline}</p>
+                    <p class="row-p">{d.text}</p>
+
+                    <dl class="row-facts">
+                      <div>
+                        <dt><Icon name="mountain" size={16} /> Altitude</dt>
+                        <dd>{d.altitude}</dd>
+                      </div>
+                      <div>
+                        <dt><Icon name="compass" size={16} /> Getting there</dt>
+                        <dd>{d.access}</dd>
+                      </div>
+                      <div>
+                        <dt><Icon name="star" size={16} /> Best for</dt>
+                        <dd>{d.bestFor}</dd>
+                      </div>
+                    </dl>
+
+                    <ul class="row-highlights">
+                      {d.highlights.map((h) => (
+                        <li>
+                          <span class="check"><Icon name="check" size={13} /></span>
+                          {h}
+                        </li>
+                      ))}
+                    </ul>
+
+                    <div class="row-actions">
+                      {count > 0 ? (
+                        <a href={`/tours?place=${encodeURIComponent(d.name)}`} class="btn btn-primary">
+                          View {count} {count === 1 ? "tour" : "tours"} <Icon name="arrow-right" size={18} />
+                        </a>
+                      ) : null}
+                      <a href={`/contact?place=${encodeURIComponent(d.name)}#form-title`} class:list={["btn", count > 0 ? "btn-ghost" : "btn-primary"]}>
+                        Plan a trip here
+                      </a>
+                    </div>
+                  </div>
+                </article>
+              );
+            })
+          }
+        </div>
+      </div>
+    </section>
+
+    <CtaBand {...cta} primary={{ label: "Ask our team", href: "/contact" }} secondary={{ label: "Browse all tours", href: "/tours" }} />
+  </main>
+  <Footer />
+  <BackToTop />
+</BaseLayout>
+
+<style>
+  /* ---------- Quick jump chips ---------- */
+  .jump ul {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+  }
+  .jump a {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    min-height: 44px;
+    padding: 0 18px;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    background: var(--white);
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--primary);
+    transition:
+      background-color 0.25s,
+      border-color 0.25s,
+      color 0.25s;
+  }
+  .jump a :global(svg) {
+    color: var(--accent);
+    transition: color 0.25s;
+  }
+  .jump a:hover {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: var(--white);
+  }
+  .jump a:hover :global(svg) {
+    color: var(--white);
+  }
+
+  /* ---------- Rows ---------- */
+  .rows {
+    display: grid;
+    gap: 80px;
+    margin-top: 64px;
+  }
+  @media (min-width: 992px) {
+    .rows {
+      gap: 112px;
+      margin-top: 88px;
+    }
+  }
+  .row {
+    display: grid;
+    gap: 32px;
+    align-items: center;
+    scroll-margin-top: calc(var(--header-h) + 24px);
+  }
+  @media (min-width: 992px) {
+    .row {
+      grid-template-columns: 1fr 1fr;
+      gap: 64px;
+    }
+    .row-flip .row-media {
+      order: 2;
+    }
+  }
+  .row-media {
+    position: relative;
+  }
+  .row-media :global(.row-img) {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-lg);
+  }
+  .row-badge {
+    position: absolute;
+    top: 18px;
+    left: 18px;
+  }
+  .row-title {
+    font-size: clamp(30px, 2.2vw + 18px, 44px);
+    font-weight: 700;
+    letter-spacing: -0.015em;
+  }
+  .row-tagline {
+    margin-top: 8px;
+    font-size: 18px;
+    font-weight: 500;
+    color: var(--accent);
+  }
+  .row-p {
+    margin-top: 16px;
+    color: var(--muted);
+  }
+
+  .row-facts {
+    display: grid;
+    gap: 12px;
+    margin: 24px 0 0;
+    padding: 18px 20px;
+    border-radius: var(--radius-sm);
+    background: var(--soft);
+  }
+  @media (min-width: 576px) {
+    .row-facts {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+  .row-facts dt {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+  .row-facts dd {
+    margin: 4px 0 0;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 1.4;
+    color: var(--primary);
+  }
+
+  .row-highlights {
+    display: grid;
+    gap: 10px 20px;
+    margin-top: 22px;
+  }
+  @media (min-width: 576px) {
+    .row-highlights {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+  .row-highlights li {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    font-size: 15px;
+  }
+  .check {
+    flex: none;
+    display: grid;
+    place-items: center;
+    width: 22px;
+    height: 22px;
+    margin-top: 1px;
+    border-radius: 50%;
+    background: var(--accent);
+    color: var(--white);
+  }
+
+  .row-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 28px;
+  }
+  .btn-ghost {
+    border: 1px solid var(--line);
+    color: var(--primary);
+  }
+  .btn-ghost:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+</style>

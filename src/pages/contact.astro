@@ -1,0 +1,482 @@
+---
+// Contact Us page. Content lives in src/data/pages.ts; phone/email/address in `site` (src/data/home.ts).
+// No backend yet: the enquiry form opens the visitor's email app with the message filled in (mailto).
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Header from "../components/Header.astro";
+import PageHero from "../components/PageHero.astro";
+import Footer from "../components/Footer.astro";
+import BackToTop from "../components/BackToTop.astro";
+import Icon from "../components/Icon.astro";
+import { site, socials, type IconName } from "../data/home";
+import { contact } from "../data/pages";
+
+const { hero, form, faqs } = contact;
+const tel = site.phone.replace(/[^\d+]/g, "");
+
+// Second phone number shows under the first on the "Call us" card
+const telAlt = site.phoneAlt.replace(/[^\d+]/g, "");
+const cards: { icon: IconName; title: string; value: string; href?: string; value2?: string; href2?: string }[] = [
+  { icon: "phone", title: "Call us", value: site.phone, href: `tel:${tel}`, value2: site.phoneAlt, href2: `tel:${telAlt}` },
+  { icon: "mail", title: "Email us", value: site.email, href: `mailto:${site.email}` },
+  { icon: "building", title: "Visit our office", value: site.address },
+  { icon: "clock", title: "Office hours", value: contact.hours },
+];
+---
+
+<BaseLayout title={contact.meta.title} description={contact.meta.description}>
+  <Header />
+  <main id="main">
+    <PageHero {...hero} crumb="Contact Us" />
+
+    <!-- Contact details -->
+    <section class="info-wrap" aria-label="Contact details">
+      <div class="container">
+        <ul class="info-grid">
+          {
+            cards.map((c, i) => (
+              <li class="info-card" data-reveal style={`--reveal-delay:${i * 80}ms`}>
+                <span class="info-icon"><Icon name={c.icon} size={26} strokeWidth={1.5} /></span>
+                <h2>{c.title}</h2>
+                {c.href ? <a href={c.href}>{c.value}</a> : <p>{c.value}</p>}
+                {c.value2 && c.href2 && <a href={c.href2}>{c.value2}</a>}
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+    </section>
+
+    <!-- Enquiry form + map -->
+    <section class="section enquiry" aria-labelledby="form-title">
+      <div class="container enquiry-grid">
+        <div class="form-card" data-reveal>
+          <span class="eyebrow">Plan your trip</span>
+          <h2 id="form-title" class="section-title">{form.title}</h2>
+          <p class="form-intro">{form.text}</p>
+
+          <form class="form" data-enquiry data-email={site.email} novalidate>
+            <div class="row">
+              <label class="fld">
+                <span>Full name *</span>
+                <input type="text" name="name" autocomplete="name" required />
+              </label>
+              <label class="fld">
+                <span>Email *</span>
+                <input type="email" name="email" autocomplete="email" required />
+              </label>
+            </div>
+            <div class="row">
+              <label class="fld">
+                <span>Phone / WhatsApp</span>
+                <input type="tel" name="phone" autocomplete="tel" />
+              </label>
+              <label class="fld">
+                <span>Country</span>
+                <input type="text" name="country" autocomplete="country-name" />
+              </label>
+            </div>
+            <div class="row row-3">
+              <label class="fld">
+                <span>Tour interest</span>
+                <select name="interest">
+                  {form.interests.map((o) => <option>{o}</option>)}
+                </select>
+              </label>
+              <label class="fld">
+                <span>Travel month</span>
+                <input type="month" name="month" />
+              </label>
+              <label class="fld">
+                <span>Travellers</span>
+                <input type="number" name="travellers" min="1" max="50" value="2" inputmode="numeric" />
+              </label>
+            </div>
+            <label class="fld">
+              <span>Your message *</span>
+              <textarea name="message" rows="5" required placeholder="Tell us what you'd love to see and do in Bhutan…"></textarea>
+            </label>
+            <p class="form-error" role="alert" hidden data-form-error>Please fill in your name, a valid email and a message.</p>
+            <p class="form-ok" role="status" hidden data-form-ok>
+              <Icon name="check" size={18} /> Your email app should now open with the enquiry. If it doesn't, email us at
+              <a href={`mailto:${site.email}`}>{site.email}</a>.
+            </p>
+            <button type="submit" class="btn btn-primary">Send enquiry <Icon name="arrow-right" size={18} /></button>
+          </form>
+        </div>
+
+        <aside class="side" data-reveal style="--reveal-delay:120ms">
+          <div class="map">
+            <iframe src={contact.mapSrc} title={`Map: ${site.address}`} loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+          </div>
+          <div class="side-card">
+            <h2>Follow our journeys</h2>
+            <p>Festival dates, trek updates and photos from across Bhutan.</p>
+            <ul class="socials">
+              {
+                socials.map((s) => (
+                  <li>
+                    <a href={s.href} aria-label={s.label}>
+                      <Icon name={s.icon} size={18} />
+                    </a>
+                  </li>
+                ))
+              }
+            </ul>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <!-- FAQs -->
+    <section class="section faq" aria-labelledby="faq-title">
+      <div class="container">
+        <header class="section-head" data-reveal>
+          <h2 id="faq-title" class="section-title">Frequently asked questions</h2>
+          <p class="section-subtitle">Quick answers about travelling to Bhutan with us.</p>
+        </header>
+        <div class="faq-list" data-reveal>
+          {
+            faqs.map((f, i) => (
+              <details class="faq-item" open={i === 0}>
+                <summary>
+                  {f.q}
+                  <Icon name="plus" size={20} class="faq-icon" />
+                </summary>
+                <p>{f.a}</p>
+              </details>
+            ))
+          }
+        </div>
+      </div>
+    </section>
+  </main>
+  <Footer />
+  <BackToTop />
+</BaseLayout>
+
+<style>
+  /* ---------- Info cards (overlap the banner, like the homepage search bar) ---------- */
+  .info-wrap {
+    position: relative;
+    z-index: 3;
+    margin-top: -56px;
+  }
+  .info-grid {
+    display: grid;
+    gap: 16px;
+  }
+  @media (min-width: 576px) {
+    .info-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  @media (min-width: 1200px) {
+    .info-grid {
+      grid-template-columns: repeat(4, 1fr);
+      gap: 24px;
+    }
+  }
+  .info-card {
+    padding: 28px 24px;
+    border-radius: var(--radius);
+    background: var(--white);
+    box-shadow: var(--shadow-lg);
+    text-align: center;
+  }
+  .info-icon {
+    display: inline-grid;
+    place-items: center;
+    width: 60px;
+    height: 60px;
+    margin-bottom: 14px;
+    border-radius: 50%;
+    background: var(--soft);
+    color: var(--accent);
+  }
+  .info-card h2 {
+    font-size: 18px;
+    margin-bottom: 6px;
+  }
+  .info-card p,
+  .info-card a {
+    display: block;
+    color: var(--muted);
+    font-size: 15px;
+    overflow-wrap: anywhere;
+  }
+  .info-card a:hover {
+    color: var(--accent);
+  }
+
+  /* ---------- Enquiry ---------- */
+  .enquiry-grid {
+    display: grid;
+    gap: 32px;
+  }
+  @media (min-width: 992px) {
+    .enquiry-grid {
+      grid-template-columns: 1.5fr 1fr;
+      gap: 40px;
+    }
+  }
+  .form-card {
+    padding: 32px 22px;
+    border-radius: var(--radius);
+    background: var(--soft);
+  }
+  @media (min-width: 768px) {
+    .form-card {
+      padding: 48px;
+    }
+  }
+  .form-intro {
+    margin: 12px 0 28px;
+    color: var(--muted);
+  }
+  .form {
+    display: grid;
+    gap: 18px;
+  }
+  .row {
+    display: grid;
+    gap: 18px;
+  }
+  @media (min-width: 576px) {
+    .row {
+      grid-template-columns: 1fr 1fr;
+    }
+    .row-3 {
+      grid-template-columns: 1.4fr 1fr 0.8fr;
+    }
+  }
+  .fld {
+    display: grid;
+    gap: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--primary);
+  }
+  .fld input,
+  .fld select,
+  .fld textarea {
+    width: 100%;
+    min-height: 52px;
+    padding: 12px 16px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-sm);
+    background: var(--white);
+    font-size: 15px;
+    font-weight: 400;
+    color: var(--text);
+    transition:
+      border-color 0.25s,
+      box-shadow 0.25s;
+  }
+  .fld textarea {
+    resize: vertical;
+    min-height: 140px;
+  }
+  .fld input:focus,
+  .fld select:focus,
+  .fld textarea:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(22, 122, 138, 0.18);
+  }
+  .fld [aria-invalid="true"] {
+    border-color: #b42318;
+  }
+  .form-error {
+    color: #b42318;
+    font-size: 14px;
+    font-weight: 500;
+  }
+  .form-ok {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px;
+    padding: 14px 16px;
+    border-radius: var(--radius-sm);
+    background: var(--white);
+    color: var(--primary);
+    font-size: 14px;
+  }
+  .form-ok[hidden],
+  .form-error[hidden] {
+    display: none;
+  }
+  .form-ok a {
+    color: var(--accent);
+    font-weight: 500;
+  }
+  .form .btn {
+    justify-self: start;
+  }
+
+  .side {
+    display: grid;
+    gap: 24px;
+    align-content: start;
+  }
+  .map {
+    overflow: hidden;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    background: var(--soft-2);
+  }
+  .map iframe {
+    display: block;
+    width: 100%;
+    height: 380px;
+    border: 0;
+  }
+  .side-card {
+    padding: 32px 28px;
+    border-radius: var(--radius);
+    background: var(--primary);
+    color: var(--white);
+  }
+  .side-card h2 {
+    font-size: 22px;
+    color: var(--white);
+  }
+  .side-card p {
+    margin-top: 8px;
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 15px;
+  }
+  .socials {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+  }
+  .socials a {
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    transition:
+      background-color 0.25s,
+      border-color 0.25s;
+  }
+  .socials a:hover {
+    background: var(--accent);
+    border-color: var(--accent);
+  }
+
+  /* ---------- FAQ ---------- */
+  .faq {
+    padding-top: 0;
+  }
+  .faq-list {
+    max-width: 860px;
+    margin-inline: auto;
+    display: grid;
+    gap: 14px;
+  }
+  .faq-item {
+    border: 1px solid var(--line);
+    border-radius: var(--radius-sm);
+    background: var(--white);
+    transition: box-shadow 0.25s;
+  }
+  .faq-item[open] {
+    box-shadow: var(--shadow);
+  }
+  .faq-item summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 20px 24px;
+    font-weight: 500;
+    color: var(--primary);
+    cursor: pointer;
+    list-style: none;
+  }
+  .faq-item summary::-webkit-details-marker {
+    display: none;
+  }
+  .faq-item :global(.faq-icon) {
+    flex: none;
+    color: var(--accent);
+    transition: transform 0.3s var(--ease);
+  }
+  .faq-item[open] :global(.faq-icon) {
+    transform: rotate(45deg);
+  }
+  .faq-item p {
+    padding: 0 24px 22px;
+    color: var(--muted);
+  }
+</style>
+
+<script>
+  // Enquiry form: validate, then open the visitor's email app with the enquiry filled in
+  const form = document.querySelector<HTMLFormElement>("[data-enquiry]");
+  const error = document.querySelector<HTMLElement>("[data-form-error]");
+  const ok = document.querySelector<HTMLElement>("[data-form-ok]");
+
+  form?.addEventListener("submit", (e) => {
+    e.preventDefault();
+    const required = [...form.querySelectorAll<HTMLInputElement | HTMLTextAreaElement>("[required]")];
+    let firstBad: HTMLElement | undefined;
+    required.forEach((el) => {
+      const bad = !el.value.trim() || !el.checkValidity();
+      el.setAttribute("aria-invalid", String(bad));
+      if (bad && !firstBad) firstBad = el;
+    });
+    if (error) error.hidden = !firstBad;
+    if (firstBad) {
+      if (ok) ok.hidden = true;
+      firstBad.focus();
+      return;
+    }
+
+    const d = new FormData(form);
+    const get = (k: string) => String(d.get(k) ?? "").trim();
+    const body = [
+      `Name: ${get("name")}`,
+      `Email: ${get("email")}`,
+      `Phone / WhatsApp: ${get("phone") || "-"}`,
+      `Country: ${get("country") || "-"}`,
+      `Tour interest: ${get("interest")}`,
+      `Travel month: ${get("month") || "-"}`,
+      `Travellers: ${get("travellers") || "-"}`,
+      "",
+      get("message"),
+    ].join("\n");
+    const subject = `Bhutan tour enquiry — ${get("name")}`;
+    window.location.href = `mailto:${form.dataset.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    if (ok) ok.hidden = false;
+  });
+
+  // Coming from a tour or destination page (?tour=<title>&type=<category> or ?place=<name>): preselect the interest and start the message
+  const params = new URLSearchParams(location.search);
+  const tourName = params.get("tour");
+  const tourType = params.get("type")?.toLowerCase();
+  if (form && tourType) {
+    const select = form.querySelector<HTMLSelectElement>("select[name=interest]");
+    const opt = [...(select?.options ?? [])].find((o) => o.text.toLowerCase().startsWith(tourType));
+    if (select && opt) select.value = opt.value;
+  }
+  const message = form?.querySelector<HTMLTextAreaElement>("textarea[name=message]");
+  const place = params.get("place");
+  if (message && !message.value) {
+    if (tourName) message.value = `I am interested in the tour "${tourName}".
+
+`;
+    else if (place) message.value = `I would like to visit ${place}.
+
+`;
+  }
+
+  // Clear the error state as the visitor fixes a field
+  form?.addEventListener("input", (e) => {
+    const el = e.target as HTMLElement;
+    if (el.getAttribute("aria-invalid") === "true") el.setAttribute("aria-invalid", "false");
+  });
+</script>

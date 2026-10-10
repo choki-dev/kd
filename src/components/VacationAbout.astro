@@ -1,0 +1,206 @@
+---
+import { Image } from "astro:assets";
+import Icon from "./Icon.astro";
+import { site, vacation } from "../data/home";
+---
+
+<section id="about" class="section vacation" aria-labelledby="vacation-title">
+  <div class="container vacation-grid">
+    <div class="vacation-text" data-reveal>
+      <h2 id="vacation-title" class="section-title serif-title">{vacation.title}</h2>
+      <p class="lead">{vacation.text}</p>
+
+      <ul class="features">
+        {
+          vacation.features.map((f) => (
+            <li class="feature">
+              <span class="feature-icon">
+                <Icon name={f.icon} size={30} strokeWidth={1.4} />
+              </span>
+              <div>
+                <h3>{f.title}</h3>
+                <p>{f.text}</p>
+              </div>
+            </li>
+          ))
+        }
+      </ul>
+
+      <div class="booking">
+        <a href={`tel:${site.phone.replace(/[^\d+]/g, "")}`} class="booking-phone">
+          <span class="phone-icon"><Icon name="phone" size={22} /></span>
+          <span>
+            <small>Booking number</small>
+            <strong>{site.phone}</strong>
+          </span>
+        </a>
+        <a href="#search" class="btn btn-primary">Book now</a>
+      </div>
+    </div>
+
+    <!-- Two overlapping circular photos -->
+    <div class="vacation-media" data-reveal style="--reveal-delay:120ms">
+      <div class="circle circle-lg">
+        <Image
+          src={vacation.imageLarge.src}
+          alt={vacation.imageLarge.alt}
+          width={900}
+          height={900}
+          widths={[420, 640, 900]}
+          sizes="(min-width: 992px) 460px, 80vw"
+          loading="lazy"
+        />
+      </div>
+      <div class="circle circle-sm">
+        <Image
+          src={vacation.imageSmall.src}
+          alt={vacation.imageSmall.alt}
+          width={600}
+          height={600}
+          widths={[300, 600]}
+          sizes="(min-width: 992px) 280px, 50vw"
+          loading="lazy"
+        />
+      </div>
+      <span class="ring" aria-hidden="true"></span>
+    </div>
+  </div>
+</section>
+
+<style>
+  .vacation-grid {
+    display: grid;
+    gap: 56px;
+    align-items: center;
+  }
+  @media (min-width: 992px) {
+    .vacation-grid {
+      grid-template-columns: 1fr 1fr;
+      gap: 64px;
+    }
+  }
+  .vacation-text .section-title {
+    max-width: 560px;
+  }
+  .lead {
+    margin-top: 18px;
+    max-width: 540px;
+    color: var(--muted);
+  }
+  .features {
+    display: grid;
+    gap: 24px;
+    margin-top: 34px;
+  }
+  @media (min-width: 576px) {
+    .features {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+  .feature {
+    display: flex;
+    gap: 16px;
+  }
+  .feature-icon {
+    display: grid;
+    place-items: center;
+    width: 64px;
+    height: 64px;
+    flex-shrink: 0;
+    border-radius: 50%;
+    background: var(--soft);
+    color: var(--accent);
+  }
+  .feature h3 {
+    font-size: 20px;
+  }
+  .feature p {
+    margin-top: 6px;
+    font-size: 15px;
+    color: var(--muted);
+  }
+  .booking {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 22px 32px;
+    margin-top: 40px;
+    padding-top: 32px;
+    border-top: 1px solid var(--line);
+  }
+  .booking-phone {
+    display: inline-flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .phone-icon {
+    display: grid;
+    place-items: center;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: var(--accent);
+    color: var(--white);
+  }
+  .booking-phone small {
+    display: block;
+    color: var(--muted);
+    font-size: 14px;
+  }
+  .booking-phone strong {
+    display: block;
+    font-size: 20px;
+    font-weight: 500;
+    color: var(--primary);
+  }
+  .booking-phone:hover strong {
+    color: var(--accent);
+  }
+
+  /* Overlapping circles */
+  .vacation-media {
+    position: relative;
+    width: min(100%, 560px);
+    aspect-ratio: 1;
+    margin-inline: auto;
+  }
+  .circle {
+    position: absolute;
+    overflow: hidden;
+    border-radius: 50%;
+  }
+  .circle :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .circle-lg {
+    top: 0;
+    left: 0;
+    width: 80%;
+    height: 80%;
+  }
+  .circle-sm {
+    right: 0;
+    bottom: 0;
+    width: 48%;
+    height: 48%;
+    border: 10px solid var(--white);
+    box-shadow: var(--shadow-lg);
+  }
+  .ring {
+    position: absolute;
+    top: 6%;
+    right: 4%;
+    width: 18%;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    border: 2px dashed var(--accent);
+    animation: spin 18s linear infinite;
+  }
+  @keyframes spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+</style>

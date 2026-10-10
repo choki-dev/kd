@@ -1,11 +1,35 @@
 ---
-import Welcome from '../components/Welcome.astro';
-import Layout from '../layouts/Layout.astro';
-
-// Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
-// Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
+// KD Global homepage — sections in page order. Content lives in src/data/home.ts.
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Header from "../components/Header.astro";
+import Hero from "../components/Hero.astro";
+import SearchBar from "../components/SearchBar.astro";
+import TourTypes from "../components/TourTypes.astro";
+import FeaturedRetreats from "../components/FeaturedRetreats.astro";
+import BestSellingTours from "../components/BestSellingTours.astro";
+import PopularDestinations from "../components/PopularDestinations.astro";
+import VacationAbout from "../components/VacationAbout.astro";
+import Testimonials from "../components/Testimonials.astro";
+import BrandLogos from "../components/BrandLogos.astro";
+import LatestNews from "../components/LatestNews.astro";
+import Footer from "../components/Footer.astro";
+import BackToTop from "../components/BackToTop.astro";
 ---
 
-<Layout>
-	<Welcome />
-</Layout>
+<BaseLayout>
+  <Header />
+  <main id="main">
+    <Hero />
+    <SearchBar />
+    <TourTypes />
+    <FeaturedRetreats />
+    <BestSellingTours />
+    <PopularDestinations />
+    <VacationAbout />
+    <Testimonials />
+    <BrandLogos />
+    <LatestNews />
+  </main>
+  <Footer />
+  <BackToTop />
+</BaseLayout>

@@ -1,0 +1,203 @@
+---
+import Icon from "./Icon.astro";
+import { testimonials } from "../data/home";
+
+// Initials avatar (no client photos yet), e.g. "Courtney Henry" -> "CH"
+const initials = (name: string) => name.split(" ").map((w) => w[0]).join("").slice(0, 2).toUpperCase();
+---
+
+<section class="section testimonials" aria-labelledby="testimonials-title" data-testimonials>
+  <div class="container">
+    <header class="section-head" data-reveal>
+      <h2 id="testimonials-title" class="section-title">What our guests say</h2>
+      <p class="section-subtitle">Travellers from around the world on their journeys through Bhutan.</p>
+    </header>
+
+    <!-- 3 cards visible on desktop, 2 on tablet, 1 on phones; swipe or use the arrows / dots -->
+    <ul class="t-track" aria-label="Testimonials" tabindex="0" data-t-track>
+      {
+        testimonials.map((t, i) => (
+          <li class="t-slide" aria-roledescription="slide" aria-label={`${i + 1} of ${testimonials.length}`}>
+            <figure class="t-card">
+              <span class="t-avatar" aria-hidden="true">{initials(t.name)}</span>
+              <blockquote>
+                <p>“{t.quote}”</p>
+              </blockquote>
+              <figcaption>
+                <strong>{t.name}</strong>
+                <span>{t.role}</span>
+              </figcaption>
+            </figure>
+          </li>
+        ))
+      }
+    </ul>
+
+    <div class="t-controls">
+      <button type="button" class="circle-btn" aria-label="Previous testimonials" data-t-prev><Icon name="arrow-left" size={20} /></button>
+      <div class="t-dots" role="group" aria-label="Choose testimonials page" data-t-dots></div>
+      <button type="button" class="circle-btn" aria-label="Next testimonials" data-t-next><Icon name="arrow-right" size={20} /></button>
+    </div>
+  </div>
+</section>
+
+<style>
+  .testimonials {
+    padding-top: 0;
+  }
+  .t-track {
+    --per: 1;
+    --gap: 20px;
+    display: flex;
+    gap: var(--gap);
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+    scrollbar-width: none;
+    padding-block: 6px;
+  }
+  .t-track::-webkit-scrollbar {
+    display: none;
+  }
+  @media (min-width: 768px) {
+    .t-track {
+      --per: 2;
+    }
+  }
+  @media (min-width: 1200px) {
+    .t-track {
+      --per: 3;
+      --gap: 30px;
+    }
+  }
+  .t-slide {
+    flex: 0 0 calc((100% - var(--gap) * (var(--per) - 1)) / var(--per));
+    scroll-snap-align: start;
+  }
+  .t-card {
+    position: relative; /* keeps the screen-reader-only rating text inside the slider */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 100%;
+    margin: 0;
+    padding: 40px 30px 34px;
+    border-radius: 20px;
+    background: var(--soft);
+    text-align: center;
+  }
+  .t-avatar {
+    display: grid;
+    place-items: center;
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    border: 4px solid var(--white);
+    background: var(--primary);
+    color: var(--white);
+    font-size: 24px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    box-shadow: var(--shadow);
+  }
+  blockquote {
+    flex: 1;
+    margin: 22px 0 18px;
+    font-size: 17px;
+    line-height: 1.7;
+    color: var(--text);
+  }
+  figcaption {
+    margin-top: 14px;
+  }
+  figcaption strong {
+    display: block;
+    font-size: 19px;
+    font-weight: 500;
+    color: var(--primary);
+  }
+  figcaption span {
+    color: var(--muted);
+    font-size: 15px;
+  }
+
+  .t-controls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    margin-top: 40px;
+  }
+  .t-dots {
+    display: flex;
+    gap: 2px;
+  }
+  .t-dots :global(button) {
+    display: grid;
+    place-items: center;
+    min-width: 24px;
+    height: 24px;
+  }
+  .t-dots :global(button)::before {
+    content: "";
+    width: 10px;
+    height: 10px;
+    border-radius: 999px;
+    background: var(--bluegray);
+    transition:
+      width 0.3s var(--ease),
+      background-color 0.3s;
+  }
+  .t-dots :global(button[aria-current="true"])::before {
+    width: 28px;
+    background: var(--accent);
+  }
+</style>
+
+<script>
+  // Testimonials slider: scroll-snap track; arrows and dots move one "page" (as many cards as are visible)
+  const root = document.querySelector<HTMLElement>("[data-testimonials]");
+  const track = root?.querySelector<HTMLElement>("[data-t-track]");
+  const dotsWrap = root?.querySelector<HTMLElement>("[data-t-dots]");
+  if (root && track && dotsWrap) {
+    const slides = [...track.children] as HTMLElement[];
+    const perPage = () => Math.max(1, Math.round(track.clientWidth / slides[0].getBoundingClientRect().width));
+    const pages = () => Math.ceil(slides.length / perPage());
+    const page = () => Math.round(track.scrollLeft / track.clientWidth);
+    const goTo = (p: number) => {
+      const n = pages();
+      const target = slides[((p % n) + n) % n * perPage()];
+      track.scrollTo({ left: target.offsetLeft - slides[0].offsetLeft });
+    };
+
+    const buildDots = () => {
+      dotsWrap.innerHTML = "";
+      for (let i = 0; i < pages(); i++) {
+        const b = document.createElement("button");
+        b.type = "button";
+        b.setAttribute("aria-label", `Page ${i + 1}`);
+        b.addEventListener("click", () => goTo(i));
+        dotsWrap.append(b);
+      }
+      syncDots();
+    };
+    const syncDots = () => {
+      const p = page();
+      [...dotsWrap.children].forEach((d, i) => d.setAttribute("aria-current", String(i === p)));
+    };
+
+    root.querySelector("[data-t-prev]")?.addEventListener("click", () => goTo(page() - 1));
+    root.querySelector("[data-t-next]")?.addEventListener("click", () => goTo(page() + 1));
+    track.addEventListener("keydown", (e) => {
+      if (e.key === "ArrowRight") (e.preventDefault(), goTo(page() + 1));
+      if (e.key === "ArrowLeft") (e.preventDefault(), goTo(page() - 1));
+    });
+    let raf = 0;
+    track.addEventListener("scroll", () => {
+      cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(syncDots);
+    });
+    window.addEventListener("resize", buildDots);
+    buildDots();
+  }
+</script>

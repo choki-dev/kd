@@ -1,0 +1,382 @@
+---
+// Tours page: every tour with filters (type, destination, duration) and sorting.
+// Tours come from src/data/home.ts; page text from src/data/pages.ts.
+// The Tours menu links here with ?type=<category>, which preselects that type; the Destinations page uses ?place=<name>.
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Header from "../components/Header.astro";
+import PageHero from "../components/PageHero.astro";
+import TourCard from "../components/TourCard.astro";
+import CtaBand from "../components/CtaBand.astro";
+import Footer from "../components/Footer.astro";
+import BackToTop from "../components/BackToTop.astro";
+import Icon from "../components/Icon.astro";
+import { tours, tourCategories } from "../data/home";
+import { toursPage } from "../data/pages";
+
+const { hero, durations, cta } = toursPage;
+
+// Destinations in the order they first appear, with how many tours visit each
+const places = [...new Set(tours.flatMap((t) => t.places))].map((p) => ({ name: p, count: tours.filter((t) => t.places.includes(p)).length }));
+const typeCount = (c: string) => tours.filter((t) => t.category === c).length;
+const durationCount = (min: number, max: number) => tours.filter((t) => t.days >= min && t.days <= max).length;
+---
+
+<BaseLayout title={toursPage.meta.title} description={toursPage.meta.description}>
+  <Header />
+  <main id="main">
+    <PageHero {...hero} crumb="Tours" />
+
+    <section class="section listing" aria-label="Tour list">
+      <div class="container listing-grid">
+        <!-- Filters (a collapsible panel on small screens) -->
+        <aside class="filters" aria-label="Filter tours">
+          <details class="filter-box" open data-filter-box>
+            <summary class="filter-toggle">
+              <Icon name="search" size={18} /> Filter tours
+              <Icon name="chevron-down" size={16} class="chev" />
+            </summary>
+            <form class="filter-form" data-filters>
+              <fieldset>
+                <legend>Tour type</legend>
+                <label class="opt">
+                  <input type="radio" name="type" value="" checked />
+                  <span>All types</span>
+                  <span class="count">{tours.length}</span>
+                </label>
+                {
+                  tourCategories.map((c) => (
+                    <label class="opt">
+                      <input type="radio" name="type" value={c} />
+                      <span>{c}</span>
+                      <span class="count">{typeCount(c)}</span>
+                    </label>
+                  ))
+                }
+              </fieldset>
+
+              <fieldset>
+                <legend>Destination</legend>
+                {
+                  places.map((p) => (
+                    <label class="opt">
+                      <input type="checkbox" name="place" value={p.name} />
+                      <span>{p.name}</span>
+                      <span class="count">{p.count}</span>
+                    </label>
+                  ))
+                }
+              </fieldset>
+
+              <fieldset>
+                <legend>Duration</legend>
+                {
+                  durations.map((d) => (
+                    <label class="opt">
+                      <input type="checkbox" name="duration" value={d.id} data-min={d.min} data-max={d.max} />
+                      <span>{d.label}</span>
+                      <span class="count">{durationCount(d.min, d.max)}</span>
+                    </label>
+                  ))
+                }
+              </fieldset>
+
+              <button type="reset" class="reset">Clear all filters</button>
+            </form>
+          </details>
+        </aside>
+
+        <!-- Results -->
+        <div class="results">
+          <div class="toolbar">
+            <p class="result-count" aria-live="polite" data-count>Showing {tours.length} of {tours.length} tours</p>
+            <label class="sort">
+              <span>Sort by</span>
+              <select data-sort>
+                <option value="recommended">Recommended</option>
+                <option value="price-asc">Price: low to high</option>
+                <option value="price-desc">Price: high to low</option>
+                <option value="days-asc">Duration: shortest first</option>
+                <option value="days-desc">Duration: longest first</option>
+              </select>
+            </label>
+          </div>
+
+          <ul class="tour-list" data-list>
+            {
+              tours.map((t, i) => (
+                <li data-category={t.category} data-places={t.places.join("|")} data-days={t.days} data-price={t.price} data-order={i} data-reveal style={`--reveal-delay:${(i % 3) * 80}ms`}>
+                  <TourCard tour={t} />
+                </li>
+              ))
+            }
+          </ul>
+
+          <div class="empty" hidden data-empty>
+            <p>No tours match these filters.</p>
+            <button type="button" class="btn btn-primary" data-clear>Clear filters</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <CtaBand {...cta} primary={{ label: "Plan a custom trip", href: "/contact" }} />
+  </main>
+  <Footer />
+  <BackToTop />
+</BaseLayout>
+
+<style>
+  .listing-grid {
+    display: grid;
+    gap: 32px;
+    align-items: start;
+  }
+  @media (min-width: 992px) {
+    .listing-grid {
+      grid-template-columns: 280px 1fr;
+      gap: 40px;
+    }
+  }
+
+  /* ---------- Filters ---------- */
+  @media (min-width: 992px) {
+    .filters {
+      position: sticky;
+      top: calc(var(--header-h) + 24px);
+    }
+  }
+  .filter-box {
+    border-radius: var(--radius);
+    background: var(--soft);
+  }
+  .filter-toggle {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 18px 24px;
+    font-weight: 500;
+    color: var(--primary);
+    cursor: pointer;
+    list-style: none;
+  }
+  .filter-toggle::-webkit-details-marker {
+    display: none;
+  }
+  .filter-toggle :global(.chev) {
+    margin-left: auto;
+    transition: transform 0.25s;
+  }
+  .filter-box[open] .filter-toggle :global(.chev) {
+    transform: rotate(180deg);
+  }
+  @media (min-width: 992px) {
+    /* Always open on desktop: the summary becomes a plain heading */
+    .filter-toggle {
+      pointer-events: none;
+      padding-bottom: 6px;
+    }
+    .filter-toggle :global(.chev) {
+      display: none;
+    }
+  }
+  .filter-form {
+    display: grid;
+    gap: 24px;
+    padding: 6px 24px 24px;
+  }
+  fieldset {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    display: grid;
+    gap: 4px;
+  }
+  legend {
+    margin-bottom: 8px;
+    padding: 0;
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+  .opt {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-height: 36px;
+    font-size: 15px;
+    color: var(--text);
+    cursor: pointer;
+  }
+  .opt input {
+    width: 18px;
+    height: 18px;
+    margin: 0;
+    accent-color: var(--accent);
+    cursor: pointer;
+  }
+  .opt:hover span:first-of-type {
+    color: var(--accent);
+  }
+  .opt .count {
+    margin-left: auto;
+    min-width: 28px;
+    padding: 2px 8px;
+    border-radius: 999px;
+    background: var(--white);
+    font-size: 12px;
+    font-weight: 500;
+    text-align: center;
+    color: var(--muted);
+  }
+  .reset {
+    justify-self: start;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--accent);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+  .reset:hover {
+    color: var(--primary);
+  }
+
+  /* ---------- Results ---------- */
+  .toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px 24px;
+    margin-bottom: 24px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--line);
+  }
+  .result-count {
+    color: var(--muted);
+    font-size: 15px;
+  }
+  .sort {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--primary);
+  }
+  .sort select {
+    min-height: 44px;
+    padding: 0 14px;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    background: var(--white);
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text);
+    cursor: pointer;
+  }
+  .sort select:focus-visible {
+    border-color: var(--accent);
+  }
+  .tour-list {
+    display: grid;
+    gap: 24px;
+  }
+  @media (min-width: 640px) {
+    .tour-list {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  @media (min-width: 1200px) {
+    .tour-list {
+      grid-template-columns: repeat(3, 1fr);
+      gap: 28px;
+    }
+  }
+  .tour-list li[hidden] {
+    display: none;
+  }
+  .empty {
+    display: grid;
+    justify-items: center;
+    gap: 18px;
+    padding: 56px 24px;
+    border-radius: var(--radius);
+    background: var(--soft);
+    text-align: center;
+    color: var(--muted);
+  }
+  .empty[hidden] {
+    display: none;
+  }
+</style>
+
+<script>
+  const form = document.querySelector<HTMLFormElement>("[data-filters]");
+  const list = document.querySelector<HTMLElement>("[data-list]");
+  const sort = document.querySelector<HTMLSelectElement>("[data-sort]");
+  const count = document.querySelector<HTMLElement>("[data-count]");
+  const empty = document.querySelector<HTMLElement>("[data-empty]");
+  const box = document.querySelector<HTMLDetailsElement>("[data-filter-box]");
+  const items = [...(list?.children ?? [])] as HTMLElement[];
+
+  // Filter panel starts collapsed on small screens
+  if (box && window.matchMedia("(max-width: 991.98px)").matches) box.open = false;
+
+  const apply = () => {
+    if (!form || !list) return;
+    const type = (form.querySelector<HTMLInputElement>('input[name="type"]:checked')?.value) ?? "";
+    const places = [...form.querySelectorAll<HTMLInputElement>('input[name="place"]:checked')].map((i) => i.value);
+    const ranges = [...form.querySelectorAll<HTMLInputElement>('input[name="duration"]:checked')].map((i) => [Number(i.dataset.min), Number(i.dataset.max)]);
+
+    let shown = 0;
+    for (const li of items) {
+      const days = Number(li.dataset.days);
+      const tourPlaces = (li.dataset.places ?? "").split("|");
+      const match =
+        (!type || li.dataset.category === type) &&
+        (!places.length || places.some((p) => tourPlaces.includes(p))) &&
+        (!ranges.length || ranges.some(([min, max]) => days >= min && days <= max));
+      li.hidden = !match;
+      if (match) {
+        shown++;
+        li.classList.add("is-visible"); // don't wait for the scroll animation after filtering
+      }
+    }
+
+    // Sort by re-appending in order
+    const [key, dir] = (sort?.value ?? "recommended").split("-");
+    const val = (li: HTMLElement) => Number(key === "price" ? li.dataset.price : key === "days" ? li.dataset.days : li.dataset.order);
+    [...items].sort((a, b) => (val(a) - val(b)) * (dir === "desc" ? -1 : 1)).forEach((li) => list.append(li));
+
+    if (count) count.textContent = `Showing ${shown} of ${items.length} tours`;
+    if (empty) empty.hidden = shown > 0;
+
+    // Keep the chosen type in the URL so it can be shared (?type=Trekking)
+    const url = new URL(location.href);
+    if (type) url.searchParams.set("type", type);
+    else url.searchParams.delete("type");
+    history.replaceState(null, "", url);
+  };
+
+  // Preselect the type from the menu link (?type=Festival)
+  const fromUrl = new URLSearchParams(location.search).get("type");
+  if (fromUrl && form) {
+    const radio = [...form.querySelectorAll<HTMLInputElement>('input[name="type"]')].find((r) => r.value.toLowerCase() === fromUrl.toLowerCase());
+    if (radio) radio.checked = true;
+  }
+  // ...and the destination from the Destinations page (?place=Paro)
+  const placeFromUrl = new URLSearchParams(location.search).get("place");
+  if (placeFromUrl && form) {
+    const placeBox = [...form.querySelectorAll<HTMLInputElement>('input[name="place"]')].find((c) => c.value.toLowerCase() === placeFromUrl.toLowerCase());
+    if (placeBox) placeBox.checked = true;
+  }
+
+  form?.addEventListener("change", apply);
+  sort?.addEventListener("change", apply);
+  // "reset" fires before the inputs are cleared, so re-apply on the next tick
+  form?.addEventListener("reset", () => setTimeout(apply));
+  document.querySelector("[data-clear]")?.addEventListener("click", () => form?.reset());
+  apply();
+</script>

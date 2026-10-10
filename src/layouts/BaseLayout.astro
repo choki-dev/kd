@@ -1,0 +1,82 @@
+---
+import { Font, getImage } from "astro:assets";
+import ogPhoto from "../assets/images/slide1.jpg";
+import "../styles/global.css";
+import { site } from "../data/home";
+
+interface Props {
+  title?: string;
+  description?: string;
+  image?: string; // social sharing image (absolute URL); defaults to a 1200×630 crop of slide1.jpg
+}
+
+const { title = site.title, description = site.description } = Astro.props;
+
+// Social image needs an absolute URL, so it is only output once `site` is set in astro.config.mjs (the live domain)
+const og = await getImage({ src: ogPhoto, width: 1200, height: 630, format: "jpg" });
+const image = Astro.props.image ?? (Astro.site ? new URL(og.src, Astro.site).href : undefined);
+
+const canonical = Astro.site ? new URL(Astro.url.pathname, Astro.site).href : undefined;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    {canonical && <link rel="canonical" href={canonical} />}
+    <meta name="theme-color" content="#0b3d4a" />
+    <meta name="generator" content={Astro.generator} />
+
+    <!-- Social sharing -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={site.name} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    {image && <meta property="og:image" content={image} />}
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    {image && <meta name="twitter:image" content={image} />}
+
+    <!-- KD arc mark -->
+    <link rel="icon" type="image/png" sizes="64x64" href="/favicon.png" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+
+    <!-- Brand fonts, self-hosted via the Astro Fonts API (see astro.config.mjs). Only the primary font is preloaded;
+         the serif and script are small accents used once per page. -->
+    <Font cssVariable="--font-primary" preload />
+    <Font cssVariable="--font-serif" />
+    <Font cssVariable="--font-script" />
+
+    <!-- Mark JS as available before first paint, so scroll-reveal content only hides when it can be revealed -->
+    <script is:inline>document.documentElement.classList.add("js");</script>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <slot />
+
+    <script>
+      // Fade-in-on-scroll: any element with [data-reveal] gets .is-visible once it enters the viewport
+      const items = document.querySelectorAll<HTMLElement>("[data-reveal]");
+      if (!("IntersectionObserver" in window)) {
+        items.forEach((el) => el.classList.add("is-visible"));
+      } else {
+        const io = new IntersectionObserver(
+          (entries) => {
+            for (const entry of entries) {
+              if (entry.isIntersecting) {
+                entry.target.classList.add("is-visible");
+                io.unobserve(entry.target);
+              }
+            }
+          },
+          { rootMargin: "0px 0px -8% 0px", threshold: 0.12 },
+        );
+        items.forEach((el) => io.observe(el));
+      }
+    </script>
+  </body>
+</html>

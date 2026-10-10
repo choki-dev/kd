@@ -1,0 +1,159 @@
+---
+// Inner-page banner: photo + deep-teal overlay, spaced kicker, title and breadcrumb.
+// Sits under the transparent header, like the homepage hero.
+import type { ImageMetadata } from "astro";
+import { Image } from "astro:assets";
+import Icon from "./Icon.astro";
+
+interface Props {
+  title: string;
+  kicker: string;
+  text?: string;
+  image: ImageMetadata;
+  alt: string;
+  crumb: string; // current page name in the breadcrumb
+  parents?: { label: string; href: string }[]; // breadcrumb steps between Home and the current page
+}
+
+const { title, kicker, text, image, alt, crumb, parents = [] } = Astro.props;
+---
+
+<section class="page-hero">
+  <Image src={image} alt={alt} width={1920} height={1080} widths={[640, 960, 1280, 1920]} sizes="100vw" loading="eager" fetchpriority="high" class="page-hero-img" />
+  <div class="page-hero-overlay"></div>
+  <div class="container page-hero-content">
+    <p class="page-hero-kicker">{kicker}</p>
+    <h1 class="page-hero-title">{title}</h1>
+    {text && <p class="page-hero-text">{text}</p>}
+    <nav aria-label="Breadcrumb">
+      <ol class="crumbs">
+        <li><a href="/">Home</a></li>
+        {
+          parents.map((p) => (
+            <>
+              <li aria-hidden="true"><Icon name="chevron-right" size={14} /></li>
+              <li><a href={p.href}>{p.label}</a></li>
+            </>
+          ))
+        }
+        <li aria-hidden="true"><Icon name="chevron-right" size={14} /></li>
+        <li aria-current="page">{crumb}</li>
+      </ol>
+    </nav>
+  </div>
+</section>
+
+<style>
+  /* Full-screen banner, like the homepage hero */
+  .page-hero {
+    position: relative;
+    display: flex;
+    align-items: center;
+    height: 100vh;
+    height: 100svh;
+    min-height: 600px;
+    max-height: 1100px;
+    overflow: hidden;
+    background: var(--primary);
+    color: var(--white);
+  }
+  @media (max-height: 600px) {
+    .page-hero {
+      height: auto;
+    }
+  }
+  .page-hero :global(.page-hero-img) {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  /* Light overlay so more of the photo shows: darker only behind the header, softly behind the centred text,
+     and at the bottom edge (where the facts/contact cards overlap) */
+  .page-hero-overlay {
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 60% 45% at 50% 52%, rgba(11, 61, 74, 0.5), transparent 78%),
+      linear-gradient(180deg, rgba(11, 61, 74, 0.6) 0%, rgba(11, 61, 74, 0) 24%, rgba(11, 61, 74, 0) 70%, rgba(11, 61, 74, 0.45) 100%);
+  }
+  .page-hero-content {
+    position: relative;
+    z-index: 2;
+    text-align: center;
+    padding-top: calc(var(--header-h) + 48px);
+    padding-bottom: 64px;
+  }
+  /* Spaced uppercase line, styled like "COMMERCE & SERVICES" in the logo */
+  .page-hero-kicker {
+    text-shadow: 0 1px 8px rgba(11, 61, 74, 0.6);
+    display: inline-flex;
+    align-items: center;
+    gap: 14px;
+    font-size: clamp(11px, 0.2vw + 10px, 13px);
+    font-weight: 500;
+    letter-spacing: 0.34em;
+    text-transform: uppercase;
+    color: var(--accent-tint);
+  }
+  .page-hero-kicker::before,
+  .page-hero-kicker::after {
+    content: "";
+    width: 36px;
+    height: 1px;
+    background: currentColor;
+    opacity: 0.6;
+  }
+  @media (max-width: 575.98px) {
+    .page-hero-kicker {
+      letter-spacing: 0.2em;
+    }
+    .page-hero-kicker::before,
+    .page-hero-kicker::after {
+      display: none;
+    }
+  }
+  .page-hero-title {
+    max-width: 780px;
+    margin: 16px auto 0;
+    font-size: clamp(28px, 2vw + 14px, 44px);
+    font-weight: 700;
+    line-height: 1.08;
+    letter-spacing: -0.025em;
+    color: var(--white);
+    text-shadow: 0 2px 18px rgba(11, 61, 74, 0.55);
+  }
+  .page-hero-text {
+    max-width: 620px;
+    margin: 18px auto 0;
+    font-size: clamp(14px, 0.3vw + 13px, 16px);
+    color: rgba(255, 255, 255, 0.92);
+    text-shadow: 0 1px 10px rgba(11, 61, 74, 0.6);
+  }
+  .crumbs {
+    display: inline-flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin-top: 28px;
+    padding: 10px 20px;
+    border-radius: 999px;
+    background: rgba(11, 61, 74, 0.45); /* teal glass: readable on bright photos too */
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    font-size: 14px;
+    font-weight: 500;
+  }
+  .crumbs li {
+    display: inline-flex;
+  }
+  .crumbs a:hover {
+    color: var(--accent-tint);
+  }
+  .crumbs [aria-current] {
+    color: var(--accent-tint);
+  }
+</style>

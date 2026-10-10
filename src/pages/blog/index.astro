@@ -1,0 +1,281 @@
+---
+// Blog list: newest post as a large featured card, then the rest in a grid.
+// Posts without a `slug` (no article yet) are shown as "Coming soon" and aren't links.
+import { Image } from "astro:assets";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Header from "../../components/Header.astro";
+import PageHero from "../../components/PageHero.astro";
+import CtaBand from "../../components/CtaBand.astro";
+import Footer from "../../components/Footer.astro";
+import BackToTop from "../../components/BackToTop.astro";
+import Icon from "../../components/Icon.astro";
+import { postHref, posts } from "../../data/home";
+import { blogPage, postBodies, readingMinutes } from "../../data/blog";
+
+const [featured, ...rest] = posts;
+const minutes = (slug?: string) => (slug && postBodies[slug] ? readingMinutes(postBodies[slug]) : undefined);
+const featuredMinutes = minutes(featured.slug);
+---
+
+<BaseLayout title={blogPage.meta.title} description={blogPage.meta.description}>
+  <Header />
+  <main id="main">
+    <PageHero {...blogPage.hero} crumb="Blog" />
+
+    <section class="section blog" aria-labelledby="latest-title">
+      <div class="container">
+        <h2 id="latest-title" class="sr-only">Latest articles</h2>
+
+        <!-- Featured (newest) post -->
+        <article class="featured" data-reveal>
+          <a href={postHref(featured)} class="featured-media" tabindex="-1" aria-hidden="true">
+            <Image src={featured.image} alt="" width={900} height={640} widths={[480, 720, 900]} sizes="(min-width: 992px) 600px, 92vw" loading="eager" class="featured-img" />
+          </a>
+          <div class="featured-body">
+            <span class="eyebrow">Latest article</span>
+            <p class="meta">
+              <span class="tag">{featured.category}</span>
+              <span><Icon name="calendar" size={15} /> {featured.date}</span>
+              {featuredMinutes && <span><Icon name="clock" size={15} /> {featuredMinutes} min read</span>}
+            </p>
+            <h3 class="featured-title serif-title"><a href={postHref(featured)}>{featured.title}</a></h3>
+            <p class="excerpt">{featured.excerpt}</p>
+            <a href={postHref(featured)} class="btn btn-primary">Read article <Icon name="arrow-right" size={18} /></a>
+          </div>
+        </article>
+
+        <!-- More posts -->
+        {
+          rest.length > 0 && (
+            <>
+              <header class="section-head more-head" data-reveal>
+                <h2 class="section-title">More stories</h2>
+              </header>
+              <ul class="grid">
+                {rest.map((p, i) => (
+                  <li data-reveal style={`--reveal-delay:${i * 100}ms`}>
+                    <article class:list={["card", { soon: !p.slug }]}>
+                      <div class="card-media">
+                        <Image src={p.image} alt={p.alt} width={800} height={560} widths={[360, 560, 800]} sizes="(min-width: 992px) 380px, (min-width: 640px) 45vw, 92vw" loading="lazy" class="card-img" />
+                        <span class="tag tag-on-img">{p.category}</span>
+                        {!p.slug && <span class="soon-badge">Coming soon</span>}
+                      </div>
+                      <div class="card-body">
+                        <p class="meta">
+                          <span><Icon name="calendar" size={15} /> {p.date}</span>
+                        </p>
+                        <h3 class="card-title">{p.slug ? <a href={postHref(p)}>{p.title}</a> : p.title}</h3>
+                        <p class="excerpt">{p.excerpt}</p>
+                        {p.slug ? (
+                          <a href={postHref(p)} class="read-more" aria-label={`Read more: ${p.title}`}>
+                            Read more <Icon name="arrow-right" size={16} />
+                          </a>
+                        ) : (
+                          <p class="soon-note">Article coming soon</p>
+                        )}
+                      </div>
+                    </article>
+                  </li>
+                ))}
+              </ul>
+            </>
+          )
+        }
+      </div>
+    </section>
+
+    <CtaBand
+      title="Ready to see it for yourself?"
+      text="Our team in Thimphu can turn the places in these stories into a journey planned around you."
+      primary={{ label: "Plan your trip", href: "/contact" }}
+      secondary={{ label: "Browse tours", href: "/tours" }}
+    />
+  </main>
+  <Footer />
+  <BackToTop />
+</BaseLayout>
+
+<style>
+  /* ---------- Shared bits ---------- */
+  .meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px 16px;
+    font-size: 14px;
+    color: var(--muted);
+  }
+  .meta span {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .tag {
+    padding: 5px 12px;
+    border-radius: 999px;
+    background: var(--accent);
+    color: var(--white);
+    font-size: 13px;
+    font-weight: 500;
+    line-height: 1;
+  }
+  .excerpt {
+    margin-top: 12px;
+    color: var(--muted);
+  }
+
+  /* ---------- Featured ---------- */
+  .featured {
+    display: grid;
+    overflow: hidden;
+    border-radius: var(--radius);
+    background: var(--white);
+    box-shadow: var(--shadow-lg);
+  }
+  @media (min-width: 992px) {
+    .featured {
+      grid-template-columns: 1.1fr 1fr;
+    }
+  }
+  .featured-media {
+    display: block;
+    overflow: hidden;
+    aspect-ratio: 16 / 10;
+  }
+  @media (min-width: 992px) {
+    .featured-media {
+      aspect-ratio: auto;
+      min-height: 420px;
+    }
+  }
+  .featured-media :global(.featured-img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.7s var(--ease);
+  }
+  .featured:hover :global(.featured-img) {
+    transform: scale(1.05);
+  }
+  .featured-body {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 32px 24px;
+  }
+  @media (min-width: 768px) {
+    .featured-body {
+      padding: 48px;
+    }
+  }
+  .featured-title {
+    margin-top: 14px;
+    font-size: clamp(24px, 1.4vw + 16px, 34px);
+    font-weight: 600;
+    line-height: 1.25;
+  }
+  .featured-title a:hover {
+    color: var(--accent);
+  }
+  .featured .excerpt {
+    margin-bottom: 28px;
+  }
+
+  /* ---------- Grid ---------- */
+  .more-head {
+    margin-top: 88px;
+  }
+  .grid {
+    display: grid;
+    gap: 24px;
+  }
+  @media (min-width: 640px) {
+    .grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  @media (min-width: 992px) {
+    .grid {
+      grid-template-columns: repeat(3, 1fr);
+      gap: 30px;
+    }
+  }
+  .card {
+    height: 100%;
+    overflow: hidden;
+    border-radius: var(--radius);
+    background: var(--white);
+    box-shadow: var(--shadow);
+    transition:
+      transform 0.35s var(--ease),
+      box-shadow 0.35s var(--ease);
+  }
+  .card:not(.soon):hover {
+    transform: translateY(-6px);
+    box-shadow: var(--shadow-lg);
+  }
+  .card-media {
+    position: relative;
+    aspect-ratio: 10 / 7;
+    overflow: hidden;
+  }
+  .card-media :global(.card-img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .soon .card-media :global(.card-img) {
+    filter: grayscale(0.35);
+  }
+  .tag-on-img {
+    position: absolute;
+    top: 16px;
+    left: 16px;
+  }
+  .soon-badge {
+    position: absolute;
+    right: 16px;
+    bottom: 16px;
+    padding: 6px 14px;
+    border-radius: 999px;
+    background: rgba(11, 61, 74, 0.75);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    color: var(--white);
+    font-size: 13px;
+    font-weight: 500;
+  }
+  .card-body {
+    padding: 22px 24px 26px;
+  }
+  .card-title {
+    margin-top: 10px;
+    font-size: 20px;
+    line-height: 1.4;
+  }
+  .card-title a:hover {
+    color: var(--accent);
+  }
+  .read-more {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 18px;
+    font-weight: 500;
+    color: var(--primary);
+    transition:
+      color 0.25s,
+      gap 0.25s;
+  }
+  .read-more:hover {
+    color: var(--accent);
+    gap: 12px;
+  }
+  .soon-note {
+    margin-top: 18px;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--muted);
+  }
+</style>

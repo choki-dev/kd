@@ -1,0 +1,495 @@
+---
+// Blog article — one page per post with a `slug` (src/data/home.ts); the body is in src/data/blog.ts.
+import type { GetStaticPaths } from "astro";
+import { Image } from "astro:assets";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Header from "../../components/Header.astro";
+import PageHero from "../../components/PageHero.astro";
+import Footer from "../../components/Footer.astro";
+import BackToTop from "../../components/BackToTop.astro";
+import Icon from "../../components/Icon.astro";
+import { postHref, posts, tourHref, tours, type Post } from "../../data/home";
+import { blogPage, postBodies, readingMinutes } from "../../data/blog";
+
+export const getStaticPaths = (() =>
+  posts
+    .filter((p) => p.slug)
+    .map((post) => {
+      const body = postBodies[post.slug!];
+      if (!body) throw new Error(`No article body in blog.ts for "${post.slug}"`);
+      return { params: { slug: post.slug }, props: { post } };
+    })) satisfies GetStaticPaths;
+
+interface Props {
+  post: Post;
+}
+
+const { post } = Astro.props;
+const body = postBodies[post.slug!];
+const minutes = readingMinutes(body);
+const shortTitle = post.title.split(/:\s*/)[0];
+
+// Section anchors for the "In this article" list
+const slugify = (s: string) => s.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
+const headings = body.blocks.filter((b) => b.type === "h2").map((b) => ({ text: b.text, id: slugify(b.text) }));
+
+const related = body.relatedTours.map((slug) => tours.find((t) => t.slug === slug)).filter((t) => t !== undefined);
+const others = posts.filter((p) => p !== post);
+---
+
+<BaseLayout title={`${post.title} | KD Global Blog`} description={post.excerpt}>
+  <Header />
+  <main id="main">
+    <PageHero
+      kicker={`${post.category} · ${post.date}`}
+      title={post.title}
+      image={post.image}
+      alt={post.alt}
+      crumb={shortTitle}
+      parents={[{ label: "Blog", href: "/blog" }]}
+    />
+
+    <div class="section article-wrap">
+      <div class="container article-grid">
+        <article class="article" aria-labelledby="article-title">
+          <h2 id="article-title" class="sr-only">{post.title}</h2>
+          <p class="byline">
+            <span class="avatar" aria-hidden="true">KD</span>
+            <span>
+              <strong>{blogPage.author}</strong>
+              <small>
+                {post.date} · {minutes} min read
+              </small>
+            </span>
+          </p>
+
+          <p class="intro serif-title">{body.intro}</p>
+
+          {
+            body.blocks.map((b) => {
+              if (b.type === "h2") return <h2 id={slugify(b.text)}>{b.text}</h2>;
+              if (b.type === "p") return <p>{b.text}</p>;
+              if (b.type === "list")
+                return (
+                  <ul class="list">
+                    {b.items.map((i) => (
+                      <li>
+                        <span class="dot" aria-hidden="true" />
+                        {i}
+                      </li>
+                    ))}
+                  </ul>
+                );
+              if (b.type === "tip")
+                return (
+                  <aside class="tip">
+                    <span class="tip-icon">
+                      <Icon name="star" size={18} />
+                    </span>
+                    <p>
+                      <strong>{b.title}:</strong> {b.text}
+                    </p>
+                  </aside>
+                );
+              return (
+                <figure class="figure">
+                  <Image src={b.src} alt={b.alt} width={1000} height={620} widths={[480, 760, 1000]} sizes="(min-width: 992px) 720px, 92vw" loading="lazy" class="figure-img" />
+                  <figcaption>{b.caption}</figcaption>
+                </figure>
+              );
+            })
+          }
+
+          <div class="article-foot">
+            <a href="/blog" class="back"><Icon name="arrow-left" size={16} /> Back to all articles</a>
+            <a href="/contact" class="btn btn-primary">Plan your trip <Icon name="arrow-right" size={18} /></a>
+          </div>
+        </article>
+
+        <aside class="side" aria-label="Article tools">
+          {
+            headings.length > 0 && (
+              <nav class="side-card toc" aria-labelledby="toc-title">
+                <h2 id="toc-title" class="side-title">In this article</h2>
+                <ol>
+                  {headings.map((h) => (
+                    <li>
+                      <a href={`#${h.id}`}>{h.text}</a>
+                    </li>
+                  ))}
+                </ol>
+              </nav>
+            )
+          }
+
+          {
+            related.length > 0 && (
+              <div class="side-card">
+                <h2 class="side-title">Related tours</h2>
+                <ul class="mini-tours">
+                  {related.map((t) => (
+                    <li>
+                      <a href={tourHref(t)} class="mini">
+                        <Image src={t.image} alt="" width={160} height={160} widths={[80, 160]} sizes="80px" loading="lazy" class="mini-img" />
+                        <span>
+                          <strong>{t.title.split(/:\s*/)[0]}</strong>
+                          <small>
+                            {t.days} days · from US${t.price.toLocaleString("en-US")}
+                          </small>
+                        </span>
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )
+          }
+
+          <div class="side-card side-cta">
+            <h2 class="side-title">Questions about visiting Bhutan?</h2>
+            <p>Our team in Thimphu is happy to help with festivals, visas, the SDF and planning your route.</p>
+            <a href="/contact" class="btn btn-light">Contact us <Icon name="arrow-right" size={16} /></a>
+          </div>
+        </aside>
+      </div>
+    </div>
+
+    <!-- More stories -->
+    {
+      others.length > 0 && (
+        <section class="section more" aria-labelledby="more-title">
+          <div class="container">
+            <header class="section-head" data-reveal>
+              <h2 id="more-title" class="section-title">More stories</h2>
+            </header>
+            <ul class="more-grid">
+              {others.map((p, i) => (
+                <li data-reveal style={`--reveal-delay:${i * 100}ms`}>
+                  <a href={postHref(p)} class="more-card">
+                    <Image src={p.image} alt="" width={640} height={420} widths={[320, 480, 640]} sizes="(min-width: 768px) 45vw, 92vw" loading="lazy" class="more-img" />
+                    <span class="more-body">
+                      <small>
+                        {p.category} · {p.slug ? p.date : "Coming soon"}
+                      </small>
+                      <strong>{p.title}</strong>
+                    </span>
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </section>
+      )
+    }
+  </main>
+  <Footer />
+  <BackToTop />
+</BaseLayout>
+
+<style>
+  .article-grid {
+    display: grid;
+    gap: 48px;
+    align-items: start;
+  }
+  @media (min-width: 992px) {
+    .article-grid {
+      grid-template-columns: minmax(0, 1fr) 320px;
+      gap: 64px;
+    }
+  }
+
+  /* ---------- Article ---------- */
+  .article {
+    max-width: 760px;
+    min-width: 0;
+    font-size: 17px;
+    line-height: 1.8;
+  }
+  .byline {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding-bottom: 24px;
+    margin-bottom: 28px;
+    border-bottom: 1px solid var(--line);
+  }
+  .avatar {
+    flex: none;
+    display: grid;
+    place-items: center;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: var(--primary);
+    color: var(--white);
+    font-size: 14px;
+    font-weight: 700;
+  }
+  .byline strong {
+    display: block;
+    font-size: 15px;
+    color: var(--primary);
+  }
+  .byline small {
+    display: block;
+    font-size: 14px;
+    color: var(--muted);
+  }
+  .intro {
+    font-size: 20px;
+    line-height: 1.7;
+    font-weight: 500;
+    color: var(--primary);
+  }
+  .article > p {
+    margin-top: 18px;
+    color: var(--text);
+  }
+  .article h2 {
+    margin: 48px 0 4px;
+    font-size: clamp(22px, 1vw + 17px, 28px);
+    font-weight: 700;
+    scroll-margin-top: calc(var(--header-h) + 24px);
+  }
+  .list {
+    display: grid;
+    gap: 10px;
+    margin-top: 18px;
+  }
+  .list li {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  .dot {
+    flex: none;
+    width: 8px;
+    height: 8px;
+    margin-top: 0.7em;
+    border-radius: 50%;
+    background: var(--accent);
+  }
+  .tip {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    margin-top: 24px;
+    padding: 20px 22px;
+    border-left: 4px solid var(--accent);
+    border-radius: var(--radius-sm);
+    background: var(--soft);
+  }
+  .tip p {
+    font-size: 16px;
+    color: var(--text);
+  }
+  .tip strong {
+    color: var(--primary);
+  }
+  .tip-icon {
+    flex: none;
+    display: grid;
+    place-items: center;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: var(--accent);
+    color: var(--white);
+  }
+  .figure {
+    margin: 32px 0 8px;
+  }
+  .figure :global(.figure-img) {
+    width: 100%;
+    aspect-ratio: 50 / 31;
+    object-fit: cover;
+    border-radius: var(--radius);
+  }
+  .figure figcaption {
+    margin-top: 10px;
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--muted);
+    text-align: center;
+  }
+  .article-foot {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin-top: 48px;
+    padding-top: 28px;
+    border-top: 1px solid var(--line);
+  }
+  .back {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--primary);
+  }
+  .back:hover {
+    color: var(--accent);
+  }
+
+  /* ---------- Sidebar ---------- */
+  .side {
+    display: grid;
+    gap: 24px;
+  }
+  @media (min-width: 992px) {
+    .side {
+      position: sticky;
+      top: calc(var(--header-h) + 24px);
+    }
+  }
+  .side-card {
+    padding: 26px 24px;
+    border-radius: var(--radius);
+    background: var(--soft);
+  }
+  .side-title {
+    margin-bottom: 14px;
+    font-size: 18px;
+    font-weight: 700;
+  }
+  .toc ol {
+    display: grid;
+    gap: 2px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    counter-reset: toc;
+  }
+  .toc li {
+    counter-increment: toc;
+  }
+  .toc a {
+    display: flex;
+    gap: 10px;
+    padding: 7px 0;
+    font-size: 15px;
+    line-height: 1.4;
+    color: var(--text);
+  }
+  .toc a::before {
+    content: counter(toc, decimal-leading-zero);
+    font-weight: 700;
+    color: var(--accent);
+  }
+  .toc a:hover {
+    color: var(--accent);
+  }
+  .mini-tours {
+    display: grid;
+    gap: 14px;
+  }
+  .mini {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .mini :global(.mini-img) {
+    flex: none;
+    width: 72px;
+    height: 72px;
+    object-fit: cover;
+    border-radius: var(--radius-sm);
+  }
+  .mini strong {
+    display: block;
+    font-size: 15px;
+    line-height: 1.35;
+    color: var(--primary);
+    transition: color 0.25s;
+  }
+  .mini small {
+    display: block;
+    margin-top: 4px;
+    font-size: 13px;
+    color: var(--muted);
+  }
+  .mini:hover strong {
+    color: var(--accent);
+  }
+  .side-cta {
+    background: var(--primary);
+    color: var(--white);
+  }
+  .side-cta .side-title {
+    color: var(--white);
+  }
+  .side-cta p {
+    margin-bottom: 20px;
+    font-size: 15px;
+    color: rgba(255, 255, 255, 0.82);
+  }
+  .btn-light {
+    min-height: 46px;
+    padding: 0 22px;
+    background: var(--white);
+    color: var(--primary);
+    font-size: 15px;
+  }
+  .btn-light:hover {
+    background: var(--accent-tint);
+  }
+
+  /* ---------- More stories ---------- */
+  .more {
+    background: var(--soft);
+  }
+  .more-grid {
+    display: grid;
+    gap: 24px;
+    max-width: 960px;
+    margin-inline: auto;
+  }
+  @media (min-width: 768px) {
+    .more-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  .more-card {
+    display: block;
+    height: 100%;
+    overflow: hidden;
+    border-radius: var(--radius);
+    background: var(--white);
+    box-shadow: var(--shadow);
+    transition:
+      transform 0.35s var(--ease),
+      box-shadow 0.35s var(--ease);
+  }
+  .more-card:hover {
+    transform: translateY(-6px);
+    box-shadow: var(--shadow-lg);
+  }
+  .more-card :global(.more-img) {
+    width: 100%;
+    aspect-ratio: 16 / 10;
+    object-fit: cover;
+  }
+  .more-body {
+    display: block;
+    padding: 20px 22px 24px;
+  }
+  .more-body small {
+    display: block;
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+  .more-body strong {
+    display: block;
+    margin-top: 8px;
+    font-size: 18px;
+    line-height: 1.4;
+    color: var(--primary);
+  }
+</style>

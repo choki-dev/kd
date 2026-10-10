@@ -1,0 +1,655 @@
+---
+// Tour detail page — one per tour with a `slug` (src/data/home.ts); details in src/data/tourDetails.ts.
+import type { GetStaticPaths } from "astro";
+import { Image } from "astro:assets";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Header from "../../components/Header.astro";
+import PageHero from "../../components/PageHero.astro";
+import TourCard from "../../components/TourCard.astro";
+import Footer from "../../components/Footer.astro";
+import BackToTop from "../../components/BackToTop.astro";
+import Icon from "../../components/Icon.astro";
+import { site, tours, type IconName, type Tour } from "../../data/home";
+import { standardExcluded, standardIncluded, tourDetails, type TourDetail } from "../../data/tourDetails";
+
+export const getStaticPaths = (() =>
+  tours
+    .filter((t) => t.slug)
+    .map((tour) => {
+      const detail = tourDetails[tour.slug!];
+      if (!detail) throw new Error(`No entry in tourDetails.ts for "${tour.slug}"`);
+      if (detail.itinerary.length !== tour.days)
+        throw new Error(`"${tour.slug}": itinerary has ${detail.itinerary.length} days but the tour is ${tour.days} days`);
+      return { params: { slug: tour.slug }, props: { tour, detail } };
+    })) satisfies GetStaticPaths;
+
+interface Props {
+  tour: Tour;
+  detail: TourDetail;
+}
+
+const { tour, detail } = Astro.props;
+
+// "Main title: subtitle" → banner title + banner text
+const [name, subtitle] = tour.title.split(/:\s*/, 2);
+const price = `US$${tour.price.toLocaleString("en-US")}`;
+const route = tour.places.join(" · ");
+const included = detail.included ?? standardIncluded;
+const excluded = detail.excluded ?? standardExcluded;
+const enquire = `/contact?tour=${encodeURIComponent(tour.title)}&type=${tour.category}#form-title`;
+
+const facts: { icon: IconName; label: string; value: string }[] = [
+  { icon: "clock", label: "Duration", value: `${tour.days} days / ${tour.days - 1} nights` },
+  { icon: "users", label: "Group size", value: `Up to ${tour.people} guests` },
+  { icon: "mountain", label: "Difficulty", value: detail.difficulty },
+  { icon: "calendar", label: "Best time", value: detail.bestTime },
+];
+
+// Related: same category first, then other tours with detail pages
+const related = [
+  ...tours.filter((t) => t !== tour && t.category === tour.category),
+  ...tours.filter((t) => t !== tour && t.category !== tour.category && t.slug),
+].slice(0, 3);
+---
+
+<BaseLayout title={`${name} — ${tour.days}-Day Bhutan ${tour.category} Tour | KD Global`} description={`${detail.overview[0].slice(0, 150)}…`}>
+  <Header />
+  <main id="main">
+    <PageHero
+      kicker={`${tour.category} Tour · ${tour.days} Days`}
+      title={name}
+      text={subtitle}
+      image={detail.hero?.src ?? tour.image}
+      alt={detail.hero?.alt ?? tour.alt}
+      crumb={name}
+      parents={[{ label: "Tours", href: "/tours" }]}
+    />
+
+    <!-- Key facts (overlap the banner) -->
+    <section class="facts-wrap" aria-label="Tour facts">
+      <div class="container">
+        <ul class="facts">
+          {
+            facts.map((f) => (
+              <li>
+                <span class="fact-icon"><Icon name={f.icon} size={22} strokeWidth={1.6} /></span>
+                <span>
+                  <small>{f.label}</small>
+                  <strong>{f.value}</strong>
+                </span>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+    </section>
+
+    <div class="section detail">
+      <div class="container detail-grid">
+        <div class="detail-main">
+          <!-- Overview -->
+          <section aria-labelledby="overview-title" class="block" data-reveal>
+            <span class="eyebrow">Overview</span>
+            <h2 id="overview-title" class="block-title">About this tour</h2>
+            {detail.overview.map((p) => <p class="lead">{p}</p>)}
+            <p class="route"><Icon name="map-pin" size={18} /> <strong>Route:</strong> {route}</p>
+          </section>
+
+          <!-- Highlights -->
+          <section aria-labelledby="highlights-title" class="block" data-reveal>
+            <h2 id="highlights-title" class="block-title">Highlights</h2>
+            <ul class="checks">
+              {
+                detail.highlights.map((h) => (
+                  <li>
+                    <span class="check"><Icon name="check" size={15} /></span>
+                    {h}
+                  </li>
+                ))
+              }
+            </ul>
+          </section>
+
+          <!-- Itinerary -->
+          <section aria-labelledby="itinerary-title" class="block" data-reveal>
+            <div class="block-head">
+              <h2 id="itinerary-title" class="block-title">Day-by-day itinerary</h2>
+              <button type="button" class="toggle-all" data-toggle-days aria-pressed="false">Expand all</button>
+            </div>
+            <ol class="days">
+              {
+                detail.itinerary.map((d, i) => (
+                  <li class="day">
+                    <details open={i === 0} data-day>
+                      <summary>
+                        <span class="day-num">Day {i + 1}</span>
+                        <span class="day-title">{d.title}</span>
+                        <Icon name="plus" size={18} class="day-icon" />
+                      </summary>
+                      <div class="day-body">
+                        <p>{d.text}</p>
+                        {d.overnight !== "—" && (
+                          <p class="overnight">
+                            <Icon name="building" size={16} /> Overnight: {d.overnight}
+                          </p>
+                        )}
+                      </div>
+                    </details>
+                  </li>
+                ))
+              }
+            </ol>
+          </section>
+
+          <!-- Included / not included -->
+          <section aria-labelledby="inc-title" class="block" data-reveal>
+            <h2 id="inc-title" class="block-title">What's included</h2>
+            <div class="inc-grid">
+              <div class="inc-card">
+                <h3>Included</h3>
+                <ul>
+                  {
+                    included.map((i) => (
+                      <li>
+                        <Icon name="check" size={18} class="yes" /> {i}
+                      </li>
+                    ))
+                  }
+                </ul>
+              </div>
+              <div class="inc-card inc-card-no">
+                <h3>Not included</h3>
+                <ul>
+                  {
+                    excluded.map((i) => (
+                      <li>
+                        <Icon name="x" size={18} class="no" /> {i}
+                      </li>
+                    ))
+                  }
+                </ul>
+              </div>
+            </div>
+          </section>
+
+          <!-- Gallery -->
+          <section aria-labelledby="gallery-title" class="block" data-reveal>
+            <h2 id="gallery-title" class="block-title">Gallery</h2>
+            <ul class="gallery">
+              {
+                detail.gallery.map((g) => (
+                  <li>
+                    <Image src={g.src} alt={g.alt} width={640} height={480} widths={[320, 480, 640]} sizes="(min-width: 992px) 380px, 46vw" loading="lazy" class="gallery-img" />
+                  </li>
+                ))
+              }
+            </ul>
+          </section>
+        </div>
+
+        <!-- Booking card -->
+        <aside class="detail-side" aria-label="Book this tour">
+          <div class="book">
+            <p class="book-from">From</p>
+            <p class="book-price">{price} <span>per person</span></p>
+            <ul class="book-list">
+              <li><Icon name="clock" size={18} /> {tour.days} days</li>
+              <li><Icon name="users" size={18} /> Up to {tour.people} guests</li>
+              <li><Icon name="building" size={18} /> {detail.stay}</li>
+              <li><Icon name="map-pin" size={18} /> Starts and ends in Paro</li>
+            </ul>
+            <a href={enquire} class="btn btn-primary book-btn">Enquire about this tour <Icon name="arrow-right" size={18} /></a>
+            <a href={`tel:${site.phone.replace(/[^\d+]/g, "")}`} class="book-call">
+              <Icon name="phone" size={18} /> Or call {site.phone}
+            </a>
+          </div>
+          <div class="tailor">
+            <h2>Want to change something?</h2>
+            <p>All our tours are private, so dates, hotels, pace and route can be tailored to you.</p>
+          </div>
+        </aside>
+      </div>
+    </div>
+
+    <!-- Related tours -->
+    {
+      related.length > 0 && (
+        <section class="section related" aria-labelledby="related-title">
+          <div class="container">
+            <header class="section-head" data-reveal>
+              <h2 id="related-title" class="section-title">You might also like</h2>
+            </header>
+            <ul class="related-grid">
+              {related.map((t, i) => (
+                <li data-reveal style={`--reveal-delay:${i * 80}ms`}>
+                  <TourCard tour={t} />
+                </li>
+              ))}
+            </ul>
+          </div>
+        </section>
+      )
+    }
+  </main>
+  <Footer />
+  <BackToTop />
+</BaseLayout>
+
+<style>
+  /* ---------- Facts bar ---------- */
+  .facts-wrap {
+    position: relative;
+    z-index: 3;
+    margin-top: -48px;
+  }
+  .facts {
+    display: grid;
+    gap: 18px 24px;
+    padding: 24px;
+    border-radius: var(--radius);
+    background: var(--white);
+    box-shadow: var(--shadow-lg);
+  }
+  @media (min-width: 576px) {
+    .facts {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  @media (min-width: 992px) {
+    .facts {
+      grid-template-columns: repeat(4, 1fr);
+      padding: 28px 32px;
+    }
+  }
+  .facts li {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .fact-icon {
+    flex: none;
+    display: grid;
+    place-items: center;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: var(--soft);
+    color: var(--accent);
+  }
+  .facts small {
+    display: block;
+    font-size: 13px;
+    color: var(--muted);
+  }
+  .facts strong {
+    display: block;
+    font-size: 15px;
+    font-weight: 500;
+    line-height: 1.35;
+    color: var(--primary);
+  }
+
+  /* ---------- Layout ---------- */
+  .detail-grid {
+    display: grid;
+    gap: 48px;
+    align-items: start;
+  }
+  @media (min-width: 992px) {
+    .detail-grid {
+      grid-template-columns: 1fr 360px;
+      gap: 56px;
+    }
+  }
+  .detail-main {
+    display: grid;
+    gap: 56px;
+    min-width: 0;
+  }
+  .block-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 8px 16px;
+  }
+  .block-title {
+    margin-bottom: 20px;
+    font-size: clamp(24px, 1.2vw + 18px, 30px);
+    font-weight: 700;
+  }
+  .lead {
+    margin-bottom: 14px;
+    color: var(--muted);
+  }
+  .route {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px 8px;
+    margin-top: 20px;
+    padding: 14px 18px;
+    border-radius: var(--radius-sm);
+    background: var(--soft);
+    color: var(--primary);
+    font-size: 15px;
+  }
+  .route :global(svg) {
+    color: var(--accent);
+  }
+
+  /* Highlights */
+  .checks {
+    display: grid;
+    gap: 14px 24px;
+  }
+  @media (min-width: 640px) {
+    .checks {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+  .checks li {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    font-weight: 500;
+    color: var(--text);
+  }
+  .check {
+    flex: none;
+    display: grid;
+    place-items: center;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: var(--accent);
+    color: var(--white);
+  }
+
+  /* Itinerary: a timeline of accordions */
+  .toggle-all {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--accent);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+  .toggle-all:hover {
+    color: var(--primary);
+  }
+  .days {
+    position: relative;
+    display: grid;
+    gap: 14px;
+    margin: 0;
+    padding: 0 0 0 28px;
+    list-style: none;
+  }
+  .days::before {
+    content: "";
+    position: absolute;
+    left: 7px;
+    top: 24px;
+    bottom: 24px;
+    width: 2px;
+    background: var(--line);
+  }
+  .day {
+    position: relative;
+  }
+  .day::before {
+    content: "";
+    position: absolute;
+    left: -28px;
+    top: 20px;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    border: 3px solid var(--white);
+    background: var(--accent);
+    box-shadow: 0 0 0 2px var(--accent);
+  }
+  .day details {
+    border: 1px solid var(--line);
+    border-radius: var(--radius-sm);
+    background: var(--white);
+    transition: box-shadow 0.25s;
+  }
+  .day details[open] {
+    box-shadow: var(--shadow);
+  }
+  .day summary {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px 20px;
+    cursor: pointer;
+    list-style: none;
+  }
+  .day summary::-webkit-details-marker {
+    display: none;
+  }
+  .day-num {
+    flex: none;
+    padding: 4px 10px;
+    border-radius: 999px;
+    background: var(--primary);
+    color: var(--white);
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+  }
+  .day-title {
+    font-weight: 500;
+    color: var(--primary);
+  }
+  .day :global(.day-icon) {
+    flex: none;
+    margin-left: auto;
+    color: var(--accent);
+    transition: transform 0.3s var(--ease);
+  }
+  .day details[open] :global(.day-icon) {
+    transform: rotate(45deg);
+  }
+  .day-body {
+    padding: 0 20px 18px;
+    color: var(--muted);
+  }
+  .overnight {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 10px;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--accent);
+  }
+
+  /* Included */
+  .inc-grid {
+    display: grid;
+    gap: 20px;
+  }
+  @media (min-width: 640px) {
+    .inc-grid {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+  .inc-card {
+    padding: 26px 24px;
+    border-radius: var(--radius);
+    background: var(--soft);
+  }
+  .inc-card h3 {
+    margin-bottom: 14px;
+    font-size: 18px;
+  }
+  .inc-card ul {
+    display: grid;
+    gap: 10px;
+  }
+  .inc-card li {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    font-size: 15px;
+  }
+  .inc-card :global(svg) {
+    flex: none;
+    margin-top: 3px;
+  }
+  .inc-card :global(.yes) {
+    color: var(--accent);
+  }
+  .inc-card :global(.no) {
+    color: var(--muted);
+  }
+  .inc-card-no {
+    background: var(--white);
+    border: 1px solid var(--line);
+  }
+
+  /* Gallery */
+  .gallery {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+  }
+  .gallery li {
+    overflow: hidden;
+    border-radius: var(--radius-sm);
+  }
+  .gallery :global(.gallery-img) {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    transition: transform 0.7s var(--ease);
+  }
+  .gallery li:hover :global(.gallery-img) {
+    transform: scale(1.05);
+  }
+
+  /* ---------- Booking card ---------- */
+  .detail-side {
+    display: grid;
+    gap: 20px;
+  }
+  @media (min-width: 992px) {
+    .detail-side {
+      position: sticky;
+      top: calc(var(--header-h) + 24px);
+    }
+  }
+  .book {
+    padding: 30px 28px;
+    border-radius: var(--radius);
+    background: var(--white);
+    box-shadow: var(--shadow-lg);
+  }
+  .book-from {
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .book-price {
+    margin-top: 4px;
+    font-size: 34px;
+    font-weight: 700;
+    line-height: 1.1;
+    color: var(--accent);
+  }
+  .book-price span {
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--muted);
+  }
+  .book-list {
+    display: grid;
+    gap: 12px;
+    margin: 22px 0 24px;
+    padding-top: 22px;
+    border-top: 1px solid var(--line);
+  }
+  .book-list li {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 15px;
+  }
+  .book-list :global(svg) {
+    flex: none;
+    color: var(--accent);
+  }
+  .book-btn {
+    width: 100%;
+  }
+  .book-call {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 14px;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--primary);
+  }
+  .book-call:hover {
+    color: var(--accent);
+  }
+  .tailor {
+    padding: 26px 28px;
+    border-radius: var(--radius);
+    background: var(--primary);
+    color: var(--white);
+  }
+  .tailor h2 {
+    font-size: 19px;
+    color: var(--white);
+  }
+  .tailor p {
+    margin-top: 8px;
+    font-size: 15px;
+    color: rgba(255, 255, 255, 0.82);
+  }
+
+  /* ---------- Related ---------- */
+  .related {
+    background: var(--soft);
+  }
+  .related-grid {
+    display: grid;
+    gap: 24px;
+  }
+  @media (min-width: 640px) {
+    .related-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  @media (min-width: 992px) {
+    .related-grid {
+      grid-template-columns: repeat(3, 1fr);
+      gap: 30px;
+    }
+  }
+</style>
+
+<script>
+  // "Expand all" / "Collapse all" for the itinerary
+  const btn = document.querySelector<HTMLButtonElement>("[data-toggle-days]");
+  const days = [...document.querySelectorAll<HTMLDetailsElement>("[data-day]")];
+  const sync = () => {
+    const allOpen = days.every((d) => d.open);
+    if (!btn) return;
+    btn.textContent = allOpen ? "Collapse all" : "Expand all";
+    btn.setAttribute("aria-pressed", String(allOpen));
+  };
+  btn?.addEventListener("click", () => {
+    const open = !days.every((d) => d.open);
+    days.forEach((d) => (d.open = open));
+    sync();
+  });
+  days.forEach((d) => d.addEventListener("toggle", sync));
+</script>

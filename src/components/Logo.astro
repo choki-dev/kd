@@ -1,0 +1,59 @@
+---
+// KD Global logo (horizontal lock-up) from the brand files in /logo, optimised by Astro.
+// variant: "color" on white, "white" (one-colour reversed) on deep teal / photos,
+// "auto" = white until the header turns white on scroll, then full colour (see Header.astro).
+import { Image } from "astro:assets";
+import logoColor from "../assets/brand/kd-logo.png";
+import logoWhite from "../assets/brand/kd-logo-white.png";
+import { site } from "../data/home";
+
+interface Props {
+  variant?: "color" | "white" | "auto";
+  class?: string;
+}
+
+const { variant = "color", class: className } = Astro.props;
+const alt = `${site.name} ${site.tagline}`;
+---
+
+<a href="/" class:list={["logo", `logo-${variant}`, className]} aria-label={`${site.name} — home`}>
+  {
+    (variant === "color" || variant === "auto") && (
+      <Image src={logoColor} alt={variant === "auto" ? "" : alt} widths={[240, 480]} sizes="240px" loading="eager" class="logo-img logo-img-color" />
+    )
+  }
+  {
+    (variant === "white" || variant === "auto") && (
+      <Image src={logoWhite} alt={alt} widths={[240, 480]} sizes="240px" loading="eager" class="logo-img logo-img-white" />
+    )
+  }
+</a>
+
+<style>
+  .logo {
+    position: relative;
+    display: inline-block;
+    flex-shrink: 0;
+    line-height: 0;
+  }
+  .logo :global(.logo-img) {
+    width: clamp(168px, 14vw + 110px, 230px);
+    height: auto;
+  }
+  /* auto: both images stacked; the header toggles which one shows */
+  .logo-auto :global(.logo-img-color) {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+  .logo-auto :global(.logo-img-white) {
+    transition: opacity 0.3s;
+  }
+  :global(.is-scrolled) .logo-auto :global(.logo-img-color) {
+    opacity: 1;
+  }
+  :global(.is-scrolled) .logo-auto :global(.logo-img-white) {
+    opacity: 0;
+  }
+</style>

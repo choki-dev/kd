@@ -1,0 +1,143 @@
+---
+import { Image } from "astro:assets";
+import Icon from "./Icon.astro";
+import { postHref, posts } from "../data/home";
+---
+
+<section id="news" class="section news" aria-labelledby="news-title">
+  <div class="container">
+    <header class="section-head" data-reveal>
+      <h2 id="news-title" class="section-title">Bhutan travel stories &amp; tips</h2>
+      <p class="section-subtitle">Festival guides, trekking advice and culture notes from our team in Thimphu.</p>
+    </header>
+
+    <ul class="news-grid">
+      {
+        posts.map((p, i) => (
+          <li data-reveal style={`--reveal-delay:${i * 100}ms`}>
+            <article class="post">
+              <a href={postHref(p)} class="post-media" tabindex="-1" aria-hidden="true">
+                <Image
+                  src={p.image}
+                  alt=""
+                  width={800}
+                  height={560}
+                  widths={[360, 480, 640, 800]}
+                  sizes="(min-width: 992px) 380px, (min-width: 768px) 45vw, 92vw"
+                  loading="lazy"
+                  class="post-img"
+                />
+                <span class="post-tag">{p.category}</span>
+              </a>
+              <div class="post-body">
+                <p class="post-date">
+                  <Icon name="calendar" size={16} /> {p.date}
+                </p>
+                <h3 class="post-title">
+                  <a href={postHref(p)}>{p.title}</a>
+                </h3>
+                <a href={postHref(p)} class="read-more" aria-label={`Read more: ${p.title}`}>
+                  Read more <Icon name="arrow-right" size={16} />
+                </a>
+              </div>
+            </article>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</section>
+
+<style>
+  .news {
+    padding-top: 0;
+  }
+  .news-grid {
+    display: grid;
+    gap: 24px;
+  }
+  @media (min-width: 768px) {
+    .news-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  @media (min-width: 992px) {
+    .news-grid {
+      grid-template-columns: repeat(3, 1fr);
+      gap: 30px;
+    }
+  }
+  .post {
+    height: 100%;
+    overflow: hidden;
+    border-radius: var(--radius);
+    background: var(--white);
+    box-shadow: var(--shadow);
+    transition:
+      transform 0.35s var(--ease),
+      box-shadow 0.35s var(--ease);
+  }
+  .post:hover {
+    transform: translateY(-6px);
+    box-shadow: var(--shadow-lg);
+  }
+  .post-media {
+    position: relative;
+    display: block;
+    aspect-ratio: 10 / 7;
+    overflow: hidden;
+  }
+  .post-media :global(.post-img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.7s var(--ease);
+  }
+  .post:hover :global(.post-img) {
+    transform: scale(1.07);
+  }
+  .post-tag {
+    position: absolute;
+    top: 16px;
+    left: 16px;
+    padding: 6px 14px;
+    border-radius: 999px;
+    background: var(--accent);
+    color: var(--white);
+    font-size: 13px;
+    font-weight: 500;
+  }
+  .post-body {
+    padding: 22px 24px 26px;
+  }
+  .post-date {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--muted);
+    font-size: 14px;
+  }
+  .post-title {
+    margin-top: 10px;
+    font-size: 20px;
+    line-height: 1.4;
+  }
+  .post-title a:hover {
+    color: var(--accent);
+  }
+  .read-more {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 18px;
+    font-weight: 500;
+    color: var(--primary);
+    transition:
+      color 0.25s,
+      gap 0.25s;
+  }
+  .read-more:hover {
+    color: var(--accent);
+    gap: 12px;
+  }
+</style>

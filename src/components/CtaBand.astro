@@ -1,0 +1,122 @@
+---
+// Charcoal call-to-action band (About, Tours, Destinations, Blog). Buttons: white primary + outline secondary.
+// The brand pattern sits in a panel on the right (a strip on top below 992px) and fans out when the band is revealed.
+import Icon from "./Icon.astro";
+import BrandPattern from "./BrandPattern.astro";
+
+interface Props {
+  title: string;
+  text: string;
+  primary: { label: string; href: string };
+  secondary?: { label: string; href: string };
+}
+
+const { title, text, primary, secondary } = Astro.props;
+---
+
+<section class="cta-wrap" aria-labelledby="cta-title">
+  <div class="container">
+    <div class="cta" data-reveal>
+      <div class="cta-pattern">
+        <BrandPattern animate />
+      </div>
+      <div class="cta-body">
+        <div>
+          <h2 id="cta-title">{title}</h2>
+          <p>{text}</p>
+        </div>
+        <div class="cta-actions">
+          <a href={primary.href} class="btn btn-light">{primary.label} <Icon name="arrow-right" size={18} /></a>
+          {secondary && <a href={secondary.href} class="btn btn-outline">{secondary.label}</a>}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .cta-wrap {
+    padding-bottom: var(--section);
+  }
+  /* The pattern sits behind the content and fades into the charcoal body (mask), so there is no hard seam.
+     Below 992px it's a strip across the top that fades downward; from 992px it fills the right half and fades leftward. */
+  .cta {
+    position: relative;
+    display: grid;
+    overflow: hidden;
+    border-radius: var(--radius);
+    background: var(--charcoal); /* same as the pattern's front band, so the fade is seamless */
+    color: var(--white);
+  }
+  .cta-pattern {
+    height: 150px;
+    -webkit-mask-image: linear-gradient(to bottom, #000 30%, transparent 85%);
+    mask-image: linear-gradient(to bottom, #000 30%, transparent 85%);
+  }
+  .cta-body {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    gap: 28px;
+    align-content: center;
+    margin-top: -20px; /* overlap only the fully faded end of the strip, so text never sits on the light stripes */
+    padding: 0 28px 44px;
+  }
+  @media (min-width: 768px) {
+    .cta-pattern {
+      height: 190px;
+    }
+    .cta-body {
+      margin-top: -28px;
+      padding: 0 48px 48px;
+    }
+  }
+  @media (min-width: 992px) {
+    .cta {
+      min-height: 320px;
+    }
+    .cta-pattern {
+      position: absolute;
+      inset: 0 0 0 auto;
+      width: 52%;
+      height: auto;
+      -webkit-mask-image: linear-gradient(to right, transparent, #000 38%);
+      mask-image: linear-gradient(to right, transparent, #000 38%);
+    }
+    .cta-body {
+      max-width: 58%;
+      margin-top: 0;
+      padding: 56px 64px;
+    }
+  }
+  .cta h2 {
+    font-size: clamp(26px, 2vw + 16px, 38px);
+    font-weight: 700;
+    color: var(--white);
+  }
+  .cta p {
+    margin-top: 12px;
+    max-width: 560px;
+    color: rgba(255, 255, 255, 0.85);
+  }
+  .cta-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .btn-light {
+    background: var(--white);
+    color: var(--primary);
+  }
+  .btn-light:hover {
+    background: var(--accent-tint);
+  }
+  .btn-outline {
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    color: var(--white);
+  }
+  .btn-outline:hover {
+    background: rgba(255, 255, 255, 0.12);
+    border-color: var(--white);
+  }
+</style>

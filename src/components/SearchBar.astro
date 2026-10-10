@@ -1,0 +1,567 @@
+---
+import Icon from "./Icon.astro";
+import { searchLocations, searchTourTypes } from "../data/home";
+---
+
+<section id="search" class="search-wrap" aria-label="Find a tour">
+  <div class="container">
+    <form class="search-card" data-search novalidate>
+      <!-- Location -->
+      <div class="field" data-field>
+        <span class="field-icon"><Icon name="map-pin" size={22} /></span>
+        <div class="field-body">
+          <span class="field-label" id="lbl-location">Location</span>
+          <button type="button" class="field-trigger" aria-haspopup="listbox" aria-expanded="false" aria-labelledby="lbl-location val-location" data-trigger>
+            <span id="val-location" data-value data-placeholder="Where are you going?">Where are you going?</span>
+            <Icon name="chevron-down" size={16} class="chev" />
+          </button>
+        </div>
+        <ul class="pop listbox" role="listbox" aria-labelledby="lbl-location" tabindex="-1" hidden data-pop data-listbox="location">
+          {searchLocations.map((l) => <li role="option" aria-selected="false" tabindex="-1">{l}</li>)}
+        </ul>
+        <input type="hidden" name="location" />
+      </div>
+
+      <!-- Date -->
+      <div class="field" data-field>
+        <span class="field-icon"><Icon name="calendar" size={22} /></span>
+        <div class="field-body">
+          <span class="field-label" id="lbl-date">Date</span>
+          <button type="button" class="field-trigger" aria-haspopup="dialog" aria-expanded="false" aria-labelledby="lbl-date val-date" data-trigger>
+            <span id="val-date" data-value data-placeholder="Choose a date">Choose a date</span>
+            <Icon name="chevron-down" size={16} class="chev" />
+          </button>
+        </div>
+        <div class="pop calendar" role="dialog" aria-label="Choose a date" hidden data-pop data-calendar>
+          <div class="cal-head">
+            <button type="button" class="cal-nav" aria-label="Previous month" data-cal-prev><Icon name="arrow-left" size={16} /></button>
+            <p class="cal-title" aria-live="polite" data-cal-title></p>
+            <button type="button" class="cal-nav" aria-label="Next month" data-cal-next><Icon name="arrow-right" size={16} /></button>
+          </div>
+          <div class="cal-grid cal-week" aria-hidden="true">
+            <span>Mo</span><span>Tu</span><span>We</span><span>Th</span><span>Fr</span><span>Sa</span><span>Su</span>
+          </div>
+          <div class="cal-grid" data-cal-days></div>
+        </div>
+        <input type="hidden" name="date" />
+      </div>
+
+      <!-- Tour type -->
+      <div class="field" data-field>
+        <span class="field-icon"><Icon name="compass" size={22} /></span>
+        <div class="field-body">
+          <span class="field-label" id="lbl-type">Tour Type</span>
+          <button type="button" class="field-trigger" aria-haspopup="listbox" aria-expanded="false" aria-labelledby="lbl-type val-type" data-trigger>
+            <span id="val-type" data-value data-placeholder="All tour types">All tour types</span>
+            <Icon name="chevron-down" size={16} class="chev" />
+          </button>
+        </div>
+        <ul class="pop listbox" role="listbox" aria-labelledby="lbl-type" tabindex="-1" hidden data-pop data-listbox="type">
+          {searchTourTypes.map((t) => <li role="option" aria-selected="false" tabindex="-1">{t}</li>)}
+        </ul>
+        <input type="hidden" name="type" />
+      </div>
+
+      <!-- People -->
+      <div class="field" data-field>
+        <span class="field-icon"><Icon name="users" size={22} /></span>
+        <div class="field-body">
+          <span class="field-label" id="lbl-people">People</span>
+          <button type="button" class="field-trigger" aria-haspopup="dialog" aria-expanded="false" aria-labelledby="lbl-people val-people" data-trigger>
+            <span id="val-people" data-value>2 Adults, 0 Children</span>
+            <Icon name="chevron-down" size={16} class="chev" />
+          </button>
+        </div>
+        <div class="pop people" role="dialog" aria-label="Number of people" hidden data-pop data-people>
+          {
+            [
+              { key: "adults", label: "Adult", hint: "Ages 13 or above", value: 2, min: 1 },
+              { key: "children", label: "Children", hint: "Ages 2 – 12", value: 0, min: 0 },
+            ].map((p) => (
+              <div class="counter" data-counter={p.key} data-min={p.min}>
+                <div>
+                  <p class="counter-label">{p.label}</p>
+                  <p class="counter-hint">{p.hint}</p>
+                </div>
+                <div class="counter-ctrl">
+                  <button type="button" aria-label={`Fewer ${p.label.toLowerCase()}`} data-dec>
+                    <Icon name="minus" size={16} />
+                  </button>
+                  <output aria-live="polite" data-count>
+                    {p.value}
+                  </output>
+                  <button type="button" aria-label={`More ${p.label.toLowerCase()}`} data-inc>
+                    <Icon name="plus" size={16} />
+                  </button>
+                </div>
+                <input type="hidden" name={p.key} value={p.value} />
+              </div>
+            ))
+          }
+        </div>
+      </div>
+
+      <button type="submit" class="btn btn-primary search-btn"><Icon name="search" size={18} /> Search</button>
+    </form>
+  </div>
+</section>
+
+<style>
+  .search-wrap {
+    position: relative;
+    z-index: 10;
+    margin-top: -72px;
+  }
+  .search-card {
+    display: grid;
+    gap: 6px;
+    padding: 14px;
+    border-radius: 24px;
+    background: var(--white);
+    box-shadow: var(--shadow-lg);
+  }
+  @media (min-width: 768px) {
+    .search-card {
+      grid-template-columns: 1fr 1fr;
+      padding: 18px;
+    }
+  }
+  @media (min-width: 1200px) {
+    .search-card {
+      grid-template-columns: repeat(4, 1fr) auto;
+      align-items: center;
+      gap: 0;
+      padding: 16px 16px 16px 8px;
+      border-radius: 999px;
+    }
+  }
+
+  .field {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 10px 14px;
+    border-radius: 16px;
+    transition: background-color 0.2s;
+  }
+  .field:hover {
+    background: var(--soft);
+  }
+  @media (min-width: 1200px) {
+    .field {
+      padding: 6px 22px;
+      border-radius: 999px;
+    }
+    .field + .field::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 18%;
+      bottom: 18%;
+      width: 1px;
+      background: var(--line);
+    }
+  }
+  .field-icon {
+    display: grid;
+    place-items: center;
+    width: 48px;
+    height: 48px;
+    flex-shrink: 0;
+    border-radius: 50%;
+    background: var(--soft);
+    color: var(--accent);
+  }
+  .field-body {
+    min-width: 0;
+    flex: 1;
+  }
+  .field-label {
+    display: block;
+    font-size: 17px;
+    font-weight: 500;
+    color: var(--primary);
+    line-height: 1.3;
+  }
+  .field-trigger {
+    display: flex;
+    width: 100%;
+    align-items: center;
+    justify-content: space-between;
+    gap: 6px;
+    padding: 2px 0;
+    color: var(--muted);
+    font-size: 15px;
+    text-align: left;
+  }
+  .field-trigger span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .field-trigger.has-value {
+    color: var(--text);
+  }
+  .field-trigger :global(.chev) {
+    flex-shrink: 0;
+    transition: transform 0.25s;
+  }
+  .field-trigger[aria-expanded="true"] :global(.chev) {
+    transform: rotate(180deg);
+  }
+  .search-btn {
+    margin-top: 6px;
+    min-height: 60px;
+  }
+  @media (min-width: 768px) {
+    .search-btn {
+      grid-column: 1 / -1;
+    }
+  }
+  @media (min-width: 1200px) {
+    .search-btn {
+      grid-column: auto;
+      margin: 0 0 0 8px;
+      padding: 0 34px;
+    }
+  }
+
+  /* Popovers */
+  .pop {
+    position: absolute;
+    top: calc(100% + 10px);
+    left: 0;
+    z-index: 20;
+    min-width: 100%;
+    padding: 10px;
+    border-radius: 16px;
+    background: var(--white);
+    box-shadow: var(--shadow-lg);
+  }
+  @media (min-width: 576px) {
+    .pop {
+      min-width: 300px;
+    }
+  }
+  .listbox li {
+    padding: 11px 14px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 15px;
+    transition:
+      background-color 0.15s,
+      color 0.15s;
+  }
+  .listbox li:hover,
+  .listbox li:focus {
+    outline: none;
+    background: var(--soft);
+    color: var(--accent);
+  }
+  .listbox li[aria-selected="true"] {
+    color: var(--accent);
+    font-weight: 500;
+  }
+
+  /* Calendar */
+  .calendar {
+    width: 312px;
+    padding: 16px;
+  }
+  .cal-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+  }
+  .cal-title {
+    font-weight: 500;
+    color: var(--primary);
+  }
+  .cal-nav {
+    display: grid;
+    place-items: center;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    border: 1px solid var(--line);
+    transition:
+      background-color 0.2s,
+      color 0.2s;
+  }
+  .cal-nav:hover {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: var(--white);
+  }
+  .cal-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 4px;
+    text-align: center;
+  }
+  .cal-week span {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--muted);
+    padding: 4px 0;
+  }
+  .cal-grid :global(button) {
+    aspect-ratio: 1;
+    border-radius: 50%;
+    font-size: 14px;
+    transition:
+      background-color 0.15s,
+      color 0.15s;
+  }
+  .cal-grid :global(button:hover) {
+    background: var(--soft);
+    color: var(--accent);
+  }
+  .cal-grid :global(button.is-today) {
+    box-shadow: inset 0 0 0 1px var(--accent);
+  }
+  .cal-grid :global(button[aria-pressed="true"]) {
+    background: var(--accent);
+    color: var(--white);
+  }
+  .cal-grid :global(button:disabled) {
+    color: #c5c7cb;
+    pointer-events: none;
+  }
+
+  /* People counters */
+  .people {
+    width: 300px;
+    padding: 8px 18px;
+  }
+  .counter {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 12px 0;
+  }
+  .counter + .counter {
+    border-top: 1px solid var(--line);
+  }
+  .counter-label {
+    font-weight: 500;
+    color: var(--primary);
+  }
+  .counter-hint {
+    font-size: 13px;
+    color: var(--muted);
+  }
+  .counter-ctrl {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .counter-ctrl button {
+    display: grid;
+    place-items: center;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    border: 1px solid var(--line);
+    transition:
+      background-color 0.2s,
+      color 0.2s;
+  }
+  .counter-ctrl button:hover {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: var(--white);
+  }
+  .counter-ctrl button:disabled {
+    opacity: 0.35;
+    pointer-events: none;
+  }
+  .counter-ctrl output {
+    min-width: 22px;
+    text-align: center;
+    font-weight: 500;
+  }
+</style>
+
+<script>
+  const form = document.querySelector<HTMLFormElement>("[data-search]");
+  if (form) {
+    const fields = [...form.querySelectorAll<HTMLElement>("[data-field]")];
+
+    // ---------- Open / close popovers ----------
+    const close = (field: HTMLElement, focusTrigger = false) => {
+      const trigger = field.querySelector<HTMLButtonElement>("[data-trigger]")!;
+      const pop = field.querySelector<HTMLElement>("[data-pop]")!;
+      pop.hidden = true;
+      trigger.setAttribute("aria-expanded", "false");
+      if (focusTrigger) trigger.focus();
+    };
+    const open = (field: HTMLElement) => {
+      fields.forEach((f) => f !== field && close(f));
+      const trigger = field.querySelector<HTMLButtonElement>("[data-trigger]")!;
+      const pop = field.querySelector<HTMLElement>("[data-pop]")!;
+      pop.hidden = false;
+      trigger.setAttribute("aria-expanded", "true");
+      // Move focus into the popover: selected option, selected/today's date, or first control
+      const target =
+        pop.querySelector<HTMLElement>('[aria-selected="true"], [aria-pressed="true"]') ??
+        pop.querySelector<HTMLElement>(".is-today:not(:disabled)") ??
+        pop.querySelector<HTMLElement>('[role="option"], button:not(:disabled)');
+      target?.focus();
+    };
+    fields.forEach((field) => {
+      const trigger = field.querySelector<HTMLButtonElement>("[data-trigger]")!;
+      trigger.addEventListener("click", () => (trigger.getAttribute("aria-expanded") === "true" ? close(field) : open(field)));
+      field.addEventListener("keydown", (e) => {
+        if (e.key === "Escape" && trigger.getAttribute("aria-expanded") === "true") {
+          e.preventDefault();
+          close(field, true);
+        }
+      });
+    });
+    document.addEventListener("click", (e) => {
+      fields.forEach((f) => !f.contains(e.target as Node) && close(f));
+    });
+
+    const setValue = (field: HTMLElement, text: string, value: string) => {
+      const trigger = field.querySelector<HTMLElement>("[data-trigger]")!;
+      field.querySelector<HTMLElement>("[data-value]")!.textContent = text;
+      trigger.classList.add("has-value");
+      const input = field.querySelector<HTMLInputElement>('input[type="hidden"]');
+      if (input) input.value = value;
+    };
+
+    // ---------- Listboxes (location, tour type) ----------
+    form.querySelectorAll<HTMLElement>("[data-listbox]").forEach((list) => {
+      const field = list.closest<HTMLElement>("[data-field]")!;
+      const options = [...list.querySelectorAll<HTMLElement>('[role="option"]')];
+      const choose = (opt: HTMLElement) => {
+        options.forEach((o) => o.setAttribute("aria-selected", String(o === opt)));
+        setValue(field, opt.textContent!.trim(), opt.textContent!.trim());
+        close(field, true);
+      };
+      options.forEach((opt, i) => {
+        opt.addEventListener("click", () => choose(opt));
+        opt.addEventListener("keydown", (e) => {
+          if (e.key === "ArrowDown") (e.preventDefault(), options[(i + 1) % options.length].focus());
+          else if (e.key === "ArrowUp") (e.preventDefault(), options[(i - 1 + options.length) % options.length].focus());
+          else if (e.key === "Home") (e.preventDefault(), options[0].focus());
+          else if (e.key === "End") (e.preventDefault(), options[options.length - 1].focus());
+          else if (e.key === "Enter" || e.key === " ") (e.preventDefault(), choose(opt));
+          else if (e.key === "Tab") close(field);
+        });
+      });
+    });
+
+    // ---------- Calendar ----------
+    const cal = form.querySelector<HTMLElement>("[data-calendar]");
+    if (cal) {
+      const field = cal.closest<HTMLElement>("[data-field]")!;
+      const title = cal.querySelector<HTMLElement>("[data-cal-title]")!;
+      const grid = cal.querySelector<HTMLElement>("[data-cal-days]")!;
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      let view = new Date(today.getFullYear(), today.getMonth(), 1);
+      let selected: Date | null = null;
+      const iso = (d: Date) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+      const label = (d: Date) => d.toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" });
+
+      const render = (focusDate?: Date) => {
+        title.textContent = view.toLocaleDateString("en-GB", { month: "long", year: "numeric" });
+        grid.innerHTML = "";
+        const offset = (view.getDay() + 6) % 7; // Monday first
+        for (let i = 0; i < offset; i++) grid.append(document.createElement("span"));
+        const days = new Date(view.getFullYear(), view.getMonth() + 1, 0).getDate();
+        for (let day = 1; day <= days; day++) {
+          const d = new Date(view.getFullYear(), view.getMonth(), day);
+          const b = document.createElement("button");
+          b.type = "button";
+          b.textContent = String(day);
+          b.dataset.date = iso(d);
+          b.setAttribute("aria-label", label(d));
+          b.disabled = d < today;
+          b.classList.toggle("is-today", d.getTime() === today.getTime());
+          b.setAttribute("aria-pressed", String(!!selected && d.getTime() === selected.getTime()));
+          grid.append(b);
+        }
+        // Can't go back before the current month
+        cal.querySelector<HTMLButtonElement>("[data-cal-prev]")!.disabled =
+          view.getFullYear() === today.getFullYear() && view.getMonth() === today.getMonth();
+        if (focusDate) grid.querySelector<HTMLElement>(`[data-date="${iso(focusDate)}"]`)?.focus();
+      };
+
+      grid.addEventListener("click", (e) => {
+        const b = (e.target as HTMLElement).closest<HTMLButtonElement>("button[data-date]");
+        if (!b) return;
+        const [y, m, d] = b.dataset.date!.split("-").map(Number);
+        selected = new Date(y, m - 1, d);
+        setValue(field, label(selected), b.dataset.date!);
+        render();
+        close(field, true);
+      });
+      // Arrow keys move by day / week, crossing months
+      grid.addEventListener("keydown", (e) => {
+        const b = (e.target as HTMLElement).closest<HTMLButtonElement>("button[data-date]");
+        const step = { ArrowLeft: -1, ArrowRight: 1, ArrowUp: -7, ArrowDown: 7 }[e.key];
+        if (!b || !step) return;
+        e.preventDefault();
+        const [y, m, d] = b.dataset.date!.split("-").map(Number);
+        const next = new Date(y, m - 1, d + step);
+        if (next < today) return;
+        view = new Date(next.getFullYear(), next.getMonth(), 1);
+        render(next);
+      });
+      cal.querySelector("[data-cal-prev]")!.addEventListener("click", () => {
+        view = new Date(view.getFullYear(), view.getMonth() - 1, 1);
+        render();
+      });
+      cal.querySelector("[data-cal-next]")!.addEventListener("click", () => {
+        view = new Date(view.getFullYear(), view.getMonth() + 1, 1);
+        render();
+      });
+      render();
+    }
+
+    // ---------- People counters ----------
+    const people = form.querySelector<HTMLElement>("[data-people]");
+    if (people) {
+      const field = people.closest<HTMLElement>("[data-field]")!;
+      const counters = [...people.querySelectorAll<HTMLElement>("[data-counter]")];
+      const sync = () => {
+        const [a, c] = counters.map((el) => Number(el.querySelector("input")!.value));
+        field.querySelector<HTMLElement>("[data-value]")!.textContent =
+          `${a} Adult${a === 1 ? "" : "s"}, ${c} Child${c === 1 ? "" : "ren"}`;
+        field.querySelector("[data-trigger]")!.classList.add("has-value");
+      };
+      counters.forEach((el) => {
+        const input = el.querySelector("input")!;
+        const out = el.querySelector("[data-count]")!;
+        const dec = el.querySelector<HTMLButtonElement>("[data-dec]")!;
+        const inc = el.querySelector<HTMLButtonElement>("[data-inc]")!;
+        const min = Number(el.dataset.min);
+        const set = (n: number) => {
+          const v = Math.max(min, Math.min(20, n));
+          input.value = String(v);
+          out.textContent = String(v);
+          dec.disabled = v <= min;
+          inc.disabled = v >= 20;
+          sync();
+        };
+        dec.addEventListener("click", () => set(Number(input.value) - 1));
+        inc.addEventListener("click", () => set(Number(input.value) + 1));
+        set(Number(input.value));
+      });
+    }
+
+    // ---------- Search: jump to the tour list, filtered by tour type when it matches a tab ----------
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const type = new FormData(form).get("type") as string;
+      document.dispatchEvent(new CustomEvent("tours:filter", { detail: type || "View All" }));
+      document.getElementById("tours")?.scrollIntoView({ behavior: "smooth" });
+    });
+  }
+</script>

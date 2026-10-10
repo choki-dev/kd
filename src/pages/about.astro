@@ -1,0 +1,356 @@
+---
+// About Us page. Content lives in src/data/pages.ts.
+import { Image } from "astro:assets";
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Header from "../components/Header.astro";
+import PageHero from "../components/PageHero.astro";
+import Testimonials from "../components/Testimonials.astro";
+import Footer from "../components/Footer.astro";
+import BackToTop from "../components/BackToTop.astro";
+import CtaBand from "../components/CtaBand.astro";
+import Icon from "../components/Icon.astro";
+import { about } from "../data/pages";
+
+const { hero, story, values, steps, team, cta } = about;
+
+// Initials avatar for members without a photo, e.g. "Karma Dorji" -> "KD"
+const initials = (name: string) => name.split(" ").map((w) => w[0]).join("").slice(0, 2).toUpperCase();
+---
+
+<BaseLayout title={about.meta.title} description={about.meta.description}>
+  <Header />
+  <main id="main">
+    <PageHero {...hero} crumb="About Us" />
+
+    <!-- Our story -->
+    <section class="section story" aria-labelledby="story-title">
+      <div class="container story-grid">
+        <div class="story-media" data-reveal>
+          <Image src={story.image} alt={story.alt} width={1079} height={720} widths={[480, 760, 1079]} sizes="(min-width: 992px) 560px, 92vw" loading="lazy" class="story-img" />
+          <Image src={story.imageSmall} alt={story.altSmall} width={480} height={480} widths={[240, 480]} sizes="(min-width: 992px) 220px, 40vw" loading="lazy" class="story-img-small" />
+        </div>
+        <div class="story-text" data-reveal style="--reveal-delay:120ms">
+          <span class="script-accent">{story.eyebrow}</span>
+          <h2 id="story-title" class="section-title serif-title">{story.title}</h2>
+          {story.paragraphs.map((p) => <p class="story-p">{p}</p>)}
+          <ul class="checks">
+            {
+              story.points.map((p) => (
+                <li>
+                  <span class="check"><Icon name="check" size={16} /></span>
+                  {p}
+                </li>
+              ))
+            }
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- Values -->
+    <section class="section values" aria-labelledby="values-title">
+      <div class="container">
+        <header class="section-head" data-reveal>
+          <h2 id="values-title" class="section-title">{values.title}</h2>
+          <p class="section-subtitle">{values.subtitle}</p>
+        </header>
+        <ul class="value-grid">
+          {
+            values.items.map((v, i) => (
+              <li class="value-card" data-reveal style={`--reveal-delay:${i * 80}ms`}>
+                <span class="value-icon"><Icon name={v.icon} size={30} strokeWidth={1.4} /></span>
+                <h3>{v.title}</h3>
+                <p>{v.text}</p>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+    </section>
+
+    <!-- How we plan -->
+    <section class="section steps" aria-labelledby="steps-title">
+      <div class="container">
+        <header class="section-head" data-reveal>
+          <h2 id="steps-title" class="section-title">{steps.title}</h2>
+          <p class="section-subtitle">{steps.subtitle}</p>
+        </header>
+        <ol class="step-grid">
+          {
+            steps.items.map((s, i) => (
+              <li class="step" data-reveal style={`--reveal-delay:${i * 80}ms`}>
+                <span class="step-num" aria-hidden="true">{String(i + 1).padStart(2, "0")}</span>
+                <h3>{s.title}</h3>
+                <p>{s.text}</p>
+              </li>
+            ))
+          }
+        </ol>
+      </div>
+    </section>
+
+    <!-- Team -->
+    <section class="section team" aria-labelledby="team-title">
+      <div class="container">
+        <header class="section-head" data-reveal>
+          <h2 id="team-title" class="section-title">{team.title}</h2>
+          <p class="section-subtitle">{team.subtitle}</p>
+        </header>
+        <ul class="team-grid">
+          {
+            team.members.map((m, i) => (
+              <li class="member" data-reveal style={`--reveal-delay:${i * 80}ms`}>
+                {m.photo ? (
+                  <Image src={m.photo} alt={`Portrait of ${m.name}`} width={320} height={320} widths={[160, 320]} sizes="140px" loading="lazy" class="member-photo" />
+                ) : (
+                  <span class="member-photo member-initials" aria-hidden="true">{initials(m.name)}</span>
+                )}
+                <h3>{m.name}</h3>
+                <p class="member-role">{m.role}</p>
+                <p class="member-bio">{m.bio}</p>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+    </section>
+
+    <Testimonials />
+
+    <CtaBand {...cta} primary={{ label: "Contact us", href: "/contact" }} secondary={{ label: "View tours", href: "/tours" }} />
+  </main>
+  <Footer />
+  <BackToTop />
+</BaseLayout>
+
+<style>
+  /* ---------- Story ---------- */
+  .story-grid {
+    display: grid;
+    gap: 56px;
+    align-items: center;
+  }
+  @media (min-width: 992px) {
+    .story-grid {
+      grid-template-columns: 1fr 1fr;
+      gap: 72px;
+    }
+  }
+  .story-media {
+    position: relative;
+    padding: 0 0 48px;
+  }
+  .story-media :global(.story-img) {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+  }
+  .story-media :global(.story-img-small) {
+    position: absolute;
+    right: 16px;
+    bottom: 0;
+    width: 38%;
+    aspect-ratio: 1;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 6px solid var(--white);
+    box-shadow: var(--shadow-lg);
+  }
+  .story-text .section-title {
+    margin-bottom: 20px;
+  }
+  .story-p {
+    color: var(--muted);
+    margin-bottom: 16px;
+  }
+  .checks {
+    display: grid;
+    gap: 14px;
+    margin-top: 28px;
+  }
+  @media (min-width: 576px) {
+    .checks {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+  .checks li {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-weight: 500;
+    color: var(--primary);
+  }
+  .check {
+    flex: none;
+    display: grid;
+    place-items: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: var(--accent);
+    color: var(--white);
+  }
+
+  /* ---------- Values ---------- */
+  .values {
+    background: var(--soft);
+  }
+  .value-grid {
+    display: grid;
+    gap: 24px;
+  }
+  @media (min-width: 576px) {
+    .value-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  @media (min-width: 1200px) {
+    .value-grid {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+  .value-card {
+    padding: 36px 28px;
+    border-radius: var(--radius);
+    background: var(--white);
+    box-shadow: var(--shadow);
+    text-align: center;
+    transition:
+      transform 0.35s var(--ease),
+      box-shadow 0.35s var(--ease);
+  }
+  .value-card:hover {
+    transform: translateY(-6px);
+    box-shadow: var(--shadow-lg);
+  }
+  .value-icon {
+    display: inline-grid;
+    place-items: center;
+    width: 76px;
+    height: 76px;
+    margin-bottom: 20px;
+    border-radius: 50%;
+    background: var(--soft);
+    color: var(--accent);
+  }
+  .value-card h3 {
+    font-size: 20px;
+    margin-bottom: 10px;
+  }
+  .value-card p {
+    color: var(--muted);
+    font-size: 15px;
+  }
+
+  /* ---------- Steps ---------- */
+  .step-grid {
+    display: grid;
+    gap: 24px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  @media (min-width: 576px) {
+    .step-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  @media (min-width: 1200px) {
+    .step-grid {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+  .step {
+    position: relative;
+    padding: 32px 28px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: var(--white);
+  }
+  .step-num {
+    display: block;
+    margin-bottom: 16px;
+    font-size: 44px;
+    font-weight: 700;
+    line-height: 1;
+    color: var(--soft-2);
+    -webkit-text-stroke: 1px var(--accent);
+  }
+  .step h3 {
+    font-size: 19px;
+    margin-bottom: 10px;
+  }
+  .step p {
+    color: var(--muted);
+    font-size: 15px;
+  }
+
+  /* ---------- Team ---------- */
+  .team {
+    padding-top: 0;
+  }
+  .team-grid {
+    display: grid;
+    gap: 24px;
+  }
+  @media (min-width: 576px) {
+    .team-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  @media (min-width: 1200px) {
+    .team-grid {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+  .member {
+    padding: 36px 28px 32px;
+    border-radius: var(--radius);
+    background: var(--white);
+    box-shadow: var(--shadow);
+    text-align: center;
+    transition:
+      transform 0.35s var(--ease),
+      box-shadow 0.35s var(--ease);
+  }
+  .member:hover {
+    transform: translateY(-6px);
+    box-shadow: var(--shadow-lg);
+  }
+  .member :global(.member-photo) {
+    display: block;
+    width: 140px;
+    height: 140px;
+    margin: 0 auto 22px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 6px solid var(--soft);
+  }
+  .member .member-initials {
+    display: grid;
+    place-items: center;
+    background: var(--primary);
+    color: var(--white);
+    font-size: 40px;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+  }
+  .member h3 {
+    font-size: 20px;
+    margin-bottom: 4px;
+  }
+  .member-role {
+    margin-bottom: 14px;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+  .member-bio {
+    color: var(--muted);
+    font-size: 15px;
+  }
+</style>
