@@ -204,3 +204,7 @@ src/
 - **Social links** are `#`.
 - **Before launch:** `site:` is set to https://kdglobal.bt. Change it if the live site uses www or another domain.
 - **Logo PDF:** `KD_LOGO_.pdf` couldn't be rendered here (no poppler). If it contains extra brand rules (clear space, minimum size), check them.
+
+## Git / GitHub
+
+- 2026-10-10: pushed to https://github.com/choki-dev/kd (branch `main`, remote `origin`). `.gitattributes` marks PDFs and images as binary (core.autocrlf=true on this machine had flagged the PDFs as text). `.kilo/` (stray agent worktree in src/pages) is gitignored.
