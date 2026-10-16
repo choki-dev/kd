@@ -62,7 +62,6 @@ import { site, vacation } from "../data/home";
           loading="lazy"
         />
       </div>
-      <span class="ring" aria-hidden="true"></span>
     </div>
   </div>
 </section>
@@ -168,6 +167,9 @@ import { site, vacation } from "../data/home";
     position: absolute;
     overflow: hidden;
     border-radius: 50%;
+    /* same white outline + shadow on both photos */
+    border: 10px solid var(--white);
+    box-shadow: var(--shadow-lg);
   }
   .circle :global(img) {
     width: 100%;
@@ -185,22 +187,5 @@ import { site, vacation } from "../data/home";
     bottom: 0;
     width: 48%;
     height: 48%;
-    border: 10px solid var(--white);
-    box-shadow: var(--shadow-lg);
-  }
-  .ring {
-    position: absolute;
-    top: 6%;
-    right: 4%;
-    width: 18%;
-    aspect-ratio: 1;
-    border-radius: 50%;
-    border: 2px dashed var(--accent);
-    animation: spin 18s linear infinite;
-  }
-  @keyframes spin {
-    to {
-      transform: rotate(360deg);
-    }
   }
 </style>

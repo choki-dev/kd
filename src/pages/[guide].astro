@@ -1,0 +1,547 @@
+---
+// Travel-info pages linked from the footer (visa & SDF, travel guidelines, festival calendar, trekking seasons, FAQs, terms).
+// Content lives in src/data/guides.ts as a list of blocks; this template renders them with an "On this page" sidebar.
+import type { GetStaticPaths } from "astro";
+import { Image } from "astro:assets";
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Header from "../components/Header.astro";
+import PageHero from "../components/PageHero.astro";
+import CtaBand from "../components/CtaBand.astro";
+import Footer from "../components/Footer.astro";
+import ChatWidget from "../components/ChatWidget.astro";
+import Icon from "../components/Icon.astro";
+import { guideHref, guides, type Guide } from "../data/guides";
+import { site } from "../data/home";
+
+export const getStaticPaths = (() => guides.map((guide) => ({ params: { guide: guide.slug }, props: { guide } }))) satisfies GetStaticPaths;
+
+interface Props {
+  guide: Guide;
+}
+
+const { guide } = Astro.props;
+const slugify = (s: string) => s.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
+const headings = guide.blocks.filter((b) => b.type === "h2").map((b) => ({ text: b.text, id: slugify(b.text) }));
+const others = guides.filter((g) => g !== guide);
+const tel = site.phone.replace(/[^\d+]/g, "");
+---
+
+<BaseLayout title={guide.meta.title} description={guide.meta.description}>
+  <Header />
+  <main id="main">
+    <PageHero {...guide.hero} crumb={guide.label} />
+
+    <div class="section">
+      <div class="container guide-grid">
+        <article class="guide" aria-labelledby="guide-title">
+          <h2 id="guide-title" class="sr-only">{guide.hero.title}</h2>
+          {
+            guide.updated && (
+              <p class="updated">
+                <Icon name="clock" size={16} /> {guide.updated}
+              </p>
+            )
+          }
+          <p class="intro">{guide.intro}</p>
+
+          {
+            guide.blocks.map((b) => {
+              if (b.type === "h2") return <h2 id={slugify(b.text)}>{b.text}</h2>;
+              if (b.type === "p") return <p>{b.text}</p>;
+              if (b.type === "list")
+                return (
+                  <ul class="list">
+                    {b.items.map((i) => (
+                      <li>
+                        <span class="dot" aria-hidden="true" />
+                        {i}
+                      </li>
+                    ))}
+                  </ul>
+                );
+              if (b.type === "tip")
+                return (
+                  <aside class="tip">
+                    <span class="tip-icon">
+                      <Icon name="star" size={18} />
+                    </span>
+                    <p>
+                      <strong>{b.title}:</strong> {b.text}
+                    </p>
+                  </aside>
+                );
+              if (b.type === "table")
+                return (
+                  <div class="table-wrap">
+                    <table>
+                      <caption>{b.caption}</caption>
+                      <thead>
+                        <tr>
+                          {b.head.map((h) => (
+                            <th scope="col">{h}</th>
+                          ))}
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {b.rows.map((r) => (
+                          <tr>
+                            {r.map((c, i) => (i === 0 ? <th scope="row">{c}</th> : <td>{c}</td>))}
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                );
+              if (b.type === "faq")
+                return (
+                  <div class="faq-list">
+                    {b.items.map((f, i) => (
+                      <details class="faq-item" open={i === 0}>
+                        <summary>
+                          {f.q}
+                          <Icon name="plus" size={20} class="faq-icon" />
+                        </summary>
+                        <p>{f.a}</p>
+                      </details>
+                    ))}
+                  </div>
+                );
+              if (b.type === "links")
+                return (
+                  <nav class="links" aria-label={b.title}>
+                    <strong>{b.title}</strong>
+                    <ul>
+                      {b.items.map((l) => (
+                        <li>
+                          <a href={l.href}>
+                            {l.label} <Icon name="arrow-right" size={16} />
+                          </a>
+                        </li>
+                      ))}
+                    </ul>
+                  </nav>
+                );
+              return (
+                <figure class="figure">
+                  <Image src={b.src} alt={b.alt} width={1000} height={620} widths={[480, 760, 1000]} sizes="(min-width: 992px) 720px, 92vw" loading="lazy" class="figure-img" />
+                  <figcaption>{b.caption}</figcaption>
+                </figure>
+              );
+            })
+          }
+        </article>
+
+        <aside class="side" aria-label="More travel information">
+          {
+            headings.length > 0 && (
+              <nav class="side-card toc" aria-labelledby="toc-title">
+                <h2 id="toc-title" class="side-title">On this page</h2>
+                <ol>
+                  {headings.map((h) => (
+                    <li>
+                      <a href={`#${h.id}`}>{h.text}</a>
+                    </li>
+                  ))}
+                </ol>
+              </nav>
+            )
+          }
+          <nav class="side-card more-info" aria-labelledby="info-title">
+            <h2 id="info-title" class="side-title">Travel information</h2>
+            <ul>
+              {
+                others.map((g) => (
+                  <li>
+                    <a href={guideHref(g.slug)}>
+                      {g.label} <Icon name="chevron-right" size={16} />
+                    </a>
+                  </li>
+                ))
+              }
+            </ul>
+          </nav>
+          <div class="side-card side-cta">
+            <h2 class="side-title">Still have a question?</h2>
+            <p>Our team in Thimphu is happy to help.</p>
+            <a href="/contact" class="btn btn-light">Contact us <Icon name="arrow-right" size={16} /></a>
+            <a href={`tel:${tel}`} class="side-call"><Icon name="phone" size={16} /> {site.phone}</a>
+          </div>
+        </aside>
+      </div>
+    </div>
+
+    <CtaBand
+      title="Ready to plan your Bhutan journey?"
+      text="Tell us your dates — we handle the rest."
+      primary={{ label: "Plan your trip", href: "/contact" }}
+      secondary={{ label: "Browse tours", href: "/tours" }}
+    />
+  </main>
+  <Footer />
+  <ChatWidget />
+</BaseLayout>
+
+<style>
+  .guide-grid {
+    display: grid;
+    gap: 48px;
+    align-items: start;
+  }
+  @media (min-width: 992px) {
+    .guide-grid {
+      grid-template-columns: minmax(0, 1fr) 320px;
+      gap: 64px;
+    }
+  }
+
+  /* ---------- Content ---------- */
+  .guide {
+    max-width: 800px;
+    min-width: 0;
+    font-size: 17px;
+    line-height: 1.8;
+  }
+  .updated {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 20px;
+    padding: 6px 14px;
+    border-radius: 999px;
+    background: var(--soft);
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--primary);
+  }
+  .updated :global(svg) {
+    color: var(--accent);
+  }
+  .intro {
+    padding-bottom: 28px;
+    border-bottom: 1px solid var(--line);
+    font-family: var(--font-display-serif);
+    font-size: 20px;
+    line-height: 1.7;
+    font-weight: 500;
+    color: var(--primary);
+  }
+  .guide > p {
+    margin-top: 18px;
+    color: var(--text);
+  }
+  .guide h2 {
+    margin: 48px 0 4px;
+    font-size: clamp(22px, 1vw + 17px, 28px);
+    font-weight: 700;
+    scroll-margin-top: calc(var(--header-h) + 24px);
+  }
+  /* Brand bar under each section heading */
+  .guide h2::after {
+    content: "";
+    display: block;
+    width: 48px;
+    height: 4px;
+    margin: 12px 0 6px;
+    border-radius: 4px;
+    background: linear-gradient(90deg, var(--primary) 0 25%, var(--accent) 25% 50%, var(--bluegray) 50% 75%, var(--charcoal) 75%);
+  }
+  .list {
+    display: grid;
+    gap: 10px;
+    margin-top: 18px;
+  }
+  .list li {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  .dot {
+    flex: none;
+    width: 8px;
+    height: 8px;
+    margin-top: 0.7em;
+    border-radius: 50%;
+    background: var(--accent);
+  }
+  .tip {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    margin-top: 24px;
+    padding: 20px 22px;
+    border-left: 4px solid var(--accent);
+    border-radius: var(--radius-sm);
+    background: var(--soft);
+  }
+  .tip p {
+    font-size: 16px;
+  }
+  .tip strong {
+    color: var(--primary);
+  }
+  .tip-icon {
+    flex: none;
+    display: grid;
+    place-items: center;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: var(--accent);
+    color: var(--white);
+  }
+  .figure {
+    margin: 32px 0 8px;
+  }
+  .figure :global(.figure-img) {
+    width: 100%;
+    aspect-ratio: 50 / 31;
+    object-fit: cover;
+    border-radius: var(--radius);
+  }
+  .figure figcaption {
+    margin-top: 10px;
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--muted);
+    text-align: center;
+  }
+
+  /* Tables (fees, festivals, treks): scroll sideways on small screens */
+  .table-wrap {
+    margin-top: 24px;
+    overflow-x: auto;
+    border-radius: var(--radius);
+    background: var(--white);
+    box-shadow: var(--shadow);
+  }
+  table {
+    width: 100%;
+    min-width: 520px;
+    border-collapse: collapse;
+    font-size: 15px;
+    line-height: 1.5;
+  }
+  caption {
+    padding: 16px 20px;
+    caption-side: top;
+    text-align: left;
+    font-size: 14px;
+    color: var(--muted);
+  }
+  thead th {
+    padding: 14px 20px;
+    background: var(--primary);
+    color: var(--white);
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    text-align: left;
+  }
+  tbody th,
+  tbody td {
+    padding: 14px 20px;
+    border-top: 1px solid var(--line);
+    text-align: left;
+    vertical-align: top;
+  }
+  tbody th {
+    font-weight: 500;
+    color: var(--primary);
+  }
+  tbody tr:nth-child(even) {
+    background: var(--cloud-mist);
+  }
+  tbody tr:hover {
+    background: var(--soft);
+  }
+
+  /* FAQ accordion (same look as Contact) */
+  .faq-list {
+    display: grid;
+    gap: 14px;
+    margin-top: 28px;
+  }
+  .faq-item {
+    border: 1px solid var(--line);
+    border-radius: var(--radius-sm);
+    background: var(--white);
+    transition: box-shadow 0.25s;
+  }
+  .faq-item[open] {
+    box-shadow: var(--shadow);
+  }
+  .faq-item summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 20px 24px;
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 1.5;
+    color: var(--primary);
+    cursor: pointer;
+    list-style: none;
+  }
+  .faq-item summary::-webkit-details-marker {
+    display: none;
+  }
+  .faq-item :global(.faq-icon) {
+    flex: none;
+    color: var(--accent);
+    transition: transform 0.3s var(--ease);
+  }
+  .faq-item[open] :global(.faq-icon) {
+    transform: rotate(45deg);
+  }
+  .faq-item p {
+    padding: 0 24px 22px;
+    font-size: 16px;
+    color: var(--muted);
+  }
+
+  /* "Read more" link lists */
+  .links {
+    margin-top: 28px;
+    padding: 22px 24px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: var(--white);
+  }
+  .links strong {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+  .links ul {
+    display: grid;
+    gap: 4px;
+  }
+  .links a {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 500;
+    color: var(--primary);
+    transition:
+      color 0.25s,
+      gap 0.25s;
+  }
+  .links a:hover {
+    color: var(--accent);
+    gap: 12px;
+  }
+
+  /* ---------- Sidebar ---------- */
+  .side {
+    display: grid;
+    gap: 24px;
+  }
+  @media (min-width: 992px) {
+    .side {
+      position: sticky;
+      top: calc(var(--header-h) + 24px);
+    }
+  }
+  .side-card {
+    padding: 26px 24px;
+    border-radius: var(--radius);
+    background: var(--soft);
+  }
+  .side-title {
+    margin-bottom: 14px;
+    font-size: 18px;
+    font-weight: 700;
+  }
+  .toc ol {
+    display: grid;
+    gap: 2px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    counter-reset: toc;
+  }
+  .toc li {
+    counter-increment: toc;
+  }
+  .toc a {
+    display: flex;
+    gap: 10px;
+    padding: 7px 0;
+    font-size: 15px;
+    line-height: 1.4;
+    color: var(--text);
+  }
+  .toc a::before {
+    content: counter(toc, decimal-leading-zero);
+    font-weight: 700;
+    color: var(--accent);
+  }
+  .toc a:hover {
+    color: var(--accent);
+  }
+  .more-info ul {
+    display: grid;
+  }
+  .more-info li + li {
+    border-top: 1px solid var(--soft-2);
+  }
+  .more-info a {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 11px 0;
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--primary);
+  }
+  .more-info a :global(svg) {
+    color: var(--accent);
+    transition: transform 0.25s var(--ease);
+  }
+  .more-info a:hover {
+    color: var(--accent);
+  }
+  .more-info a:hover :global(svg) {
+    transform: translateX(4px);
+  }
+  .side-cta {
+    background: var(--primary);
+    color: var(--white);
+  }
+  .side-cta .side-title {
+    color: var(--white);
+  }
+  .side-cta p {
+    margin-bottom: 20px;
+    font-size: 15px;
+    color: rgba(255, 255, 255, 0.82);
+  }
+  .btn-light {
+    min-height: 46px;
+    padding: 0 22px;
+    background: var(--white);
+    color: var(--primary);
+    font-size: 15px;
+  }
+  .btn-light:hover {
+    background: var(--accent-tint);
+  }
+  .side-call {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 16px;
+    font-size: 15px;
+    color: var(--accent-tint);
+  }
+  .side-call:hover {
+    color: var(--white);
+  }
+</style>

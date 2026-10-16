@@ -1,7 +1,7 @@
 ---
 import { Image } from "astro:assets";
 import Icon from "./Icon.astro";
-import { heroActivities, heroSlides, site, socials } from "../data/home";
+import { heroSlides, site, socials } from "../data/home";
 ---
 
 <section class="hero" aria-roledescription="carousel" aria-label="Featured trips" data-hero>
@@ -29,17 +29,9 @@ import { heroActivities, heroSlides, site, socials } from "../data/home";
         />
         <div class="hero-overlay" />
         <div class="container hero-content">
-          <p class="hero-kicker">{site.name} · {site.kicker}</p>
+          <p class="hero-kicker">{site.kicker}</p>
           {i === 0 ? <h1 class="hero-title">{s.title}</h1> : <p class="hero-title">{s.title}</p>}
           <p class="hero-text">{s.text}</p>
-          <ul class="hero-chips" aria-label="Activities">
-            {heroActivities.map((a) => (
-              <li class="chip">
-                <Icon name={a.icon} size={18} />
-                {a.label}
-              </li>
-            ))}
-          </ul>
         </div>
       </div>
     ))
@@ -120,8 +112,9 @@ import { heroActivities, heroSlides, site, socials } from "../data/home";
     position: absolute;
     inset: 0;
     background:
-      linear-gradient(180deg, rgba(11, 61, 74, 0.6) 0%, rgba(11, 61, 74, 0.25) 45%, rgba(11, 61, 74, 0.7) 100%),
-      rgba(45, 45, 45, 0.15);
+      radial-gradient(ellipse 70% 55% at 50% 48%, rgba(0, 0, 0, 0.3), transparent 75%),
+      linear-gradient(180deg, rgba(11, 61, 74, 0.7) 0%, rgba(11, 61, 74, 0.3) 45%, rgba(11, 61, 74, 0.8) 100%),
+      rgba(20, 20, 20, 0.38);
   }
 
   .hero-content {
@@ -131,70 +124,31 @@ import { heroActivities, heroSlides, site, socials } from "../data/home";
     padding-top: var(--header-h);
     padding-bottom: 120px; /* room for the overlapping search bar */
   }
-  /* Spaced uppercase line, styled like "COMMERCE & SERVICES" in the logo */
+  /* Script tagline (Parisienne), the same style as the section heads, in the teal tint for dark backgrounds */
   .hero-kicker {
-    display: inline-flex;
-    align-items: center;
-    gap: 14px;
-    font-size: clamp(11px, 0.2vw + 10px, 13px);
-    font-weight: 500;
-    letter-spacing: 0.34em;
-    text-transform: uppercase;
+    font-family: var(--font-display-script);
+    font-size: clamp(30px, 1.6vw + 22px, 44px);
+    font-weight: 400;
+    line-height: 1.1;
     color: var(--accent-tint);
+    text-shadow: 0 2px 16px rgba(0, 0, 0, 0.35);
   }
-  .hero-kicker::before,
-  .hero-kicker::after {
-    content: "";
-    width: 36px;
-    height: 1px;
-    background: currentColor;
-    opacity: 0.6;
-  }
-  @media (max-width: 575.98px) {
-    .hero-kicker {
-      letter-spacing: 0.2em;
-    }
-    .hero-kicker::before,
-    .hero-kicker::after {
-      display: none;
-    }
-  }
+  /* Editorial serif headline (Playfair Display); size kept from the earlier request */
   .hero-title {
-    margin-top: 18px;
+    margin-top: 8px;
+    font-family: var(--font-display-serif);
     font-size: clamp(30px, 3vw + 12px, 56px);
-    font-weight: 700;
-    line-height: 1.05;
-    letter-spacing: -0.025em;
+    font-weight: 500;
+    line-height: 1.12;
+    letter-spacing: -0.01em;
     color: var(--white);
+    text-shadow: 0 2px 24px rgba(0, 0, 0, 0.3);
   }
   .hero-text {
     max-width: 620px;
     margin: 22px auto 0;
     font-size: clamp(14px, 0.3vw + 13px, 16px);
     color: rgba(255, 255, 255, 0.88);
-  }
-  .hero-chips {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 10px;
-    margin-top: 32px;
-  }
-  .chip {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    padding: 10px 18px;
-    border-radius: 999px;
-    background: rgba(255, 255, 255, 0.14);
-    border: 1px solid rgba(255, 255, 255, 0.22);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-    font-size: 15px;
-    font-weight: 500;
-  }
-  .chip :global(svg) {
-    color: var(--accent-tint);
   }
 
   /* Follow us (left edge, ≥992px) */

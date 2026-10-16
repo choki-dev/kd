@@ -7,6 +7,7 @@ import { tourFilters, tours } from "../data/home";
 <section id="tours" class="section best" aria-labelledby="best-title">
   <div class="container">
     <header class="section-head" data-reveal>
+      <span class="script-accent">Best sellers</span>
       <h2 id="best-title" class="section-title">Our most popular Bhutan tours</h2>
       <p class="section-subtitle">The itineraries our guests book again and again — private guides, comfortable hotels and unforgettable valleys.</p>
     </header>
@@ -25,7 +26,7 @@ import { tourFilters, tours } from "../data/home";
     <ul class="tour-grid" data-tour-grid>
       {
         tours.map((t, i) => (
-          <li data-category={t.category} data-reveal style={`--reveal-delay:${(i % 4) * 80}ms`}>
+          <li data-category={t.category} data-reveal style={`--reveal-delay:${(i % 3) * 80}ms`}>
             <TourCard tour={t} />
           </li>
         ))
@@ -40,9 +41,6 @@ import { tourFilters, tours } from "../data/home";
 </section>
 
 <style>
-  .best {
-    padding-top: 0;
-  }
   .tabs {
     display: flex;
     flex-wrap: wrap;
@@ -73,20 +71,27 @@ import { tourFilters, tours } from "../data/home";
     border-color: var(--accent);
     color: var(--white);
   }
+  /* 1 / 2 / 3 per row; flex so an incomplete last row (e.g. 8 tours = 3 + 3 + 2) sits centred */
   .tour-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 24px;
+    --per: 1;
+    --gap: 24px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--gap);
+  }
+  .tour-grid > li {
+    flex: 0 0 calc((100% - var(--gap) * (var(--per) - 1)) / var(--per));
   }
   @media (min-width: 768px) {
     .tour-grid {
-      grid-template-columns: repeat(2, 1fr);
+      --per: 2;
     }
   }
-  @media (min-width: 1200px) {
+  @media (min-width: 992px) {
     .tour-grid {
-      grid-template-columns: repeat(4, 1fr);
-      gap: 30px;
+      --per: 3;
+      --gap: 30px;
     }
   }
   .tour-grid li[hidden] {

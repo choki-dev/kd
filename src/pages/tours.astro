@@ -8,7 +8,7 @@ import PageHero from "../components/PageHero.astro";
 import TourCard from "../components/TourCard.astro";
 import CtaBand from "../components/CtaBand.astro";
 import Footer from "../components/Footer.astro";
-import BackToTop from "../components/BackToTop.astro";
+import ChatWidget from "../components/ChatWidget.astro";
 import Icon from "../components/Icon.astro";
 import { tours, tourCategories } from "../data/home";
 import { toursPage } from "../data/pages";
@@ -93,8 +93,6 @@ const durationCount = (min: number, max: number) => tours.filter((t) => t.days >
               <span>Sort by</span>
               <select data-sort>
                 <option value="recommended">Recommended</option>
-                <option value="price-asc">Price: low to high</option>
-                <option value="price-desc">Price: high to low</option>
                 <option value="days-asc">Duration: shortest first</option>
                 <option value="days-desc">Duration: longest first</option>
               </select>
@@ -104,7 +102,7 @@ const durationCount = (min: number, max: number) => tours.filter((t) => t.days >
           <ul class="tour-list" data-list>
             {
               tours.map((t, i) => (
-                <li data-category={t.category} data-places={t.places.join("|")} data-days={t.days} data-price={t.price} data-order={i} data-reveal style={`--reveal-delay:${(i % 3) * 80}ms`}>
+                <li data-category={t.category} data-places={t.places.join("|")} data-days={t.days} data-order={i} data-reveal style={`--reveal-delay:${(i % 3) * 80}ms`}>
                   <TourCard tour={t} />
                 </li>
               ))
@@ -122,7 +120,7 @@ const durationCount = (min: number, max: number) => tours.filter((t) => t.days >
     <CtaBand {...cta} primary={{ label: "Plan a custom trip", href: "/contact" }} />
   </main>
   <Footer />
-  <BackToTop />
+  <ChatWidget />
 </BaseLayout>
 
 <style>
@@ -347,7 +345,7 @@ const durationCount = (min: number, max: number) => tours.filter((t) => t.days >
 
     // Sort by re-appending in order
     const [key, dir] = (sort?.value ?? "recommended").split("-");
-    const val = (li: HTMLElement) => Number(key === "price" ? li.dataset.price : key === "days" ? li.dataset.days : li.dataset.order);
+    const val = (li: HTMLElement) => Number(key === "days" ? li.dataset.days : li.dataset.order);
     [...items].sort((a, b) => (val(a) - val(b)) * (dir === "desc" ? -1 : 1)).forEach((li) => list.append(li));
 
     if (count) count.textContent = `Showing ${shown} of ${items.length} tours`;

@@ -9,6 +9,7 @@ const initials = (name: string) => name.split(" ").map((w) => w[0]).join("").sli
 <section class="section testimonials" aria-labelledby="testimonials-title" data-testimonials>
   <div class="container">
     <header class="section-head" data-reveal>
+      <span class="script-accent">Guest reviews</span>
       <h2 id="testimonials-title" class="section-title">What our guests say</h2>
       <p class="section-subtitle">Travellers from around the world on their journeys through Bhutan.</p>
     </header>
@@ -19,6 +20,7 @@ const initials = (name: string) => name.split(" ").map((w) => w[0]).join("").sli
         testimonials.map((t, i) => (
           <li class="t-slide" aria-roledescription="slide" aria-label={`${i + 1} of ${testimonials.length}`}>
             <figure class="t-card">
+              <Icon name="quote" size={44} strokeWidth={1.2} class="t-quote" />
               <span class="t-avatar" aria-hidden="true">{initials(t.name)}</span>
               <blockquote>
                 <p>“{t.quote}”</p>
@@ -42,9 +44,6 @@ const initials = (name: string) => name.split(" ").map((w) => w[0]).join("").sli
 </section>
 
 <style>
-  .testimonials {
-    padding-top: 0;
-  }
   .t-track {
     --per: 1;
     --gap: 20px;
@@ -54,7 +53,10 @@ const initials = (name: string) => name.split(" ").map((w) => w[0]).join("").sli
     scroll-snap-type: x mandatory;
     scroll-behavior: smooth;
     scrollbar-width: none;
-    padding-block: 6px;
+    /* room for the card shadow inside the scroll container (it clips overflow) */
+    margin-inline: -16px;
+    padding: 10px 16px 24px;
+    scroll-padding-inline: 16px;
   }
   .t-track::-webkit-scrollbar {
     display: none;
@@ -83,8 +85,15 @@ const initials = (name: string) => name.split(" ").map((w) => w[0]).join("").sli
     margin: 0;
     padding: 40px 30px 34px;
     border-radius: 20px;
-    background: var(--soft);
+    background: var(--white);
+    box-shadow: var(--shadow);
     text-align: center;
+  }
+  .t-card :global(.t-quote) {
+    position: absolute;
+    top: 26px;
+    right: 26px;
+    color: var(--accent-tint);
   }
   .t-avatar {
     display: grid;

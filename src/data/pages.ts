@@ -58,34 +58,34 @@ export const about = {
       { title: "Arrive and explore", text: "Your guide and driver meet you at Paro airport and stay with you until you fly home." },
     ],
   },
-  // PLACEHOLDER team: names, roles and bios are examples. Replace them with the real team before launch.
+  // The real team (supplied by the owner, 2026-10-13). Bios are short role descriptions; the owner can refine them.
   // `photo` is optional: import an image from src/assets/images and set it; without one the card shows initials.
   team: {
     title: "Meet our team",
     subtitle: "The people in Thimphu who plan, guide and look after every journey.",
     members: [
       {
-        name: "Karma Dorji",
+        name: "Kezang Dorji",
         role: "Founder & Managing Director",
-        bio: "Started KD Global to share Bhutan the way locals know it, and still reviews every itinerary we send.",
+        bio: "Founded KD Global to share Bhutan the way locals know it, and oversees every journey we plan.",
         photo: undefined as ImageMetadata | undefined,
       },
       {
-        name: "Pema Choden",
-        role: "Head of Tours & Operations",
-        bio: "Handles visas, the SDF, permits, hotels and flights so each trip runs smoothly from start to finish.",
+        name: "Karma Drupchuk",
+        role: "Head of Tours & Operations · Senior Cultural Guide",
+        bio: "Runs our tour operations and guides guests through Bhutan's dzongs, festivals and Buddhist traditions.",
         photo: undefined as ImageMetadata | undefined,
       },
       {
-        name: "Sonam Wangchuk",
-        role: "Senior Cultural Guide",
-        bio: "A licensed guide who brings dzongs, festivals and Buddhist traditions to life with stories from home.",
+        name: "Chimi Dema",
+        role: "Administration & Accounts",
+        bio: "Looks after bookings, payments and paperwork so everything is in order before you arrive.",
         photo: undefined as ImageMetadata | undefined,
       },
       {
-        name: "Tshering Lhamo",
+        name: "Kelzang Namrig Dawa",
         role: "Trek Leader",
-        bio: "Leads our Himalayan treks, from the Druk Path to Jomolhari, with a focus on safety, pacing and acclimatisation.",
+        bio: "Leads our Himalayan treks, with a focus on safety, steady pacing and acclimatisation.",
         photo: undefined as ImageMetadata | undefined,
       },
     ],
@@ -104,7 +104,7 @@ export const contact = {
       "Contact KD Global in Thimphu to plan your Bhutan tour, trek or festival trip. Send an enquiry, call or email our team.",
   },
   hero: {
-    kicker: "Contact Us",
+    kicker: "Contact us",
     title: "Let's plan your Bhutan journey",
     text: "Questions about tours, festivals, visas or the SDF? Our team in Thimphu is happy to help.",
     image: contactHero,
@@ -151,7 +151,7 @@ export const toursPage = {
       "Browse KD Global's Bhutan tours: cultural journeys, tsechu festival trips, Himalayan treks, luxury holidays, pilgrimages and nature tours. Filter by type, destination and length.",
   },
   hero: {
-    kicker: "Our Tours",
+    kicker: "Our tours",
     title: "Find your journey through Bhutan",
     text: "Private, guided tours from short cultural breaks to high Himalayan treks — every itinerary can be tailored to you.",
     image: toursHero,

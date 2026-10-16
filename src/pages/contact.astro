@@ -5,7 +5,7 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 import Header from "../components/Header.astro";
 import PageHero from "../components/PageHero.astro";
 import Footer from "../components/Footer.astro";
-import BackToTop from "../components/BackToTop.astro";
+import ChatWidget from "../components/ChatWidget.astro";
 import Icon from "../components/Icon.astro";
 import { site, socials, type IconName } from "../data/home";
 import { contact } from "../data/pages";
@@ -26,7 +26,7 @@ const cards: { icon: IconName; title: string; value: string; href?: string; valu
 <BaseLayout title={contact.meta.title} description={contact.meta.description}>
   <Header />
   <main id="main">
-    <PageHero {...hero} crumb="Contact Us" />
+    <PageHero {...hero} crumb="Contact Us" overlap />
 
     <!-- Contact details -->
     <section class="info-wrap" aria-label="Contact details">
@@ -131,6 +131,7 @@ const cards: { icon: IconName; title: string; value: string; href?: string; valu
     <section class="section faq" aria-labelledby="faq-title">
       <div class="container">
         <header class="section-head" data-reveal>
+          <span class="script-accent">Good to know</span>
           <h2 id="faq-title" class="section-title">Frequently asked questions</h2>
           <p class="section-subtitle">Quick answers about travelling to Bhutan with us.</p>
         </header>
@@ -151,7 +152,7 @@ const cards: { icon: IconName; title: string; value: string; href?: string; valu
     </section>
   </main>
   <Footer />
-  <BackToTop />
+  <ChatWidget />
 </BaseLayout>
 
 <style>
@@ -368,9 +369,6 @@ const cards: { icon: IconName; title: string; value: string; href?: string; valu
   }
 
   /* ---------- FAQ ---------- */
-  .faq {
-    padding-top: 0;
-  }
   .faq-list {
     max-width: 860px;
     margin-inline: auto;
@@ -411,6 +409,74 @@ const cards: { icon: IconName; title: string; value: string; href?: string; valu
   .faq-item p {
     padding: 0 24px 22px;
     color: var(--muted);
+  }
+
+  /* ---------- Polish (2026-10-16) ---------- */
+  .fld textarea,
+  .fld textarea::placeholder {
+    font-family: inherit; /* was falling back to the browser's monospace */
+  }
+  .info-card {
+    position: relative;
+    overflow: hidden;
+    transition:
+      transform 0.35s var(--ease),
+      box-shadow 0.35s var(--ease);
+  }
+  .info-card::before {
+    content: "";
+    position: absolute;
+    inset: 0 0 auto;
+    height: 4px;
+    background: linear-gradient(90deg, var(--primary) 0 25%, var(--accent) 25% 50%, var(--bluegray) 50% 75%, var(--charcoal) 75%);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.45s var(--ease);
+  }
+  .info-card:hover {
+    transform: translateY(-6px);
+  }
+  .info-card:hover::before {
+    transform: scaleX(1);
+  }
+  .info-icon {
+    transition:
+      background-color 0.35s,
+      color 0.35s,
+      transform 0.35s var(--ease);
+  }
+  .info-card:hover .info-icon {
+    background: var(--accent);
+    color: var(--white);
+    transform: rotate(-8deg) scale(1.05);
+  }
+  /* Enquiry panel: white card with the brand bar along the top */
+  .form-card {
+    position: relative;
+    overflow: hidden;
+    background: var(--white);
+    box-shadow: var(--shadow);
+  }
+  .form-card::before {
+    content: "";
+    position: absolute;
+    inset: 0 0 auto;
+    height: 5px;
+    background: linear-gradient(90deg, var(--primary) 0 25%, var(--accent) 25% 50%, var(--bluegray) 50% 75%, var(--charcoal) 75%);
+  }
+  .form-card .fld input,
+  .form-card .fld select,
+  .form-card .fld textarea {
+    background: var(--cloud-mist);
+    border-color: var(--line);
+  }
+  .form-card .form-ok {
+    background: var(--soft);
+  }
+  .form-card .fld input:focus,
+  .form-card .fld select:focus,
+  .form-card .fld textarea:focus {
+    background: var(--white);
   }
 </style>
 

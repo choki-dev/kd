@@ -7,7 +7,7 @@ import Header from "../../components/Header.astro";
 import PageHero from "../../components/PageHero.astro";
 import CtaBand from "../../components/CtaBand.astro";
 import Footer from "../../components/Footer.astro";
-import BackToTop from "../../components/BackToTop.astro";
+import ChatWidget from "../../components/ChatWidget.astro";
 import Icon from "../../components/Icon.astro";
 import { postHref, posts } from "../../data/home";
 import { blogPage, postBodies, readingMinutes } from "../../data/blog";
@@ -49,6 +49,7 @@ const featuredMinutes = minutes(featured.slug);
           rest.length > 0 && (
             <>
               <header class="section-head more-head" data-reveal>
+                <span class="script-accent">Keep reading</span>
                 <h2 class="section-title">More stories</h2>
               </header>
               <ul class="grid">
@@ -92,7 +93,7 @@ const featuredMinutes = minutes(featured.slug);
     />
   </main>
   <Footer />
-  <BackToTop />
+  <ChatWidget />
 </BaseLayout>
 
 <style>
@@ -277,5 +278,25 @@ const featuredMinutes = minutes(featured.slug);
     font-size: 14px;
     font-weight: 500;
     color: var(--muted);
+  }
+
+  /* ---------- Polish (2026-10-16): centre an incomplete last row (e.g. only 2 stories) ---------- */
+  .grid {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .grid > li {
+    flex: 0 1 100%;
+  }
+  @media (min-width: 640px) {
+    .grid > li {
+      flex-basis: calc((100% - 24px) / 2);
+    }
+  }
+  @media (min-width: 992px) {
+    .grid > li {
+      flex-basis: calc((100% - 60px) / 3);
+    }
   }
 </style>

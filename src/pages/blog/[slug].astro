@@ -6,7 +6,7 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
 import Header from "../../components/Header.astro";
 import PageHero from "../../components/PageHero.astro";
 import Footer from "../../components/Footer.astro";
-import BackToTop from "../../components/BackToTop.astro";
+import ChatWidget from "../../components/ChatWidget.astro";
 import Icon from "../../components/Icon.astro";
 import { postHref, posts, tourHref, tours, type Post } from "../../data/home";
 import { blogPage, postBodies, readingMinutes } from "../../data/blog";
@@ -51,6 +51,7 @@ const others = posts.filter((p) => p !== post);
 
     <div class="section article-wrap">
       <div class="container article-grid">
+        <div class="read-progress" aria-hidden="true"><span data-read-bar></span></div>
         <article class="article" aria-labelledby="article-title">
           <h2 id="article-title" class="sr-only">{post.title}</h2>
           <p class="byline">
@@ -134,7 +135,7 @@ const others = posts.filter((p) => p !== post);
                         <span>
                           <strong>{t.title.split(/:\s*/)[0]}</strong>
                           <small>
-                            {t.days} days · from US${t.price.toLocaleString("en-US")}
+                            {t.days} days · {t.city}
                           </small>
                         </span>
                       </a>
@@ -157,9 +158,10 @@ const others = posts.filter((p) => p !== post);
     <!-- More stories -->
     {
       others.length > 0 && (
-        <section class="section more" aria-labelledby="more-title">
+        <section class="section section-soft more" aria-labelledby="more-title">
           <div class="container">
             <header class="section-head" data-reveal>
+              <span class="script-accent">Keep reading</span>
               <h2 id="more-title" class="section-title">More stories</h2>
             </header>
             <ul class="more-grid">
@@ -183,7 +185,7 @@ const others = posts.filter((p) => p !== post);
     }
   </main>
   <Footer />
-  <BackToTop />
+  <ChatWidget />
 </BaseLayout>
 
 <style>
@@ -439,9 +441,6 @@ const others = posts.filter((p) => p !== post);
   }
 
   /* ---------- More stories ---------- */
-  .more {
-    background: var(--soft);
-  }
   .more-grid {
     display: grid;
     gap: 24px;
@@ -492,4 +491,46 @@ const others = posts.filter((p) => p !== post);
     line-height: 1.4;
     color: var(--primary);
   }
+
+  /* ---------- Polish (2026-10-16) ---------- */
+  /* Reading progress: thin teal bar along the very top while scrolling through the article */
+  .read-progress {
+    position: fixed;
+    inset: 0 0 auto;
+    z-index: 55;
+    height: 3px;
+    pointer-events: none;
+  }
+  .read-progress span {
+    display: block;
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent-tint), var(--accent));
+    transform: scaleX(0);
+    transform-origin: left;
+  }
+  /* Editorial drop cap on the intro */
+  .intro::first-letter {
+    float: left;
+    margin: 6px 12px 0 0;
+    font-size: 3.4em;
+    line-height: 0.8;
+    font-weight: 500;
+    color: var(--accent);
+  }
 </style>
+
+<script>
+  // Reading progress bar: fills as the article scrolls past
+  const bar = document.querySelector<HTMLElement>("[data-read-bar]");
+  const article = document.querySelector<HTMLElement>(".article");
+  const updateBar = () => {
+    if (!bar || !article) return;
+    const r = article.getBoundingClientRect();
+    const total = r.height - window.innerHeight;
+    const p = total > 0 ? Math.min(1, Math.max(0, -r.top / total)) : 1;
+    bar.style.transform = `scaleX(${p})`;
+  };
+  updateBar();
+  window.addEventListener("scroll", updateBar, { passive: true });
+  window.addEventListener("resize", updateBar);
+</script>

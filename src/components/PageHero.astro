@@ -1,5 +1,5 @@
 ---
-// Inner-page banner: photo + deep-teal overlay, spaced kicker, title and breadcrumb.
+// Inner-page banner: photo + deep-teal overlay, script tagline + serif title (same text styles as the homepage hero) and breadcrumb.
 // Sits under the transparent header, like the homepage hero.
 import type { ImageMetadata } from "astro";
 import { Image } from "astro:assets";
@@ -13,12 +13,13 @@ interface Props {
   alt: string;
   crumb: string; // current page name in the breadcrumb
   parents?: { label: string; href: string }[]; // breadcrumb steps between Home and the current page
+  overlap?: boolean; // cards overlap the bottom edge (Contact, tour detail): lifts the scroll cue above them
 }
 
-const { title, kicker, text, image, alt, crumb, parents = [] } = Astro.props;
+const { title, kicker, text, image, alt, crumb, parents = [], overlap = false } = Astro.props;
 ---
 
-<section class="page-hero">
+<section class:list={["page-hero", { "has-overlap": overlap }]}>
   <Image src={image} alt={alt} width={1920} height={1080} widths={[640, 960, 1280, 1920]} sizes="100vw" loading="eager" fetchpriority="high" class="page-hero-img" />
   <div class="page-hero-overlay"></div>
   <div class="container page-hero-content">
@@ -41,7 +42,9 @@ const { title, kicker, text, image, alt, crumb, parents = [] } = Astro.props;
       </ol>
     </nav>
   </div>
+  <a href="#after-hero" class="page-hero-scroll" aria-label="Scroll to content"><span class="page-hero-mouse" aria-hidden="true"></span><span aria-hidden="true">Scroll</span></a>
 </section>
+<span id="after-hero"></span>
 
 <style>
   /* Full-screen banner, like the homepage hero */
@@ -75,6 +78,7 @@ const { title, kicker, text, image, alt, crumb, parents = [] } = Astro.props;
     position: absolute;
     inset: 0;
     background:
+      radial-gradient(ellipse 70% 55% at 50% 48%, rgba(0, 0, 0, 0.3), transparent 75%), /* homepage-hero shade behind the text */
       radial-gradient(ellipse 60% 45% at 50% 52%, rgba(11, 61, 74, 0.5), transparent 78%),
       linear-gradient(180deg, rgba(11, 61, 74, 0.6) 0%, rgba(11, 61, 74, 0) 24%, rgba(11, 61, 74, 0) 70%, rgba(11, 61, 74, 0.45) 100%);
   }
@@ -85,48 +89,30 @@ const { title, kicker, text, image, alt, crumb, parents = [] } = Astro.props;
     padding-top: calc(var(--header-h) + 48px);
     padding-bottom: 64px;
   }
-  /* Spaced uppercase line, styled like "COMMERCE & SERVICES" in the logo */
+  /* Same text as the homepage hero (Hero.astro, on request 2026-10-16):
+     Parisienne script tagline in the teal tint above a white Playfair Display headline */
   .page-hero-kicker {
-    text-shadow: 0 1px 8px rgba(11, 61, 74, 0.6);
-    display: inline-flex;
-    align-items: center;
-    gap: 14px;
-    font-size: clamp(11px, 0.2vw + 10px, 13px);
-    font-weight: 500;
-    letter-spacing: 0.34em;
-    text-transform: uppercase;
+    font-family: var(--font-display-script);
+    font-size: clamp(30px, 1.6vw + 22px, 44px);
+    font-weight: 400;
+    line-height: 1.1;
     color: var(--accent-tint);
-  }
-  .page-hero-kicker::before,
-  .page-hero-kicker::after {
-    content: "";
-    width: 36px;
-    height: 1px;
-    background: currentColor;
-    opacity: 0.6;
-  }
-  @media (max-width: 575.98px) {
-    .page-hero-kicker {
-      letter-spacing: 0.2em;
-    }
-    .page-hero-kicker::before,
-    .page-hero-kicker::after {
-      display: none;
-    }
+    text-shadow: 0 2px 16px rgba(0, 0, 0, 0.35);
   }
   .page-hero-title {
-    max-width: 780px;
-    margin: 16px auto 0;
-    font-size: clamp(28px, 2vw + 14px, 44px);
-    font-weight: 700;
-    line-height: 1.08;
-    letter-spacing: -0.025em;
+    max-width: 860px;
+    margin: 8px auto 0;
+    font-family: var(--font-display-serif);
+    font-size: clamp(30px, 3vw + 12px, 56px);
+    font-weight: 500;
+    line-height: 1.12;
+    letter-spacing: -0.01em;
     color: var(--white);
-    text-shadow: 0 2px 18px rgba(11, 61, 74, 0.55);
+    text-shadow: 0 2px 24px rgba(0, 0, 0, 0.3);
   }
   .page-hero-text {
     max-width: 620px;
-    margin: 18px auto 0;
+    margin: 22px auto 0;
     font-size: clamp(14px, 0.3vw + 13px, 16px);
     color: rgba(255, 255, 255, 0.92);
     text-shadow: 0 1px 10px rgba(11, 61, 74, 0.6);
@@ -155,5 +141,93 @@ const { title, kicker, text, image, alt, crumb, parents = [] } = Astro.props;
   }
   .crumbs [aria-current] {
     color: var(--accent-tint);
+  }
+
+  /* ---------- Motion polish (2026-10-16): slow photo zoom, staggered text entrance, scroll cue ---------- */
+  .page-hero :global(.page-hero-img) {
+    animation: ph-zoom 14s var(--ease) both;
+  }
+  @keyframes ph-zoom {
+    from { transform: scale(1.12); }
+    to { transform: scale(1); }
+  }
+  .page-hero-content > * {
+    animation: ph-rise 0.9s var(--ease) both;
+  }
+  .page-hero-content > :nth-child(2) { animation-delay: 0.12s; }
+  .page-hero-content > :nth-child(3) { animation-delay: 0.24s; }
+  .page-hero-content > :nth-child(4) { animation-delay: 0.36s; }
+  @keyframes ph-rise {
+    from { opacity: 0; transform: translateY(24px); }
+  }
+  /* Thin divider under the title: the brand's four-colour bar */
+  .page-hero-title::after {
+    content: "";
+    display: block;
+    width: 72px;
+    height: 3px;
+    margin: 20px auto 0;
+    border-radius: 3px;
+    background: linear-gradient(90deg, var(--accent-tint) 0 25%, var(--white) 25% 50%, var(--bluegray) 50% 75%, var(--accent) 75%);
+  }
+  .page-hero-scroll {
+    position: absolute;
+    left: 50%;
+    bottom: 28px;
+    z-index: 2;
+    display: grid;
+    justify-items: center;
+    gap: 8px;
+    transform: translateX(-50%);
+    color: rgba(255, 255, 255, 0.85);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    animation: ph-rise 0.9s 0.6s var(--ease) both;
+  }
+  .page-hero-scroll:hover {
+    color: var(--white);
+  }
+  .page-hero-mouse {
+    position: relative;
+    width: 24px;
+    height: 38px;
+    border: 2px solid currentColor;
+    border-radius: 14px;
+  }
+  .page-hero-mouse::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: 7px;
+    width: 4px;
+    height: 8px;
+    margin-left: -2px;
+    border-radius: 2px;
+    background: currentColor;
+    animation: ph-wheel 1.8s ease-in-out infinite;
+  }
+  @keyframes ph-wheel {
+    0% { opacity: 0; transform: translateY(-3px); }
+    40% { opacity: 1; }
+    100% { opacity: 0; transform: translateY(10px); }
+  }
+  /* Hidden where the banner is short or cards overlap its bottom edge */
+  @media (max-width: 767px), (max-height: 700px) {
+    .page-hero-scroll {
+      display: none;
+    }
+  }
+  .page-hero.has-overlap .page-hero-scroll {
+    bottom: 96px;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .page-hero :global(.page-hero-img),
+    .page-hero-content > *,
+    .page-hero-scroll,
+    .page-hero-mouse::after {
+      animation: none;
+    }
   }
 </style>

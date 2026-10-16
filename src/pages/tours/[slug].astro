@@ -7,7 +7,7 @@ import Header from "../../components/Header.astro";
 import PageHero from "../../components/PageHero.astro";
 import TourCard from "../../components/TourCard.astro";
 import Footer from "../../components/Footer.astro";
-import BackToTop from "../../components/BackToTop.astro";
+import ChatWidget from "../../components/ChatWidget.astro";
 import Icon from "../../components/Icon.astro";
 import { site, tours, type IconName, type Tour } from "../../data/home";
 import { standardExcluded, standardIncluded, tourDetails, type TourDetail } from "../../data/tourDetails";
@@ -32,7 +32,6 @@ const { tour, detail } = Astro.props;
 
 // "Main title: subtitle" → banner title + banner text
 const [name, subtitle] = tour.title.split(/:\s*/, 2);
-const price = `US$${tour.price.toLocaleString("en-US")}`;
 const route = tour.places.join(" · ");
 const included = detail.included ?? standardIncluded;
 const excluded = detail.excluded ?? standardExcluded;
@@ -56,7 +55,8 @@ const related = [
   <Header />
   <main id="main">
     <PageHero
-      kicker={`${tour.category} Tour · ${tour.days} Days`}
+      overlap
+      kicker={`${tour.category} tour · ${tour.days} days`}
       title={name}
       text={subtitle}
       image={detail.hero?.src ?? tour.image}
@@ -177,9 +177,13 @@ const related = [
             <h2 id="gallery-title" class="block-title">Gallery</h2>
             <ul class="gallery">
               {
-                detail.gallery.map((g) => (
+                detail.gallery.map((g, i) => (
                   <li>
-                    <Image src={g.src} alt={g.alt} width={640} height={480} widths={[320, 480, 640]} sizes="(min-width: 992px) 380px, 46vw" loading="lazy" class="gallery-img" />
+                    {i === 0 ? (
+                      <Image src={g.src} alt={g.alt} width={1200} height={600} widths={[640, 960, 1200]} sizes="(min-width: 992px) 760px, 92vw" loading="lazy" class="gallery-img" />
+                    ) : (
+                      <Image src={g.src} alt={g.alt} width={480} height={480} widths={[320, 480]} sizes="(min-width: 992px) 250px, 46vw" loading="lazy" class="gallery-img" />
+                    )}
                   </li>
                 ))
               }
@@ -190,8 +194,9 @@ const related = [
         <!-- Booking card -->
         <aside class="detail-side" aria-label="Book this tour">
           <div class="book">
-            <p class="book-from">From</p>
-            <p class="book-price">{price} <span>per person</span></p>
+            <p class="book-from">Private tour</p>
+            <p class="book-title">Plan this trip with us</p>
+            <p class="book-note">Rates depend on your dates, group size and hotels. Send us an enquiry for a quote.</p>
             <ul class="book-list">
               <li><Icon name="clock" size={18} /> {tour.days} days</li>
               <li><Icon name="users" size={18} /> Up to {tour.people} guests</li>
@@ -214,9 +219,10 @@ const related = [
     <!-- Related tours -->
     {
       related.length > 0 && (
-        <section class="section related" aria-labelledby="related-title">
+        <section class="section section-soft related" aria-labelledby="related-title">
           <div class="container">
             <header class="section-head" data-reveal>
+              <span class="script-accent">More journeys</span>
               <h2 id="related-title" class="section-title">You might also like</h2>
             </header>
             <ul class="related-grid">
@@ -232,7 +238,7 @@ const related = [
     }
   </main>
   <Footer />
-  <BackToTop />
+  <ChatWidget />
 </BaseLayout>
 
 <style>
@@ -554,16 +560,16 @@ const related = [
     text-transform: uppercase;
     color: var(--muted);
   }
-  .book-price {
+  .book-title {
     margin-top: 4px;
-    font-size: 34px;
+    font-size: 24px;
     font-weight: 700;
-    line-height: 1.1;
-    color: var(--accent);
+    line-height: 1.2;
+    color: var(--primary);
   }
-  .book-price span {
+  .book-note {
+    margin-top: 8px;
     font-size: 15px;
-    font-weight: 500;
     color: var(--muted);
   }
   .book-list {
@@ -616,9 +622,6 @@ const related = [
   }
 
   /* ---------- Related ---------- */
-  .related {
-    background: var(--soft);
-  }
   .related-grid {
     display: grid;
     gap: 24px;
@@ -633,6 +636,80 @@ const related = [
       grid-template-columns: repeat(3, 1fr);
       gap: 30px;
     }
+  }
+
+  /* ---------- Polish (2026-10-16) ---------- */
+  /* Left-aligned block titles get the brand's four-colour bar */
+  .block-title::after {
+    content: "";
+    display: block;
+    width: 56px;
+    height: 4px;
+    margin-top: 12px;
+    border-radius: 4px;
+    background: linear-gradient(90deg, var(--primary) 0 25%, var(--accent) 25% 50%, var(--bluegray) 50% 75%, var(--charcoal) 75%);
+  }
+  .block-head .block-title::after {
+    margin-bottom: 0;
+  }
+  /* Facts bar: thin dividers between the facts from 992px */
+  @media (min-width: 992px) {
+    .facts li + li {
+      padding-left: 24px;
+      border-left: 1px solid var(--line);
+    }
+  }
+  /* Gallery: one wide lead photo, then three squares */
+  .gallery {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .gallery li:first-child {
+    grid-column: 1 / -1;
+  }
+  .gallery li:first-child :global(.gallery-img) {
+    aspect-ratio: 2 / 1;
+  }
+  .gallery li:not(:first-child) :global(.gallery-img) {
+    aspect-ratio: 1;
+  }
+  @media (min-width: 576px) {
+    .gallery {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+  @media (max-width: 575px) {
+    .gallery li:last-child {
+      grid-column: 1 / -1;
+    }
+    .gallery li:last-child :global(.gallery-img) {
+      aspect-ratio: 2 / 1;
+    }
+  }
+  .gallery li {
+    position: relative;
+    box-shadow: var(--shadow);
+  }
+  .gallery li::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(0deg, rgba(11, 61, 74, 0.35), transparent 50%);
+    opacity: 0;
+    transition: opacity 0.4s;
+    pointer-events: none;
+  }
+  .gallery li:hover::after {
+    opacity: 1;
+  }
+  /* Included cards: soft lift on hover */
+  .inc-card {
+    transition:
+      transform 0.35s var(--ease),
+      box-shadow 0.35s var(--ease);
+  }
+  .inc-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow);
   }
 </style>
 

@@ -7,6 +7,7 @@ import { featuredRetreats, tourHref } from "../data/home";
 <section class="section retreats" aria-labelledby="retreats-title">
   <div class="container">
     <header class="section-head" data-reveal>
+      <span class="script-accent">Handpicked for you</span>
       <h2 id="retreats-title" class="section-title">Signature journeys through the Thunder Dragon kingdom</h2>
       <p class="section-subtitle">Handpicked itineraries with private Bhutanese guides, boutique hotels and farmhouse stays.</p>
     </header>
@@ -40,13 +41,12 @@ import { featuredRetreats, tourHref } from "../data/home";
                   </span>
                 </div>
                 <h3 class="retreat-title">
-                  <a href={tourHref(t)}>{t.title}</a>
+                  <a href={tourHref(t)}>{t.title.split(/:\s*/)[0]}</a>
                 </h3>
                 <div class="retreat-row retreat-foot">
                   <span>
                     Up to {t.people} guests · {t.days} days
                   </span>
-                  <span class="retreat-price">US${t.price.toLocaleString("en-US")}</span>
                 </div>
               </div>
             </article>
@@ -161,10 +161,5 @@ import { featuredRetreats, tourHref } from "../data/home";
     border-top: 1px solid rgba(255, 255, 255, 0.25);
     font-size: 15px;
     color: rgba(255, 255, 255, 0.85);
-  }
-  .retreat-price {
-    font-size: 24px;
-    font-weight: 700;
-    color: var(--white);
   }
 </style>

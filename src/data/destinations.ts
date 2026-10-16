@@ -39,7 +39,22 @@ export const destinationsPage = {
   },
   intro: {
     title: "Where would you like to go?",
-    subtitle: "Most journeys begin in Paro and the west, then head east over high passes into central Bhutan. Jump to a valley below.",
+    subtitle: "Most journeys begin in Paro and the west, then head east over high passes into central Bhutan. Follow the road below and tap a valley to jump to it.",
+  },
+  // One chapter per region on the page; `name` must match `region` on the destinations
+  regions: [
+    {
+      name: "Western Bhutan",
+      text: "Where every journey begins: the airport valley of Paro, the hidden Haa valley, the capital Thimphu and the warm rice terraces of Punakha.",
+    },
+    {
+      name: "Central Bhutan",
+      text: "Over the high passes into the heartland: the crane valley of Phobjikha, royal Trongsa and the ancient temples of Bumthang.",
+    },
+  ],
+  glance: {
+    title: "The valleys at a glance",
+    subtitle: "Altitude, travel time and what each valley is best for, side by side.",
   },
   cta: {
     title: "Not sure which valleys to choose?",
@@ -47,6 +62,7 @@ export const destinationsPage = {
   },
 };
 
+// Listed in road order, west to east (Haa is the side trip from Paro); the page groups them by `region`.
 export const destinationList: Destination[] = [
   {
     id: "paro",
@@ -60,6 +76,19 @@ export const destinationList: Destination[] = [
     highlights: ["Taktsang (Tiger's Nest) monastery", "Rinpung Dzong and the Paro Tsechu festival", "Kyichu Lhakhang, one of Bhutan's oldest temples", "National Museum in the Ta Dzong watchtower"],
     image: paroValleyImg,
     alt: "Paro valley seen from a forested hillside",
+  },
+  {
+    id: "haa",
+    name: "Haa Valley",
+    region: "Western Bhutan",
+    tagline: "A hidden valley over the Chele La pass",
+    text: "Reached by a spectacular drive over Chele La, one of the highest roads in Bhutan, the Haa valley is quiet, rural and little visited. Stay in a farmhouse, hike between villages and visit the White and Black Temples, Lhakhang Karpo and Lhakhang Nagpo.",
+    altitude: "About 2,700 m",
+    access: "About 2.5 hours from Paro over Chele La",
+    bestFor: "Off-the-beaten-path, homestays, hiking",
+    highlights: ["Chele La pass and its prayer flags", "Lhakhang Karpo and Lhakhang Nagpo", "Traditional farmhouse homestays", "Views of Jomolhari on clear days"],
+    image: haaImg,
+    alt: "Prayer flags at Chele La pass at sunrise",
   },
   {
     id: "thimphu",
@@ -88,6 +117,19 @@ export const destinationList: Destination[] = [
     alt: "Traveller crossing a suspension bridge hung with prayer flags",
   },
   {
+    id: "phobjikha",
+    name: "Phobjikha (Gangtey)",
+    region: "Central Bhutan",
+    tagline: "A glacial valley where black-necked cranes spend the winter",
+    text: "This wide, marshy glacial valley is one of Bhutan's most important wildlife areas. From late autumn to early spring, rare black-necked cranes fly in from the Tibetan plateau to winter here, watched over by the hilltop Gangtey Monastery.",
+    altitude: "About 2,900 m",
+    access: "About 3 hours from Punakha",
+    bestFor: "Wildlife, nature trails, birding",
+    highlights: ["Black-necked cranes (late Oct – Feb)", "Gangtey Monastery above the valley", "Gangtey Nature Trail through pine forest", "Crane festival at Gangtey in November"],
+    image: phobjikhaImg,
+    alt: "Black-necked cranes in flight",
+  },
+  {
     id: "trongsa",
     name: "Trongsa",
     region: "Central Bhutan",
@@ -112,31 +154,5 @@ export const destinationList: Destination[] = [
     highlights: ["Jambay Lhakhang and Kurjey Lhakhang", "Membartsho, the Burning Lake", "Tang and Ura village walks", "Local cheese, honey and apple orchards"],
     image: bumthangImg,
     alt: "Temple roofs framed by a window in Bumthang",
-  },
-  {
-    id: "phobjikha",
-    name: "Phobjikha (Gangtey)",
-    region: "Central Bhutan",
-    tagline: "A glacial valley where black-necked cranes spend the winter",
-    text: "This wide, marshy glacial valley is one of Bhutan's most important wildlife areas. From late autumn to early spring, rare black-necked cranes fly in from the Tibetan plateau to winter here, watched over by the hilltop Gangtey Monastery.",
-    altitude: "About 2,900 m",
-    access: "About 3 hours from Punakha",
-    bestFor: "Wildlife, nature trails, birding",
-    highlights: ["Black-necked cranes (late Oct – Feb)", "Gangtey Monastery above the valley", "Gangtey Nature Trail through pine forest", "Crane festival at Gangtey in November"],
-    image: phobjikhaImg,
-    alt: "Black-necked cranes in flight",
-  },
-  {
-    id: "haa",
-    name: "Haa Valley",
-    region: "Western Bhutan",
-    tagline: "A hidden valley over the Chele La pass",
-    text: "Reached by a spectacular drive over Chele La, one of the highest roads in Bhutan, the Haa valley is quiet, rural and little visited. Stay in a farmhouse, hike between villages and visit the White and Black Temples, Lhakhang Karpo and Lhakhang Nagpo.",
-    altitude: "About 2,700 m",
-    access: "About 2.5 hours from Paro over Chele La",
-    bestFor: "Off-the-beaten-path, homestays, hiking",
-    highlights: ["Chele La pass and its prayer flags", "Lhakhang Karpo and Lhakhang Nagpo", "Traditional farmhouse homestays", "Views of Jomolhari on clear days"],
-    image: haaImg,
-    alt: "Prayer flags at Chele La pass at sunrise",
   },
 ];

@@ -5,6 +5,8 @@ import blogHero from "../assets/images/slide3.jpg";
 import monkDoor from "../assets/images/bhutan.jpg";
 import taktsangFlags from "../assets/images/about-hiker.jpg";
 import tsechuMask from "../assets/images/about-temple.jpg";
+import valleyMeadow from "../assets/images/Bumthangtrek.jpg";
+import snowPeak from "../assets/images/snowtrek.jpg";
 
 export const blogPage = {
   meta: {
@@ -13,7 +15,7 @@ export const blogPage = {
       "Stories and practical tips from KD Global's team in Thimphu: temple etiquette, festivals, wildlife, trekking seasons and how to make the most of your trip to Bhutan.",
   },
   hero: {
-    kicker: "Our Blog",
+    kicker: "Our blog",
     title: "Bhutan travel stories & tips",
     text: "Culture notes, festival guides and trekking advice from our team in Thimphu.",
     image: blogHero,
@@ -106,6 +108,41 @@ export const postBodies: Record<string, { intro: string; blocks: Block[]; relate
         type: "p",
         text: "Don't worry about getting everything right. Every visitor to Bhutan travels with a licensed guide, and ours are happy to explain customs as you go — and to answer your questions about the stories, saints and symbols you'll see in every temple.",
       },
+    ],
+  },
+
+  // Added 2026-10-16
+  "phobjikha-black-necked-cranes": {
+    intro: "Each autumn, rare black-necked cranes fly over the Himalaya to winter in Phobjikha, a wide valley below Gangtey Monastery.",
+    relatedTours: ["phobjikha-crane-valley", "bumthang-valleys"],
+    blocks: [
+      { type: "h2", text: "When to go" },
+      { type: "p", text: "The cranes arrive in late October and leave by early March. November to January is best." },
+      { type: "tip", title: "Festival", text: "The Black-Necked Crane Festival is held at Gangtey Goenpa every 11 November." },
+      { type: "h2", text: "Where to watch" },
+      { type: "list", items: ["Crane Information Centre (telescopes)", "Gangtey Nature Trail", "Valley road at dawn"] },
+      { type: "image", src: valleyMeadow, alt: "Horses grazing in a meadow at the edge of a pine forest", caption: "Along the Gangtey Nature Trail." },
+      { type: "h2", text: "Visit responsibly" },
+      { type: "list", items: ["Keep your distance and stay on paths", "No flash, no drones", "Stay in local lodges"] },
+      { type: "h2", text: "Getting there" },
+      { type: "p", text: "About 5–6 hours' drive from Thimphu, via Punakha. Bring warm clothes for early mornings." },
+    ],
+  },
+
+  "chele-la-sunrise": {
+    intro: "At almost 4,000 m, Chele La is one of Bhutan's highest road passes: prayer flags, Himalayan views and the road down to Haa.",
+    relatedTours: ["tigers-nest-pilgrimage", "druk-path-trek"],
+    blocks: [
+      { type: "h2", text: "Why sunrise" },
+      { type: "p", text: "It's about 1.5 hours' drive from Paro. Arrive at dawn for the clearest views, sometimes as far as Jomolhari." },
+      { type: "tip", title: "Best season", text: "October to December for clear skies." },
+      { type: "h2", text: "The prayer flags" },
+      { type: "p", text: "Coloured flags carry prayers on the wind; white ones honour loved ones. Walk among them quietly." },
+      { type: "image", src: snowPeak, alt: "Snow-capped Himalayan peak above a forested valley", caption: "Clear mornings reveal the high peaks." },
+      { type: "h2", text: "Down into Haa" },
+      { type: "p", text: "Continue to the quiet Haa valley and its White and Black Temples." },
+      { type: "h2", text: "Bring" },
+      { type: "list", items: ["Warm layers, hat and gloves", "Sunglasses", "A camera"] },
     ],
   },
 };

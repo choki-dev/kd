@@ -16,6 +16,11 @@ import bumthangTemple from "../assets/images/Bumthang.jpg";
 import paroValley from "../assets/images/by Matt Dutile Paro 2 (1).jpg";
 import bridge from "../assets/images/bridge.jpg";
 import snowPeak from "../assets/images/snowtrek.jpg";
+import buddhaDordenma from "../assets/images/Thimphu 190723 by Amp Sripimanwat-53.jpg";
+import chelela from "../assets/images/chelela.jpg";
+import cranes from "../assets/images/Black Neck Cranes.jpg";
+import meadowPonies from "../assets/images/Bumthangtrek.jpg";
+import mistyTaktsang from "../assets/images/slide1.jpg";
 
 type Photo = { src: ImageMetadata; alt: string };
 type Day = { title: string; text: string; overnight: string };
@@ -269,6 +274,110 @@ export const tourDetails: Record<string, TourDetail> = {
       { src: elder, alt: "Smiling Bhutanese elder in a traditional bamboo hat" },
       { src: monk, alt: "Monk in red robes at a painted temple doorway" },
       { src: thimphuDzong, alt: "Tashichho Dzong and terraced fields in the Thimphu valley" },
+    ],
+  },
+
+  // ---------- Cultural (added 2026-10-16) ----------
+  "thimphu-heritage-tour": {
+    overview: [
+      "A short, rich introduction to Bhutan's capital and its living traditions. Thimphu is a city without traffic lights, where monks, office workers and farmers share the streets and centuries-old crafts are still taught to young students.",
+      "You'll visit the great Tashichho Dzong, the giant Buddha Dordenma, the craft schools and the weekend market, then finish in Paro with time to see Rinpung Dzong — and the option to hike to Tiger's Nest.",
+    ],
+    highlights: [
+      "Tashichho Dzong, seat of the government and the central monk body",
+      "The giant Buddha Dordenma overlooking the valley",
+      "Painting, carving and embroidery at the National Institute for Zorig Chusum",
+      "The Centenary Farmers' Market and the Memorial Chorten",
+      "Takin, Bhutan's national animal, at the Motithang preserve",
+      "Rinpung Dzong and Kyichu Lhakhang in Paro",
+    ],
+    difficulty: "Easy",
+    bestTime: "All year — best Mar – May and Sep – Nov",
+    stay: "Comfortable tourist-standard hotels",
+    itinerary: [
+      { title: "Arrive in Paro, drive to Thimphu", text: `${arriveParo} and drive along the river to Thimphu, stopping at Tamchog Lhakhang and its iron-chain bridge. Evening at the Memorial Chorten, where locals walk their prayer rounds.`, overnight: "Thimphu" },
+      { title: "Dzongs, Buddha and crafts", text: "Visit the Buddha Dordenma, the National Institute for Zorig Chusum where students learn Bhutan's 13 traditional arts, and the Textile Museum. End the day at Tashichho Dzong as the flag is lowered at dusk.", overnight: "Thimphu" },
+      { title: "Markets, temples and takin", text: "Browse the Centenary Farmers' Market and the craft bazaar, climb to Changangkha Lhakhang above the city, and see the takin at the Motithang preserve. Afternoon drive to Paro.", overnight: "Paro" },
+      { title: "Paro valley", text: "Explore Rinpung Dzong and the National Museum and visit Kyichu Lhakhang, one of Bhutan's oldest temples — or swap the day for the hike to Tiger's Nest. Farewell dinner.", overnight: "Paro" },
+      { title: "Depart Paro", text: "Transfer to Paro airport for your onward flight. Tashi delek!", overnight: "—" },
+    ],
+    gallery: [
+      { src: tashichho, alt: "Tashichho Dzong lit up at dusk" },
+      { src: buddhaDordenma, alt: "Buddha Dordenma statue above the Thimphu valley" },
+      { src: butterLamps, alt: "Rows of lit butter lamps in a temple" },
+      { src: paroDzong, alt: "Paro valley with Rinpung Dzong below rugged mountains" },
+    ],
+  },
+
+  // ---------- Trekking (added 2026-10-16) ----------
+  "druk-path-trek": {
+    overview: [
+      "The Druk Path is Bhutan's most popular trek: a short, high route over the mountains between Paro and Thimphu. It climbs past the ruins of Jele Dzong, through rhododendron forest and along a chain of clear alpine lakes, with Himalayan views on clear days.",
+      "It's a good first Himalayan trek for fit walkers, with four to seven hours of walking a day and a highest pass of about 4,200 m. A guide, cook and pack ponies carry the camp, so you only need a day pack.",
+    ],
+    highlights: [
+      "Jele Dzong and its views over the Paro valley",
+      "The alpine lakes of Jimilang Tsho and Simkota Tsho",
+      "Himalayan panoramas from the high ridges on clear days",
+      "Phajodhing monastery above Thimphu",
+      "Walking from one valley to the next, finishing in the capital",
+    ],
+    difficulty: "Moderate",
+    bestTime: "Mar – Jun and Sep – Nov",
+    stay: "Hotels in Paro and Thimphu; full-service camping on the trek",
+    itinerary: [
+      { title: "Arrive in Paro", text: `${arriveParo}. Visit Rinpung Dzong and take a gentle acclimatisation walk, then a trek briefing with your guide.`, overnight: "Paro" },
+      { title: "Paro to Jele Dzong", text: "Start near the National Museum and climb steadily through blue pine forest to the ruined Jele Dzong (about 3,480 m), with views back over the Paro valley.", overnight: "Camp" },
+      { title: "Jele Dzong to Jangchulakha", text: "Walk through thick rhododendron forest along the ridge, listening for monal pheasants, to the yak pastures of Jangchulakha (about 3,770 m).", overnight: "Camp" },
+      { title: "Jangchulakha to Jimilang Tsho", text: "Follow the ridge with mountain views on clear mornings, then descend to camp beside Jimilang Tsho (about 3,880 m), a lake known for its large trout.", overnight: "Camp" },
+      { title: "Jimilang Tsho to Simkota Tsho", text: "Pass the small lake of Janetso and yak herders' camps on the way to Simkota Tsho (about 4,110 m), the highest camp of the trek.", overnight: "Camp" },
+      { title: "Over Phume La to Thimphu", text: "Cross Phume La (about 4,200 m) for wide Himalayan views, descend to Phajodhing monastery, then down through forest to Thimphu for a hot shower.", overnight: "Thimphu" },
+      { title: "Thimphu to Paro, depart", text: "Drive back to Paro airport for your onward flight, or add a day to explore the capital.", overnight: "—" },
+    ],
+    included: [
+      ...standardIncluded.filter((i) => !i.startsWith("Twin-share")),
+      "Hotels in Paro and Thimphu and all camping equipment (tents, mattresses, dining tent)",
+      "Trekking cook, camp staff and pack ponies",
+    ],
+    excluded: [...standardExcluded, "Sleeping bag (can be hired in Paro)"],
+    hero: { src: glacierValley, alt: "Glacial river winding through a green Himalayan valley under clouds" },
+    gallery: [
+      { src: ponies, alt: "Trekkers and pack ponies below a snow peak" },
+      { src: chelela, alt: "Prayer flags on a mountain pass at sunrise" },
+      { src: snowPeak, alt: "Snow-capped Himalayan peak above a forested valley" },
+      { src: mistyTaktsang, alt: "Monastery on a forested cliff in the mist" },
+    ],
+  },
+
+  // ---------- Nature (added 2026-10-16) ----------
+  "phobjikha-crane-valley": {
+    overview: [
+      "Phobjikha is a wide glacial valley on the western slopes of the Black Mountains, and one of Bhutan's most beautiful places. Each autumn rare black-necked cranes fly in from the Tibetan plateau to spend the winter on its marshes, watched over by the hilltop Gangtey Monastery.",
+      "This journey combines the valley with Thimphu and Punakha. Walk the Gangtey Nature Trail, learn about the cranes at the Crane Information Centre and, in November, time your trip with the Black-Necked Crane Festival.",
+    ],
+    highlights: [
+      "Black-necked cranes on the Phobjikha marshes (late October – February)",
+      "Gangtey Goenpa, the valley's 17th-century monastery",
+      "The Gangtey Nature Trail through pine forest and farmland",
+      "The Crane Information Centre and its viewing telescopes",
+      "Punakha Dzong and the Dochu La pass",
+    ],
+    difficulty: "Easy",
+    bestTime: "Nov – Feb for the cranes; lovely all year",
+    stay: "Comfortable hotels and a lodge in Phobjikha",
+    itinerary: [
+      { title: "Arrive in Paro, drive to Thimphu", text: `${arriveParo} and drive to Thimphu. Evening walk to the Memorial Chorten.`, overnight: "Thimphu" },
+      { title: "Thimphu to Punakha", text: "Visit the Buddha Dordenma and Tashichho Dzong, then cross Dochu La and its 108 chortens to the warm Punakha valley.", overnight: "Punakha" },
+      { title: "Punakha Dzong, on to Phobjikha", text: "Explore Punakha Dzong at the meeting of two rivers, then climb through forest over Lawa La into the wide Phobjikha valley.", overnight: "Phobjikha" },
+      { title: "Cranes and Gangtey Monastery", text: "Watch the cranes feeding on the marshes in the early morning, visit the Crane Information Centre and Gangtey Goenpa, and walk the Gangtey Nature Trail through pine forest and villages.", overnight: "Phobjikha" },
+      { title: "Phobjikha to Paro", text: "A long, scenic drive back over Dochu La to Paro, with stops along the way. Farewell dinner.", overnight: "Paro" },
+      { title: "Depart Paro", text: "Transfer to Paro airport for your onward flight.", overnight: "—" },
+    ],
+    gallery: [
+      { src: cranes, alt: "Two black-necked cranes in flight" },
+      { src: meadowPonies, alt: "Horses grazing in a meadow at the edge of a pine forest" },
+      { src: thimphuDzong, alt: "Tashichho Dzong and terraced fields in the Thimphu valley" },
+      { src: bridge, alt: "Covered wooden cantilever bridge in Bhutan" },
     ],
   },
 };

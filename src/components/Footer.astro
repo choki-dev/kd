@@ -1,7 +1,7 @@
 ---
 import Icon from "./Icon.astro";
 import Logo from "./Logo.astro";
-import { footerLinks, legalLinks, site, socials } from "../data/home";
+import { credit, footerLinks, site, socials } from "../data/home";
 
 const year = new Date().getFullYear();
 ---
@@ -73,15 +73,7 @@ const year = new Date().getFullYear();
   <div class="footer-bottom">
     <div class="container bottom-inner">
       <p>© {year} {site.name}. All rights reserved.</p>
-      <ul class="legal">
-        {
-          legalLinks.map((l) => (
-            <li>
-              <a href="#">{l}</a>
-            </li>
-          ))
-        }
-      </ul>
+      <p class="credit">{credit.text} <a href={credit.href} target="_blank" rel="noopener"><strong>{credit.company}</strong></a></p>
     </div>
   </div>
 </footer>
@@ -211,9 +203,9 @@ const year = new Date().getFullYear();
     color: var(--accent-tint);
   }
 
-  /* Charcoal bottom bar — "Dark + Teal" combination from the brand board */
+  /* Bottom bar: same Deep Horizon as the footer above (on request), split off by the same thin divider as the logo row */
   .footer-bottom {
-    background: var(--charcoal);
+    background: var(--primary);
   }
   .bottom-inner {
     display: flex;
@@ -222,22 +214,23 @@ const year = new Date().getFullYear();
     justify-content: space-between;
     gap: 12px;
     padding-block: 24px;
+    /* divider inside the side gutters, so it lines up with the one under the logo row */
+    background: linear-gradient(rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.1)) center top / calc(100% - 2 * var(--gutter)) 1px no-repeat;
     font-size: 14px;
   }
-  .legal {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px 22px;
+  .credit {
+    font-size: 12.5px; /* a little smaller than the © line (14px), on request */
   }
-  .legal li + li {
-    position: relative;
+  .credit a {
+    color: inherit;
+    text-decoration: none;
   }
-  .legal li + li::before {
-    content: "·";
-    position: absolute;
-    left: -14px;
-  }
-  .legal a:hover {
+  .credit a:hover strong {
     color: var(--accent-tint);
+  }
+  .credit strong {
+    font-weight: 500;
+    color: var(--white);
+    white-space: nowrap; /* keep the company name on one line */
   }
 </style>

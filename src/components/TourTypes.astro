@@ -1,61 +1,136 @@
 ---
+import { Image } from "astro:assets";
 import Icon from "./Icon.astro";
-import { tourTypes } from "../data/home";
+import { tourTypes, tourTypesImage } from "../data/home";
+
+// Checkerboard of filled / outlined cards: in the 2-wide flow (left + right column) card i sits at row ⌊i/2⌋, col i%2
+const filled = (i: number) => (Math.floor(i / 2) + (i % 2)) % 2 === 0;
 ---
 
 <section class="section types" aria-labelledby="types-title">
   <div class="container">
     <header class="section-head" data-reveal>
+      <span class="script-accent">Tour types</span>
       <h2 id="types-title" class="section-title">Ways to experience Bhutan</h2>
       <p class="section-subtitle">Culture, festivals, Himalayan treks and quiet pilgrimages — choose the journey that suits you.</p>
     </header>
 
-    <ul class="types-grid">
+    <!-- ≥992px: cards | tall photo | cards. Below: photo on top, cards 2 / 1 per row. Each card links to /tours with that type preselected. -->
+    <div class="types-grid">
+      <div class="types-media" data-reveal>
+        <Image
+          src={tourTypesImage.src}
+          alt={tourTypesImage.alt}
+          width={760}
+          height={1080}
+          widths={[480, 760, 1100]}
+          sizes="(min-width: 992px) 300px, 92vw"
+          loading="lazy"
+        />
+      </div>
+
       {
         tourTypes.map((t, i) => (
-          <li data-reveal style={`--reveal-delay:${i * 70}ms`}>
-            <a href={`/tours?type=${t.name}`} class="type">
-              <span class="type-icon">
-                <Icon name={t.icon} size={40} strokeWidth={1.3} />
-              </span>
-              <span class="type-name">{t.name}</span>
-              <span class="type-count">{t.count} {t.count === 1 ? "Tour" : "Tours"}</span>
-            </a>
-          </li>
+          <a href={`/tours?type=${t.name}`} class:list={["type", filled(i) ? "type-filled" : "type-outline"]} data-reveal style={`--reveal-delay:${(i % 2) * 100}ms`}>
+            <span class="type-icon">
+              <Icon name={t.icon} size={30} />
+            </span>
+            <h3 class="type-name">{t.name} tours</h3>
+            <span class="type-count">{t.count} {t.count === 1 ? "tour" : "tours"}</span>
+          </a>
         ))
       }
-    </ul>
+    </div>
   </div>
 </section>
 
 <style>
+  /* narrower than the container so the cards stay compact */
   .types-grid {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 28px 16px;
+    gap: 20px;
+    max-width: 960px;
+    margin-inline: auto;
   }
   @media (min-width: 576px) {
     .types-grid {
-      grid-template-columns: repeat(3, 1fr);
+      grid-template-columns: repeat(2, 1fr);
+    }
+    .types-media {
+      grid-column: 1 / -1;
     }
   }
   @media (min-width: 992px) {
     .types-grid {
-      grid-template-columns: repeat(6, 1fr);
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+    }
+    /* photo in the middle column across all three rows; the cards auto-fill the left and right columns */
+    .types-media {
+      grid-column: 2;
+      grid-row: 1 / span 3;
     }
   }
+
+  .types-media {
+    overflow: hidden;
+    height: 280px;
+    border-radius: var(--radius);
+  }
+  @media (min-width: 576px) {
+    .types-media {
+      height: 340px;
+    }
+  }
+  @media (min-width: 992px) {
+    .types-media {
+      height: auto;
+    }
+  }
+  .types-media :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.8s var(--ease);
+  }
+  .types-media:hover :global(img) {
+    transform: scale(1.04);
+  }
+
   .type {
     display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: center;
+    padding: 22px 20px 20px;
+    border: 1px solid transparent;
+    border-radius: var(--radius);
     text-align: center;
+    transition:
+      border-color 0.35s var(--ease),
+      box-shadow 0.35s var(--ease),
+      transform 0.35s var(--ease);
   }
+  .type-filled {
+    background: var(--white);
+  }
+  .type-outline {
+    border-color: var(--bluegray);
+  }
+  .type:hover,
+  .type:focus-visible {
+    transform: translateY(-4px);
+    border-color: var(--accent);
+    box-shadow: var(--shadow);
+  }
+
+  /* Round icon badge: Morning Haze on white cards, white on outlined ones; fills Global Tide on hover */
   .type-icon {
     display: grid;
     place-items: center;
-    width: 128px;
-    height: 128px;
-    margin-bottom: 18px;
+    width: 60px;
+    height: 60px;
+    margin-bottom: 12px;
     border-radius: 50%;
     background: var(--soft);
     color: var(--accent);
@@ -64,30 +139,26 @@ import { tourTypes } from "../data/home";
       color 0.35s var(--ease),
       transform 0.35s var(--ease);
   }
-  @media (min-width: 1200px) {
-    .type-icon {
-      width: 150px;
-      height: 150px;
-    }
+  .type-outline .type-icon {
+    background: var(--white);
   }
   .type:hover .type-icon,
   .type:focus-visible .type-icon {
     background: var(--accent);
     color: var(--white);
-    transform: translateY(-4px);
+    transform: scale(1.06);
   }
   .type-name {
-    font-size: 20px;
+    font-size: 18px;
     font-weight: 500;
     color: var(--primary);
-    transition: color 0.3s;
-  }
-  .type:hover .type-name {
-    color: var(--accent);
   }
   .type-count {
-    margin-top: 2px;
-    color: var(--muted);
-    font-size: 15px;
+    margin-top: 4px;
+    color: var(--accent);
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
   }
 </style>

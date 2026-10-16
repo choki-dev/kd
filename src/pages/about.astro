@@ -4,9 +4,8 @@ import { Image } from "astro:assets";
 import BaseLayout from "../layouts/BaseLayout.astro";
 import Header from "../components/Header.astro";
 import PageHero from "../components/PageHero.astro";
-import Testimonials from "../components/Testimonials.astro";
 import Footer from "../components/Footer.astro";
-import BackToTop from "../components/BackToTop.astro";
+import ChatWidget from "../components/ChatWidget.astro";
 import CtaBand from "../components/CtaBand.astro";
 import Icon from "../components/Icon.astro";
 import { about } from "../data/pages";
@@ -48,9 +47,10 @@ const initials = (name: string) => name.split(" ").map((w) => w[0]).join("").sli
     </section>
 
     <!-- Values -->
-    <section class="section values" aria-labelledby="values-title">
+    <section class="section section-soft values" aria-labelledby="values-title">
       <div class="container">
         <header class="section-head" data-reveal>
+          <span class="script-accent">Why KD Global</span>
           <h2 id="values-title" class="section-title">{values.title}</h2>
           <p class="section-subtitle">{values.subtitle}</p>
         </header>
@@ -72,6 +72,7 @@ const initials = (name: string) => name.split(" ").map((w) => w[0]).join("").sli
     <section class="section steps" aria-labelledby="steps-title">
       <div class="container">
         <header class="section-head" data-reveal>
+          <span class="script-accent">How it works</span>
           <h2 id="steps-title" class="section-title">{steps.title}</h2>
           <p class="section-subtitle">{steps.subtitle}</p>
         </header>
@@ -93,6 +94,7 @@ const initials = (name: string) => name.split(" ").map((w) => w[0]).join("").sli
     <section class="section team" aria-labelledby="team-title">
       <div class="container">
         <header class="section-head" data-reveal>
+          <span class="script-accent">Our people</span>
           <h2 id="team-title" class="section-title">{team.title}</h2>
           <p class="section-subtitle">{team.subtitle}</p>
         </header>
@@ -115,12 +117,11 @@ const initials = (name: string) => name.split(" ").map((w) => w[0]).join("").sli
       </div>
     </section>
 
-    <Testimonials />
 
     <CtaBand {...cta} primary={{ label: "Contact us", href: "/contact" }} secondary={{ label: "View tours", href: "/tours" }} />
   </main>
   <Footer />
-  <BackToTop />
+  <ChatWidget />
 </BaseLayout>
 
 <style>
@@ -194,9 +195,6 @@ const initials = (name: string) => name.split(" ").map((w) => w[0]).join("").sli
   }
 
   /* ---------- Values ---------- */
-  .values {
-    background: var(--soft);
-  }
   .value-grid {
     display: grid;
     gap: 24px;
@@ -288,9 +286,6 @@ const initials = (name: string) => name.split(" ").map((w) => w[0]).join("").sli
   }
 
   /* ---------- Team ---------- */
-  .team {
-    padding-top: 0;
-  }
   .team-grid {
     display: grid;
     gap: 24px;
@@ -352,5 +347,89 @@ const initials = (name: string) => name.split(" ").map((w) => w[0]).join("").sli
   .member-bio {
     color: var(--muted);
     font-size: 15px;
+  }
+
+  /* ---------- Polish (2026-10-16) ---------- */
+  /* Story: offset outline frame behind the main photo */
+  .story-media::before {
+    content: "";
+    position: absolute;
+    top: -18px;
+    left: -18px;
+    width: 60%;
+    height: 70%;
+    border: 2px solid var(--bluegray);
+    border-radius: var(--radius);
+    z-index: -1;
+  }
+  .story-media {
+    isolation: isolate;
+  }
+  @media (max-width: 575px) {
+    .story-media::before {
+      top: -10px;
+      left: -10px;
+    }
+  }
+
+  /* Values + team + steps: brand bar grows along the top on hover, icon fills teal */
+  .value-card,
+  .member,
+  .step {
+    position: relative;
+    overflow: hidden;
+  }
+  .value-card::before,
+  .member::before,
+  .step::before {
+    content: "";
+    position: absolute;
+    inset: 0 0 auto;
+    height: 4px;
+    background: linear-gradient(90deg, var(--primary) 0 25%, var(--accent) 25% 50%, var(--bluegray) 50% 75%, var(--charcoal) 75%);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.45s var(--ease);
+  }
+  .value-card:hover::before,
+  .member:hover::before,
+  .step:hover::before {
+    transform: scaleX(1);
+  }
+  .value-icon {
+    transition:
+      background-color 0.35s,
+      color 0.35s,
+      transform 0.35s var(--ease);
+  }
+  .value-card:hover .value-icon {
+    background: var(--accent);
+    color: var(--white);
+    transform: rotate(-8deg) scale(1.05);
+  }
+  .step {
+    transition:
+      transform 0.35s var(--ease),
+      box-shadow 0.35s var(--ease),
+      border-color 0.35s;
+  }
+  .step:hover {
+    transform: translateY(-6px);
+    border-color: transparent;
+    box-shadow: var(--shadow-lg);
+  }
+  .step-num {
+    transition: color 0.35s;
+  }
+  .step:hover .step-num {
+    color: var(--accent);
+  }
+  /* Team: double ring around the photo / initials */
+  .member :global(.member-photo) {
+    box-shadow: 0 0 0 1px var(--bluegray);
+    transition: background-color 0.35s;
+  }
+  .member:hover .member-initials {
+    background: var(--accent);
   }
 </style>

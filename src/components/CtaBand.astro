@@ -14,7 +14,7 @@ interface Props {
 const { title, text, primary, secondary } = Astro.props;
 ---
 
-<section class="cta-wrap" aria-labelledby="cta-title">
+<section class="section cta-wrap" aria-labelledby="cta-title">
   <div class="container">
     <div class="cta" data-reveal>
       <div class="cta-pattern">
@@ -35,9 +35,6 @@ const { title, text, primary, secondary } = Astro.props;
 </section>
 
 <style>
-  .cta-wrap {
-    padding-bottom: var(--section);
-  }
   /* The pattern sits behind the content and fades into the charcoal body (mask), so there is no hard seam.
      Below 992px it's a strip across the top that fades downward; from 992px it fills the right half and fades leftward. */
   .cta {

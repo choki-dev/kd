@@ -1,27 +1,11 @@
 ---
 import Icon from "./Icon.astro";
-import { searchLocations, searchTourTypes } from "../data/home";
+import { searchTourTypes } from "../data/home";
 ---
 
 <section id="search" class="search-wrap" aria-label="Find a tour">
   <div class="container">
     <form class="search-card" data-search novalidate>
-      <!-- Location -->
-      <div class="field" data-field>
-        <span class="field-icon"><Icon name="map-pin" size={22} /></span>
-        <div class="field-body">
-          <span class="field-label" id="lbl-location">Location</span>
-          <button type="button" class="field-trigger" aria-haspopup="listbox" aria-expanded="false" aria-labelledby="lbl-location val-location" data-trigger>
-            <span id="val-location" data-value data-placeholder="Where are you going?">Where are you going?</span>
-            <Icon name="chevron-down" size={16} class="chev" />
-          </button>
-        </div>
-        <ul class="pop listbox" role="listbox" aria-labelledby="lbl-location" tabindex="-1" hidden data-pop data-listbox="location">
-          {searchLocations.map((l) => <li role="option" aria-selected="false" tabindex="-1">{l}</li>)}
-        </ul>
-        <input type="hidden" name="location" />
-      </div>
-
       <!-- Date -->
       <div class="field" data-field>
         <span class="field-icon"><Icon name="calendar" size={22} /></span>
@@ -128,7 +112,7 @@ import { searchLocations, searchTourTypes } from "../data/home";
   }
   @media (min-width: 1200px) {
     .search-card {
-      grid-template-columns: repeat(4, 1fr) auto;
+      grid-template-columns: repeat(3, 1fr) auto;
       align-items: center;
       gap: 0;
       padding: 16px 16px 16px 8px;
@@ -214,14 +198,15 @@ import { searchLocations, searchTourTypes } from "../data/home";
     margin-top: 6px;
     min-height: 60px;
   }
+  /* Tablet: 3 fields + the button fill a 2 × 2 grid */
   @media (min-width: 768px) {
     .search-btn {
-      grid-column: 1 / -1;
+      align-self: center;
+      margin-top: 0;
     }
   }
   @media (min-width: 1200px) {
     .search-btn {
-      grid-column: auto;
       margin: 0 0 0 8px;
       padding: 0 34px;
     }
@@ -434,7 +419,7 @@ import { searchLocations, searchTourTypes } from "../data/home";
       if (input) input.value = value;
     };
 
-    // ---------- Listboxes (location, tour type) ----------
+    // ---------- Listbox (tour type) ----------
     form.querySelectorAll<HTMLElement>("[data-listbox]").forEach((list) => {
       const field = list.closest<HTMLElement>("[data-field]")!;
       const options = [...list.querySelectorAll<HTMLElement>('[role="option"]')];

@@ -31,7 +31,7 @@ npm run preview   # serve dist/ — use another port if needed: npx astro previe
 |---|---|---|
 | Deep Horizon (`--primary`) | `#0b3d4a` | lead colour: wordmark, headings, nav, footer, covers |
 | Global Tide (`--accent`) | `#167a8a` | signature accent: **buttons**, links, highlights, icons, prices |
-| Charcoal Graphite (`--charcoal`, `--text`) | `#2d2d2d` | body text, dark UI, footer bottom bar |
+| Charcoal Graphite (`--charcoal`, `--text`) | `#2d2d2d` | body text, dark UI, CTA band |
 | Misty Horizon (`--bluegray`) | `#a7b8c2` | soft panels, dividers, graphics |
 | Morning Haze (`--morning-haze` = `--soft`, `--line`) | `#e5eaeb` (sampled; the hex is missing from the PDF text) | cards, panels, layered surfaces |
 | Cloud Mist (`--cloud-mist`) | `#f2f6f7` | **main page background** (`body`) |
@@ -42,8 +42,8 @@ npm run preview   # serve dist/ — use another port if needed: npx astro previe
   - **Primary = Aeonik** (commercial, CoType). **General Sans (Fontshare) stands in** until the owner supplies licensed .woff2 files. To swap, replace the first `fonts` entry in `astro.config.mjs` with `fontProviders.local()` named "Aeonik" and keep `--font-primary`.
   - **Weights: 300 / 400 / 500 / 700 only.** Headlines Bold (700) or Medium (500); no 600/800.
   - **Headlines in sentence case** (proper nouns and tour names keep their capitals).
-  - **Playfair Display** (`.serif-title`): one editorial headline or pull quote per page, Deep Horizon. Currently: home "Travel Bhutan with people…", About story title, Blog featured title, article intro.
-  - **Parisienne** (`.script-accent`): one short greeting or tagline per page, display size, Global Tide. Currently: home "Explore the valleys", About "Kuzuzangpo la".
+  - **Playfair Display** (`.serif-title`): one editorial headline or pull quote per page, Deep Horizon. Currently: home hero headlines (white, on request) and "Travel Bhutan with people…", About story title, Blog featured title, article intro, and (since 2026-10-16, on request) every inner-page banner title.
+  - **Parisienne** (`.script-accent`): Global Tide, display size. **On the owner's request (2026-10-13) every centred section title has a short script tagline above it**, styled like the homepage "Explore the valleys" (e.g. Tour types, Handpicked for you, Best sellers, Guest reviews, Travel journal, Why KD Global, How it works, Our people, Good to know, Where we travel, Keep reading, More journeys). This goes beyond the guideline's "one per page"; new section heads should follow it. Also used for About "Kuzuzangpo la".
   - Uppercase labels use wide letter-spacing like the "COMMERCE & SERVICES" line.
 - **Logo:**
   - Use the real files, never redraw or recolour them.
@@ -68,20 +68,21 @@ src/
 ├─ layouts/BaseLayout.astro <head>: SEO/OG meta (OG image from slide1.jpg, only when `site` is set), font, skip link, scroll-reveal observer
 ├─ data/pages.ts            About Us + Contact Us content (hero, story, values, steps, FAQs, office hours, map URL)
 ├─ pages/index.astro        the homepage
-├─ pages/about.astro        About Us: PageHero, story, values, how-we-plan steps, Meet our team, Testimonials, CTA band
+├─ pages/about.astro        About Us: PageHero, story, values, how-we-plan steps, Meet our team, CTA band
 ├─ pages/tours.astro        Tours: PageHero, sticky filter sidebar (type radio / destination + duration checkboxes, live counts), sort select, 3-col TourCard grid, CtaBand; ?type=<Category> preselects a type and is kept in the URL
 ├─ pages/tours/[slug].astro tour detail template (getStaticPaths over tours with a `slug`): PageHero (Home › Tours › name), facts bar, overview + route, highlights, day-by-day accordion timeline (Expand all), included / not included, gallery, sticky booking card (Enquire → /contact?tour=…&type=…), related tours
 ├─ data/tourDetails.ts      detail content per slug (overview, highlights, difficulty, best time, stay, itinerary, optional included/excluded/hero, gallery) + standard included/excluded lists
-├─ pages/destinations.astro Destinations: PageHero, jump chips, alternating photo/text row per valley (facts, highlights, View N tours → /tours?place=…, Plan a trip here → /contact?place=…), CtaBand
-├─ data/destinations.ts     the 7 destinations (Paro, Thimphu, Punakha, Trongsa, Bumthang, Phobjikha, Haa) + page text
+├─ pages/destinations.astro Destinations (redesigned 2026-10-16): PageHero, "road east" route of photo stops, sticky scroll-spy bar, region chapters with a cinematic photo + overlapping card per valley (text, View N tours → /tours?place=…, Plan a trip here → /contact?place=…, Don't miss, facts), at-a-glance table, CtaBand
+├─ data/destinations.ts     the 7 destinations in road order (Paro, Haa, Thimphu, Punakha, Phobjikha, Trongsa, Bumthang) + page text, `regions` (each destination's `region` must match one; build fails otherwise)
 ├─ pages/blog/index.astro   Blog list: newest post as a large featured card, rest in a grid (posts without a slug = "Coming soon", not links), CtaBand
 ├─ pages/blog/[slug].astro  article template: PageHero (Home › Blog › title), byline + reading time, intro, blocks (h2/p/list/image/tip), sticky sidebar (In this article TOC, related tours, contact card), More stories
 ├─ data/blog.ts             blog page text + article bodies keyed by slug (block list) + readingMinutes()
+├─ pages/[guide].astro      travel-info pages (visa & SDF, guidelines, festivals, trekking seasons, FAQs, terms) from data/guides.ts
 ├─ pages/contact.astro      Contact Us: PageHero, 4 overlapping info cards, enquiry form (mailto, no backend), Google Maps embed, FAQ accordion
 ├─ styles/global.css        tokens, base, container/section, buttons, badges, reveal animation
 └─ components/              Header, Hero, SearchBar, TourTypes, FeaturedRetreats, BestSellingTours, TourCard,
                             PopularDestinations, VacationAbout, Testimonials, BrandLogos, LatestNews, Footer,
-                            PageHero (inner-page banner + breadcrumb), CtaBand (deep-teal call-to-action, About + Tours), BackToTop, Logo, Icon (inline SVG icon set; names typed by IconName in home.ts)
+                            PageHero (inner-page banner + breadcrumb), CtaBand (deep-teal call-to-action, About + Tours), ChatWidget, Logo, Icon (inline SVG icon set; names typed by IconName in home.ts)
 ```
 
 `src/pages/.kilo/` is a leftover worktree from another tool (Kilo Code); Astro ignores dot-folders. Leave it alone unless the owner asks.
@@ -91,25 +92,23 @@ src/
 1. **Header** (fixed): transparent over the hero with the white logo; on scroll it turns white with the colour logo and deep-teal nav.
    - Nav: **Home · Tours ▾ (Cultural Tours, Festival Tours, Trekking Tours, Luxury Tours) · Destination · Blog · Contact Us**, plus a search icon.
    - Below 1200px: a deep-teal slide-in drawer with accordion sub-menus.
-2. **Hero:** 3-slide fade slider (`slide1–3.jpg`), autoplay that pauses on hover/focus and is off for reduced motion, "KD GLOBAL · TRAVEL & TOURS" label, activity chips, a "Follow us" bar, arrows and a "1 / 3" counter.
+2. **Hero:** 3-slide fade slider (`slide1–3.jpg`), autoplay that pauses on hover/focus and is off for reduced motion, a "Follow us" bar, arrows and a "1 / 3" counter. Since 2026-10-13 (on request): darker overlay (deep teal gradient + charcoal), a Parisienne tagline "Welcome to Bhutan" (`site.kicker`, in `--accent-tint`) above a Playfair Display 500 headline in white (same clamp size as step 12), and no activity chips (`heroActivities` deleted).
 3. **Search bar:**
-   - Location and Tour Type dropdowns, a calendar popover (past dates disabled) and Adult/Children counters, all keyboard-operable.
+   - Tour Type dropdown (the Location field was removed on request, 2026-10-13), a calendar popover (past dates disabled) and Adult/Children counters, all keyboard-operable.
    - Search jumps to the tour grid and applies the tour-type tab if one matches.
-4. **Types of tours:** 6 icon circles.
+4. **Types of tours:** redesigned 2026-10-15 on request from a reference ("Why choose us" layout): from 992px three columns, 3 cards | a tall photo across all rows (`tourTypesImage` in home.ts, the cham dancer) | 3 cards; below that the photo becomes a 280–340px banner above a 2 / 1-column card grid. Cards alternate white-filled and Misty Horizon-outlined in a checkerboard, compact (~160px tall, grid max-width 960px; both reduced on request), each with a **Google Material Symbols** icon (temple / festival / hiking / diamond / meditation / forest; the owner asked for standard icons; filled 960-unit glyphs in the `material` map of Icon.astro) in a round Morning Haze badge that fills Global Tide on hover, name and an uppercase "N tours" line (icons in `categoryIcons` in home.ts; the one-line descriptions were removed on request); the whole card links to `/tours?type=…`. (Earlier: icon circles; a card-grid redesign was tried 2026-10-14 and reverted.)
 5. **Featured retreats:** 3 tall cards (`tours.slice(0,3)`), a swipe slider on mobile.
-6. **Best-selling tours:** filter tabs plus 8 `TourCard`s (4 / 2 / 1 columns).
-7. **Popular destinations:** bento grid of 5 tiles.
-8. **Vacation / about:** split section with two overlapping circular photos, booking phone and "Booking Now".
-9. **Testimonials:**
-   - slider (3 / 2 / 1-up), arrows and dots
-   - initials avatars, since there are no client photos
-10. **Partner logo marquee:** made-up placeholder names.
+6. **Best-selling tours:** filter tabs plus 9 `TourCard`s, 3 / 2 / 1 per row (3 from 992px, on request 2026-10-13: bigger cards, about 380px wide). Flex-wrap grid, so an incomplete last row is centred (with 9 tours the rows are full).
+7. **Popular destinations ("Explore the valleys"):** bento grid of 5 tiles, redesigned 2026-10-14 on request: only the valley name in big white text on the photo over a **black** bottom shade (region/tagline lines were tried and removed on request) (tour-count pill removed on request), a round arrow button bottom right (teal and pointing forward on hover) and image zoom. Section subtitle + "View all 7 destinations" button under the grid.
+8. **Vacation / about:** split section with two overlapping circular photos, booking phone and "Book now". The spinning dashed ring by the photos was removed on request (2026-10-14); both photos have the same 10px white outline + shadow.
+9. **Testimonials: removed on request (2026-10-14)** from Home and About, plus the footer "Guest reviews" link. `Testimonials.astro` and the sample `testimonials` in home.ts are kept for when real reviews exist (slider 3 / 2 / 1-up, initials avatars); add `<Testimonials />` back to a page to show it.
+10. **Partner logo marquee:** real logos since 2026-10-16 (on request): Department of Tourism, ABTO, Drukair, Bhutan Believe, Bhutan Airlines, HRAB. Files copied from the owner's other Bhutan sites (`D:Website htmlbitm.btssets`, also used by luxurybhutan), trimmed with sharp into `src/assets/partners/`; data in `partners` (home.ts; `wide` = wordmark shown shorter). Greyscale at rest, full colour on hover; static for reduced motion.
 11. **Latest news:** 3 blog cards.
 12. **Footer:**
    - deep teal with the white logo and socials
    - Contact us, and "About us" link columns
-   - charcoal bottom bar
-13. **Back-to-top button** with a scroll-progress ring.
+   - bottom bar: © on the left, and on the right the credit "Website Designed And Developed by **aBit Private Limited**" (`credit` in home.ts; the company name links to https://abit.bt in a new tab, on request 2026-10-16; it replaced the Terms of use / Privacy policy / FAQs links on request, 2026-10-14). The bar is in the same Deep Horizon as the footer since 2026-10-13 (on request; was charcoal), split off by a thin divider that lines up with the one under the logo row
+13. **Chat widget** (`ChatWidget.astro`, every page, bottom right; replaced the back-to-top button on request 2026-10-16): round button with a pulse ring that alternates WhatsApp green / Messenger blue (static green for reduced motion) opens a small chat card (Deep Horizon header with the arc-mark favicon, "Kuzuzangpo la!" bubble, "Chat on WhatsApp" → `wa.me/<site.whatsapp>` with a pre-filled message, "Chat on Messenger" → `m.me/<site.messenger>`; Messenger added on request the same day). Closes on Esc / outside click. Number in `site.whatsapp` (home.ts; +975 17936364, from the owner), colours `--whatsapp(-dark)` / `--messenger(-dark)` in global.css.
 
 ## History (what was done, in order — 2026-10-07 / 08)
 
@@ -141,7 +140,7 @@ src/
    - One category list `tourCategories` (Cultural, Festival, Trekking, Luxury, Spiritual, Nature) drives the filter tabs, the search "Tour Type" and the 6 type circles. Counts are computed from `tours`.
    - Each tour has `places[]`. Destination tile counts (Paro, Thimphu, Punakha, Trongsa, Bumthang) are computed from it. The bento slot keys were renamed to those names.
    - Prices display as `US$1,450` (toLocaleString); group size shows as "Up to N"; "1 Tour" / "N Tours" plurals.
-   - New icons `flame` and `bird` (Lucide) in `Icon.astro`.
+   - New icons `flame` and `bird` (Lucide) in `Icon.astro` (replaced 2026-10-14 by the tour-type icons in section 4).
    - A border-radius removal was tried and reverted on request. **Keep the rounded corners.**
 7. **About Us (/about) and Contact Us (/contact) pages (2026-10-08)**, in the homepage theme (PageHero banner under the transparent header, section-head accent bar, soft/teal cards, rounded corners):
    - Banner photos: `buddha.jpg` (About), `temple.jpg` (Contact). The story section uses `Ben-Richards-Tourism-Bhutan-001` + `about-couple.jpg`.
@@ -154,9 +153,9 @@ src/
    - Tours without a slug (Thimphu Heritage, Druk Path) link to `/contact?tour=…` (`tourHref()` in home.ts). To add a page: give the tour a `slug` + add its entry in tourDetails.ts.
    - The whole TourCard is now clickable (stretched title link). The Contact page pre-selects the interest and starts the message from `?tour=&type=`.
    - `hero` override: Jomolhari uses `trek.jpg` because the portrait `snowtrek.jpg` crops to forest in a wide banner.
-10. **Destinations page (/destinations, 2026-10-08):** banner `tdzong.jpg`. Nav "Destination" and footer "Destinations" → /destinations; homepage tiles → `/destinations#<id>` (tile `area` keys = row ids). Tours page also reads `?place=`; Contact reads `?place=` ("I would like to visit …"). Phobjikha and Haa have no tours yet, so they only show "Plan a trip here". Altitudes and drive times are approximate.
+10. **Destinations page (/destinations, 2026-10-08):** banner `tdzong.jpg`. Nav "Destination" and footer "Destinations" → /destinations; homepage tiles → `/destinations#<id>` (tile `area` keys = row ids). Tours page also reads `?place=`; Contact reads `?place=` ("I would like to visit …"). Haa has no tour yet, so it only shows "Plan a trip here" (Phobjikha got one in step 22). Altitudes and drive times are approximate.
 11. **Blog (/blog) + first article (2026-10-08):** /blog/visiting-bhutan-temples-respectfully ("Butter Lamps and Blessings", temple etiquette). `posts` in home.ts now have `slug?` + `excerpt` (no more `href`); use `postHref()`. Nav Blog → /blog. The cranes and Chele La posts have no article yet ("Coming soon"). **To publish one:** add a `slug` in home.ts and its body in blog.ts (build fails if the body is missing). Blog banner `slide3.jpg`.
-12. **Smaller banner text (2026-10-08, on request: titles covered the photos).** Homepage hero title clamp(38px, 6.2vw, 100px) → clamp(30px, 3vw + 12px, 56px). PageHero title clamp(34px, 4.6vw, 66px) → clamp(28px, 2vw + 14px, 44px), max-width 780px. Kicker → 11–13px and intro text → 14–16px on both. **Keep these sizes.**
+12. **Smaller banner text (2026-10-08, on request: titles covered the photos; inner-page banners changed again 2026-10-16, see step 23).** Homepage hero title clamp(38px, 6.2vw, 100px) → clamp(30px, 3vw + 12px, 56px). PageHero title clamp(34px, 4.6vw, 66px) → clamp(28px, 2vw + 14px, 44px), max-width 780px. Kicker → 11–13px and intro text → 14–16px on both. **Keep these sizes.**
 13. **Removed on request (2026-10-08):** star ratings and photo/video count badges from TourCard and the Signature-journeys (FeaturedRetreats) cards.
    - TourCard is shared, so they're also gone on /tours and in the related-tour cards.
    - The "Featured" badge stays.
@@ -189,19 +188,58 @@ src/
 
 18. **Team profiles on About (2026-10-09, on request):** "Meet our team" section after the steps, before Testimonials. Data in `about.team` in pages.ts: 4 cards (name, role, bio, optional `photo`); without a photo the card shows a Deep Horizon initials circle. 4 / 2 / 1 columns, same card style as the values.
 
+19. **Real team + no rates (2026-10-13, from the owner):**
+   - Team: Kezang Dorji (Founder & Managing Director), Karma Drupchuk (Head of Tours & Operations · Senior Cultural Guide), Chimi Dema (Administration & Accounts), Kelzang Namrig Dawa (Trek Leader). No photos yet (initials).
+   - Packages stay as they are.
+   - **Rates removed everywhere, on request.** `price` is deleted from the Tour type and data; no price on TourCard, Signature-journeys cards, blog related tours; the price sorts on /tours are gone; the tour-detail booking card says "Plan this trip with us" + enquire for a quote. **Don't add prices back.**
+
+20. **Equal gap between sections, site-wide (2026-10-13, on request):** one `--section` gap (72 / 96 / 120px) between every pair of sections, on every page. A rule in global.css handles it: two `.section`s in a row (an inline `<script>` between them is allowed) share one gap, and `.section-soft` (Morning Haze band: About values, tour "related", blog "more") keeps padding on both sides. The logo strip and CtaBand are `.section`s now too. **Don't add per-section `padding-top: 0` overrides; give new sections the `section` class (and `section-soft` for a tinted band).**
+
+21. **Design polish (2026-10-13, on request):**
+   - Section labels above every centred section title (first as uppercase `.eyebrow`, then the same day changed on request to Parisienne `.script-accent` taglines, see Fonts). `.eyebrow` is still used inside content (Overview, Latest article, Plan your trip, destination row numbers).
+   - Tour-type circles: white with a soft shadow; on hover they fill Global Tide and a dashed Misty Horizon ring appears (replaced 2026-10-15, see Homepage section 4).
+   - TourCard footer: "View tour →" on the right, where the price used to be (decorative, aria-hidden; the title link covers the card).
+   - Testimonials: white cards with a shadow and a decorative `quote` icon (new in Icon.astro). The slider track has inline padding with negative margin so the shadows aren't clipped.
+
+22. **9th tour + shorter card titles + taller photos (2026-10-13, on request):**
+   - New tour (no slug, so it links to /contact?tour=…): "Phobjikha Crane Valley: Black-Necked Cranes and Gangtey Monastery", Nature, 6 days, places Paro · Thimphu · Punakha · Phobjikha (Gangtey), photo `Black Neck Cranes.jpg` (also used by the cranes blog card). Placeholder like the other tours, so the owner should confirm it. Destinations now shows "View 1 tour" for Phobjikha.
+   - TourCard shows only the name before the colon ("Punakha Valley Cultural Journey") at 20px; the full title stays on the detail page banner. The "Handpicked for you" (FeaturedRetreats) cards do the same.
+   - TourCard photo is square (`aspect-ratio: 1 / 1`, image requested at 800 × 800). It applies everywhere TourCard is used (homepage, /tours, related tours).
+
+23. **Inner-page banner text = homepage hero (2026-10-16, on request):** `PageHero` now uses the homepage hero text styles: a Parisienne script tagline (`kicker`, teal tint, clamp(30px, 1.6vw + 22px, 44px)) above a white Playfair Display 500 title at the homepage size clamp(30px, 3vw + 12px, 56px), max-width 860px. This replaces the uppercase spaced kicker and the 28–44px bold sans title of step 12. Taglines are sentence case ("Our tours", "Contact us", "Trekking tour · 9 days"). The overlay keeps the lighter photo of step 17 plus the homepage's soft black radial shade behind the text, so the script reads on bright photos (e.g. the butter-lamp article).
+
+24. **Inner-page polish (2026-10-16, on request "make the inner pages nicer"):**
+   - `PageHero`: slow 14s zoom-out on the photo, staggered fade-up of tagline/title/text/breadcrumb, a short four-colour bar under the title, and a "Scroll" mouse cue (links to `#after-hero`; hidden under 768px wide / 700px tall; `overlap` prop lifts it above the overlapping cards on Contact and tour detail). All off for reduced motion.
+   - Cards (About values / steps / team, Contact info cards): lift on hover, the brand bar grows along the top, icons fill Global Tide.
+   - About story photo and Destinations rows: an offset Misty Horizon outline frame behind the photo (Destinations alternates side with the row).
+   - Contact: the enquiry form is a white card with the brand bar on top (inputs Cloud Mist); fixed the textarea placeholder showing in monospace.
+   - Tour detail: left-aligned block titles get the four-colour bar; facts bar has dividers; gallery = one wide 2:1 lead photo + three squares.
+   - Blog: "More stories" grid centres an incomplete last row; articles have a reading-progress bar along the top and a teal drop cap on the intro.
+
+
+25. **All missing pages built (2026-10-16, on request "create a page for every title mentioned"):**
+   - **6 travel-info pages** from the footer, one template `src/pages/[guide].astro` + content in `src/data/guides.ts` (block list like the blog, plus `table`, `faq` and `links` blocks): /bhutan-visa-sdf, /travel-guidelines, /festival-calendar, /trekking-seasons, /faqs (Contact FAQs + 6 more), /terms-and-conditions. Layout: PageHero, article with brand-bar h2s, sticky sidebar (On this page, Travel information links, contact card), CtaBand. Footer links point to them; "Why travel with us" → /about#values-title.
+   - **3 tour pages** (every tour now has a slug): /tours/thimphu-heritage-tour (5 days), /tours/druk-path-trek (7 days, banner `Snowman Race48.jpg`), /tours/phobjikha-crane-valley (6 days).
+   - **2 blog articles** (no "Coming soon" posts left): /blog/phobjikha-black-necked-cranes, /blog/chele-la-sunrise.
+   - 24 pages in total. A crawl of `dist` found no broken internal links; the only `#` links left are the social icons.
+   - **Minimal text (same day, on request):** the 6 info pages and the 2 new articles were cut to short intros, one-line paragraphs and short lists (no body images on the info pages; FAQ answers one sentence). Keep new content on these pages just as brief.
+
+
+26. **Destinations page redesigned (2026-10-16, on request "change destination page design totally"):** replaced the jump chips + alternating rows. Now: "Where we travel" head with a west → east route (round photo stops, dashed road, altitude; scrolls sideways on phones); a sticky scroll-spy bar under the header (active valley in Deep Horizon); valleys grouped into Western / Central Bhutan chapters (`regions` in destinations.ts); each valley = full-width photo (16:7 desktop, 16:9 tablet, 4:3 phone) with region pill, name and tagline, and a white card overlapping its bottom (text + buttons | Don't miss | facts); then a "The valleys at a glance" table (Morning Haze band; rows become cards under 768px). Data reordered into road order. **No numbers anywhere on the page** (route badges, bar chips, region "01 – 04" pills, outlined photo numbers and table circles removed on request, same day).
+
 **Lighthouse** (production build, before step 4): mobile 94 / 100 / 100 / 100, desktop 99 / 96 / 100 / 100.
 
 ## Open items (need the owner)
 
-- **Placeholder business data (from step 6), replace with real figures:** tour prices (US$ per person), group sizes, durations, ratings / "(120)" review counts, photo/video counts, blog dates, and the **testimonials, which are written examples and not real guests**. Do not launch with them.
+- **Placeholder business data (from step 6), replace with real figures:** group sizes, durations, ratings / "(120)" review counts, photo/video counts, blog dates, and the testimonials (not shown now; written examples, not real guests). Do not launch with them.
 - **Destination tiles:** the Punakha (mask-dancer photo) and Trongsa (monk-at-door photo) pairings are a best guess. Confirm where those photos were taken.
 - **Tour itineraries are sample plans** written from general Bhutan knowledge (routes, passes, approx. altitudes). The owner should check them against their real programmes, and the inclusions too.
 - **Confirm the email:** the visiting card prints "kdglobal2026@**gamil**.com". The site uses @gmail.com on the assumption it's a typo (gamil.com is a known typo domain). Fix it in `site.email` if the card was right.
-- **About team profiles are placeholders:** the names, roles and bios in `about.team` are made-up examples, and there are no photos. Replace them with the real staff and add photos to `src/assets/images` before launch.
+- **About team bios** are short role descriptions written for the real staff (step 19). The owner can refine them, and add photos to `src/assets/images`.
 - **Contact page placeholders:** office hours (in `contact.hours`). The map points at Babesa Highway generally, not an exact office pin.
-- **Tours dropdown links** all go to `#tours` (there are no tour-type pages yet).
-- **Partner logos** are made-up names.
-- **Social links** are `#`.
+- **Social links** are `#` (Footer + Contact "Follow our journeys"); they need the real profile URLs.
+- **New content to check (step 25):** the 6 travel-info pages, 3 new tour itineraries and 2 blog articles were written from general Bhutan knowledge. Check especially the **visa fee (US$40) and SDF rates (US$100 / US$50 children 6–12 / free under 6 / ₹1,200 Indian nationals)**, festival months, trek altitudes, and have the **Terms & conditions** reviewed (deposit, cancellation charges and payment methods are deliberately left to the booking confirmation).
+- **Messenger:** `site.messenger` is a placeholder ("kdglobal"); set the real Facebook page username.
 - **Before launch:** `site:` is set to https://kdglobal.bt. Change it if the live site uses www or another domain.
 - **Logo PDF:** `KD_LOGO_.pdf` couldn't be rendered here (no poppler). If it contains extra brand rules (clear space, minimum size), check them.
 

@@ -26,6 +26,10 @@
   --soft: var(--morning-haze); /* panels, tinted sections, icon circles */
   --soft-2: #d3dcdf; /* Morning Haze, one step deeper: stronger fills */
   --white: #fff;
+  --whatsapp: #25d366; /* WhatsApp brand green: chat button only */
+  --whatsapp-dark: #128c7e;
+  --messenger: #0866ff; /* Messenger brand blue: chat button only */
+  --messenger-dark: #0552c7;
   --line: var(--morning-haze);
 
   /* Type (guideline §05): primary = Aeonik (General Sans stands in until licensed files are supplied);
@@ -182,6 +186,22 @@ ul {
 
 .section {
   padding-block: var(--section);
+}
+/* One equal gap between sections site-wide: two sections on the same background share a single --section gap
+   instead of stacking both paddings. A tinted section (.section-soft) keeps its padding on both sides,
+   and so does the section after it, so the gap inside each colour band is the same.
+   (A component's inline <script> can sit between two sections; :where() keeps that from raising specificity.) */
+.section + .section,
+.section + :where(script) + .section {
+  padding-top: 0;
+}
+.section.section-soft,
+.section-soft + .section,
+.section-soft + :where(script) + .section {
+  padding-top: var(--section);
+}
+.section-soft {
+  background: var(--soft);
 }
 
 .section-head {
@@ -356,7 +376,7 @@ ul {
   letter-spacing: -0.005em;
   color: var(--primary);
 }
-/* Parisienne: one short greeting/tagline per page, display size only, Global Tide; never body text or all caps */
+/* Parisienne: short tagline above each centred section title (owner's choice, 2026-10-13), display size only, Global Tide; never body text or all caps */
 .script-accent {
   display: inline-block;
   font-family: var(--font-display-script);

@@ -1,6 +1,8 @@
 ---
 import { Image } from "astro:assets";
+import Icon from "./Icon.astro";
 import { destinations } from "../data/home";
+import { destinationList } from "../data/destinations";
 
 // Image size per tile shape
 const sizes = {
@@ -17,16 +19,18 @@ const sizes = {
     <header class="section-head" data-reveal>
       <span class="script-accent">Explore the valleys</span>
       <h2 id="dest-title" class="section-title">Discover Bhutan's most beloved places</h2>
+      <p class="section-subtitle">From the gateway valley of Paro to the temples of Bumthang — every valley has its own festivals, dzongs and trails.</p>
     </header>
 
     <ul class="bento">
       {
         destinations.map((d, i) => (
           <li class={`tile tile-${d.area}`} data-reveal style={`--reveal-delay:${i * 80}ms`}>
-            <a href={`/destinations#${d.area}`} class="tile-link" aria-label={`${d.name} — ${d.tours} tours`}>
+            <a href={`/destinations#${d.area}`} class="tile-link">
+              {/* decorative: the link is named by the valley name, so screen readers don't hear the photo description first */}
               <Image
                 src={d.image}
-                alt={d.alt}
+                alt=""
                 width={sizes[d.area].w}
                 height={sizes[d.area].h}
                 widths={[360, 560, sizes[d.area].w]}
@@ -34,15 +38,19 @@ const sizes = {
                 loading="lazy"
                 class="tile-img"
               />
-              <span class="tile-label">
-                <strong>{d.name}</strong>
-                <span>{d.tours} {d.tours === 1 ? "Tour" : "Tours"}</span>
+              <strong class="tile-name">{d.name}</strong>
+              <span class="tile-arrow" aria-hidden="true">
+                <Icon name="arrow-right" size={18} />
               </span>
             </a>
           </li>
         ))
       }
     </ul>
+
+    <div class="dest-more" data-reveal>
+      <a href="/destinations" class="btn btn-primary">View all {destinationList.length} destinations <Icon name="arrow-right" size={18} /></a>
+    </div>
   </div>
 </section>
 
@@ -50,7 +58,7 @@ const sizes = {
   .bento {
     display: grid;
     grid-template-columns: 1fr;
-    grid-auto-rows: 260px;
+    grid-auto-rows: 280px;
     gap: 16px;
   }
   @media (min-width: 576px) {
@@ -61,7 +69,7 @@ const sizes = {
         "punakha bumthang"
         "trongsa paro"
         "trongsa .";
-      grid-auto-rows: 240px;
+      grid-auto-rows: 260px;
     }
     .tile-punakha { grid-area: punakha; }
     .tile-thimphu { grid-area: thimphu; }
@@ -70,7 +78,7 @@ const sizes = {
     .tile-trongsa { grid-area: trongsa; }
   }
   @media (min-width: 576px) and (max-width: 991.98px) {
-    /* fill the empty cell: London spans the last two rows */
+    /* fill the empty cell: Paro spans the last two rows */
     .bento {
       grid-template-areas:
         "punakha thimphu"
@@ -85,13 +93,13 @@ const sizes = {
       grid-template-areas:
         "punakha thimphu thimphu trongsa"
         "punakha bumthang paro trongsa";
-      grid-auto-rows: 280px;
+      grid-auto-rows: 290px;
       gap: 24px;
     }
   }
   @media (min-width: 1200px) {
     .bento {
-      grid-auto-rows: 300px;
+      grid-auto-rows: 310px;
       gap: 30px;
     }
   }
@@ -102,41 +110,90 @@ const sizes = {
     height: 100%;
     overflow: hidden;
     border-radius: 20px;
+    color: var(--white);
+    isolation: isolate;
   }
   .tile-link :global(.tile-img) {
+    position: absolute;
+    inset: 0;
+    z-index: -2;
     width: 100%;
     height: 100%;
     object-fit: cover;
     transition: transform 0.8s var(--ease);
   }
+  /* Black shade rising from the bottom so the name reads on any photo; deepens on hover */
+  .tile-link::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: linear-gradient(180deg, rgba(0, 0, 0, 0) 40%, rgba(0, 0, 0, 0.45) 70%, rgba(0, 0, 0, 0.8) 100%);
+    transition: opacity 0.4s var(--ease);
+  }
+  .tile-link::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: rgba(0, 0, 0, 0.2);
+    opacity: 0;
+    transition: opacity 0.4s var(--ease);
+  }
   .tile-link:hover :global(.tile-img),
   .tile-link:focus-visible :global(.tile-img) {
     transform: scale(1.07);
   }
-  .tile-label {
+  .tile-link:hover::after,
+  .tile-link:focus-visible::after {
+    opacity: 1;
+  }
+
+  .tile-name {
     position: absolute;
-    inset: auto 14px 14px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 10px;
-    padding: 14px 20px;
-    border-radius: 14px;
-    background: var(--white);
-    color: var(--primary);
+    left: 22px;
+    right: 76px;
+    bottom: 26px;
+    font-size: clamp(24px, 0.8vw + 18px, 30px);
+    font-weight: 700;
+    line-height: 1.15;
+    letter-spacing: -0.01em;
+  }
+
+  /* Round arrow, bottom right: glass at rest, Global Tide and pointing forward on hover */
+  .tile-arrow {
+    position: absolute;
+    right: 20px;
+    bottom: 22px;
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    background: rgba(255, 255, 255, 0.12);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
     transition:
       background-color 0.3s,
-      color 0.3s;
+      border-color 0.3s;
   }
-  .tile-link:hover .tile-label {
+  .tile-arrow :global(svg) {
+    transform: rotate(-45deg);
+    transition: transform 0.35s var(--ease);
+  }
+  .tile-link:hover .tile-arrow,
+  .tile-link:focus-visible .tile-arrow {
     background: var(--accent);
-    color: var(--white);
+    border-color: var(--accent);
   }
-  .tile-label strong {
-    font-size: 20px;
-    font-weight: 500;
+  .tile-link:hover .tile-arrow :global(svg),
+  .tile-link:focus-visible .tile-arrow :global(svg) {
+    transform: rotate(0);
   }
-  .tile-label span {
-    font-size: 15px;
+
+  .dest-more {
+    margin-top: 48px;
+    text-align: center;
   }
 </style>
