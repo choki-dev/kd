@@ -1,6 +1,7 @@
 ---
 import Icon from "./Icon.astro";
 import Logo from "./Logo.astro";
+import SiteSearch from "./SiteSearch.astro";
 import { nav } from "../data/home";
 
 // Highlight the link of the page being viewed ("/about" etc.; hash links never match)
@@ -46,7 +47,7 @@ const current = (href?: string) => (href === path ? "page" : undefined);
     </nav>
 
     <div class="header-actions">
-      <a href="/#search" class="icon-btn" aria-label="Search tours"><Icon name="search" size={20} /></a>
+      <a href="/#search" class="icon-btn" aria-label="Search the site" aria-haspopup="dialog" data-search-open><Icon name="search" size={20} /></a>
       <button type="button" class="icon-btn hamburger" aria-label="Open menu" aria-expanded="false" aria-controls="mobile-drawer" data-drawer-open>
         <Icon name="menu" size={22} />
       </button>
@@ -93,6 +94,8 @@ const current = (href?: string) => (href === path ? "page" : undefined);
     </ul>
   </nav>
 </aside>
+
+<SiteSearch />
 
 <style>
   .site-header {

@@ -78,10 +78,10 @@ src/
 ├─ pages/blog/[slug].astro  article template: PageHero (Home › Blog › title), byline + reading time, intro, blocks (h2/p/list/image/tip), sticky sidebar (In this article TOC, related tours, contact card), More stories
 ├─ data/blog.ts             blog page text + article bodies keyed by slug (block list) + readingMinutes()
 ├─ pages/[guide].astro      travel-info pages (visa & SDF, guidelines, festivals, trekking seasons, FAQs, terms) from data/guides.ts
-├─ pages/contact.astro      Contact Us: PageHero, 4 overlapping info cards, enquiry form (mailto, no backend), Google Maps embed, FAQ accordion
+├─ pages/contact.astro      Contact Us: PageHero, 4 overlapping info cards, enquiry form (sent via FormSubmit to `site.email`, no backend), Google Maps embed, FAQ accordion
 ├─ styles/global.css        tokens, base, container/section, buttons, badges, reveal animation
 └─ components/              Header, Hero, SearchBar, TourTypes, FeaturedRetreats, BestSellingTours, TourCard,
-                            PopularDestinations, VacationAbout, Testimonials, BrandLogos, LatestNews, Footer,
+                            PopularDestinations, VacationAbout, Testimonials, BrandLogos, LatestNews, Footer, SiteSearch,
                             PageHero (inner-page banner + breadcrumb), CtaBand (deep-teal call-to-action, About + Tours), ChatWidget, Logo, Icon (inline SVG icon set; names typed by IconName in home.ts)
 ```
 
@@ -91,6 +91,7 @@ src/
 
 1. **Header** (fixed): transparent over the hero with the white logo; on scroll it turns white with the colour logo and deep-teal nav.
    - Nav: **Home · Tours ▾ (Cultural Tours, Festival Tours, Trekking Tours, Luxury Tours) · Destination · Blog · Contact Us**, plus a search icon.
+   - **Site search (2026-10-16, on request):** the search icon opens `SiteSearch.astro`, a native `<dialog>` (Esc / backdrop / × close; also Ctrl+K or "/"). Live results as you type, grouped Tours / Destinations / Travel information / Blog / Pages, with thumbnails and highlighted matches; every word must match (case, accents and apostrophes ignored). The index is built at build time from home.ts, tourDetails.ts (highlights as keywords), destinations.ts, guides.ts and pages.ts, so new content is searchable automatically; links include the base path. Without JS the icon still links to the homepage search bar.
    - Below 1200px: a deep-teal slide-in drawer with accordion sub-menus.
 2. **Hero:** 3-slide fade slider (`slide1–3.jpg`), autoplay that pauses on hover/focus and is off for reduced motion, a "Follow us" bar, arrows and a "1 / 3" counter. Since 2026-10-13 (on request): darker overlay (deep teal gradient + charcoal), a Parisienne tagline "Welcome to Bhutan" (`site.kicker`, in `--accent-tint`) above a Playfair Display 500 headline in white (same clamp size as step 12), and no activity chips (`heroActivities` deleted).
 3. **Search bar:**
@@ -146,7 +147,7 @@ src/
    - Banner photos: `buddha.jpg` (About), `temple.jpg` (Contact). The story section uses `Ben-Richards-Tourism-Bhutan-001` + `about-couple.jpg`.
    - Nav: added **About Us**; Contact Us → /contact; all homepage anchors are now `/#…` so they work from inner pages. Header marks the current page with `aria-current` (styled like hover).
    - Footer links are now `{label, href}`; `#` = page not built yet.
-   - Enquiry form validates required fields, then opens a `mailto:` to `site.email` with the details. **No server-side sending.** Add a form service or backend if the owner wants submissions without the visitor's email app.
+   - Enquiry form validates required fields, then (since 2026-10-16, on request) POSTs the enquiry as JSON to **FormSubmit** (`site.formEndpoint` = formsubmit.co/ajax/<email>), which emails it to `site.email` with the visitor's address as Reply-To. Shows "Sending…", then a thank-you or an error with a direct email link. `_honey` spam trap; no account or npm package. **The very first submission triggers an activation email to the inbox; the owner must click "Activate Form" once** (earlier: a `mailto:` link).
 8. **Tours page (/tours, 2026-10-08):** lists all `tours` with client-side filters + sort (no reload). Tours menu = All Tours + 4 types linking to `/tours?type=…`; homepage type circles link there too; homepage best-selling grid got a "View all tours" button; footer "Our tours" → /tours. Banner photo `Snowman Race48.jpg`. Tour cards still link to `#` (no tour detail pages yet).
 9. **Tour detail pages (2026-10-08), one per category:** /tours/punakha-valley-cultural-journey (Cultural), /paro-tsechu-festival-tour (Festival), /jomolhari-base-camp-trek (Trekking), /luxury-bhutan-thimphu-to-bumthang (Luxury), /tigers-nest-pilgrimage (Spiritual), /bumthang-valleys (Nature).
    - **The build fails on purpose** if a slugged tour has no tourDetails entry or its itinerary length ≠ `days`.
@@ -239,6 +240,8 @@ src/
 - **Contact page placeholders:** office hours (in `contact.hours`). The map points at Babesa Highway generally, not an exact office pin.
 - **Social links** are `#` (Footer + Contact "Follow our journeys"); they need the real profile URLs.
 - **New content to check (step 25):** the 6 travel-info pages, 3 new tour itineraries and 2 blog articles were written from general Bhutan knowledge. Check especially the **visa fee (US$40) and SDF rates (US$100 / US$50 children 6–12 / free under 6 / ₹1,200 Indian nationals)**, festival months, trek altitudes, and have the **Terms & conditions** reviewed (deposit, cancellation charges and payment methods are deliberately left to the booking confirmation).
+- **Contact form is in TEST mode (2026-10-16):** `site.formEndpoint` sends enquiries to choki@abit.bt (the developer) for testing. **Switch it back to kdglobal2026@gmail.com before launch.**
+- **Activate the contact form:** send one test enquiry from the live site, then click "Activate Form" in the email FormSubmit sends to kdglobal2026@gmail.com. If the email address changes, update `site.formEndpoint` too (and activate again).
 - **Messenger:** `site.messenger` is a placeholder ("kdglobal"); set the real Facebook page username.
 - **Before launch:** `site:` is set to https://kdglobal.bt. Change it if the live site uses www or another domain.
 - **Logo PDF:** `KD_LOGO_.pdf` couldn't be rendered here (no poppler). If it contains extra brand rules (clear space, minimum size), check them.

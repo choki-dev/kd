@@ -54,7 +54,9 @@ const cards: { icon: IconName; title: string; value: string; href?: string; valu
           <h2 id="form-title" class="section-title">{form.title}</h2>
           <p class="form-intro">{form.text}</p>
 
-          <form class="form" data-enquiry data-email={site.email} novalidate>
+          <form class="form" data-enquiry data-email={site.email} data-endpoint={site.formEndpoint} novalidate>
+            <!-- Spam trap for bots (FormSubmit drops submissions that fill it); hidden from people and screen readers -->
+            <input type="text" name="_honey" tabindex="-1" autocomplete="off" aria-hidden="true" class="honey" />
             <div class="row">
               <label class="fld">
                 <span>Full name *</span>
@@ -97,10 +99,12 @@ const cards: { icon: IconName; title: string; value: string; href?: string; valu
             </label>
             <p class="form-error" role="alert" hidden data-form-error>Please fill in your name, a valid email and a message.</p>
             <p class="form-ok" role="status" hidden data-form-ok>
-              <Icon name="check" size={18} /> Your email app should now open with the enquiry. If it doesn't, email us at
-              <a href={`mailto:${site.email}`}>{site.email}</a>.
+              <Icon name="check" size={18} /> Thank you! Your enquiry has been sent. We'll reply to you by email soon.
             </p>
-            <button type="submit" class="btn btn-primary">Send enquiry <Icon name="arrow-right" size={18} /></button>
+            <p class="form-error" role="alert" hidden data-send-error>
+              Sorry, your enquiry couldn't be sent. Please try again, or email us at <a href={`mailto:${site.email}`}>{site.email}</a>.
+            </p>
+            <button type="submit" class="btn btn-primary" data-submit><span data-submit-label>Send enquiry</span> <Icon name="arrow-right" size={18} /></button>
           </form>
         </div>
 
@@ -311,8 +315,25 @@ const cards: { icon: IconName; title: string; value: string; href?: string; valu
     color: var(--accent);
     font-weight: 500;
   }
+  .form-error a {
+    color: inherit;
+    font-weight: 500;
+    text-decoration: underline;
+  }
   .form .btn {
     justify-self: start;
+  }
+  .form .btn:disabled {
+    opacity: 0.7;
+    cursor: progress;
+  }
+  /* Spam trap: off-screen, never seen or tabbed to by people */
+  .honey {
+    position: absolute;
+    left: -9999px;
+    width: 1px;
+    height: 1px;
+    opacity: 0;
   }
 
   .side {
@@ -481,13 +502,20 @@ const cards: { icon: IconName; title: string; value: string; href?: string; valu
 </style>
 
 <script>
-  // Enquiry form: validate, then open the visitor's email app with the enquiry filled in
+  // Enquiry form: validate, then send it through FormSubmit (site.formEndpoint) to the company inbox.
+  // If sending fails, the error message offers a direct email link.
   const form = document.querySelector<HTMLFormElement>("[data-enquiry]");
   const error = document.querySelector<HTMLElement>("[data-form-error]");
+  const sendError = document.querySelector<HTMLElement>("[data-send-error]");
   const ok = document.querySelector<HTMLElement>("[data-form-ok]");
+  const submit = document.querySelector<HTMLButtonElement>("[data-submit]");
+  const submitLabel = document.querySelector<HTMLElement>("[data-submit-label]");
+  let sending = false;
 
-  form?.addEventListener("submit", (e) => {
+  form?.addEventListener("submit", async (e) => {
     e.preventDefault();
+    if (sending) return;
+    if (sendError) sendError.hidden = true;
     const required = [...form.querySelectorAll<HTMLInputElement | HTMLTextAreaElement>("[required]")];
     let firstBad: HTMLElement | undefined;
     required.forEach((el) => {
@@ -516,8 +544,38 @@ const cards: { icon: IconName; title: string; value: string; href?: string; valu
       get("message"),
     ].join("\n");
     const subject = `Bhutan tour enquiry — ${get("name")}`;
-    window.location.href = `mailto:${form.dataset.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-    if (ok) ok.hidden = false;
+
+    sending = true;
+    if (ok) ok.hidden = true;
+    if (submit) submit.disabled = true;
+    if (submitLabel) submitLabel.textContent = "Sending…";
+    try {
+      const res = await fetch(form.dataset.endpoint!, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Accept: "application/json" },
+        body: JSON.stringify({
+          _subject: subject,
+          _template: "box",
+          _captcha: "false",
+          _honey: get("_honey"),
+          name: get("name"),
+          email: get("email"), // FormSubmit sets this as Reply-To, so "Reply" in the inbox answers the visitor
+          enquiry: body,
+        }),
+      });
+      const result = await res.json().catch(() => ({}));
+      if (!res.ok || String(result.success) !== "true") throw new Error(result.message || `HTTP ${res.status}`);
+      form.reset();
+      if (ok) ok.hidden = false;
+      ok?.scrollIntoView({ block: "nearest", behavior: "smooth" });
+    } catch (err) {
+      console.warn("Enquiry not sent:", err);
+      if (sendError) sendError.hidden = false;
+    } finally {
+      sending = false;
+      if (submit) submit.disabled = false;
+      if (submitLabel) submitLabel.textContent = "Send enquiry";
+    }
   });
 
   // Coming from a tour or destination page (?tour=<title>&type=<category> or ?place=<name>): preselect the interest and start the message

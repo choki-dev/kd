@@ -44,6 +44,11 @@ export const site = {
   whatsapp: "+975 17936364", // floating WhatsApp chat button (number from the owner, 2026-10-16)
   messenger: "kdglobal", // Facebook page username for the Messenger chat button (m.me/<username>) — PLACEHOLDER, replace with the real page
   email: "kdglobal2026@gmail.com",
+  // Contact-form delivery (no backend): FormSubmit forwards each enquiry to this inbox. The first enquiry sends an
+  // activation email to the inbox; click "Activate Form" once, and every enquiry after that arrives normally.
+  // TEMPORARY (2026-10-16): enquiries go to the developer's inbox for testing. Switch back to
+  // "https://formsubmit.co/ajax/kdglobal2026@gmail.com" before launch (and activate it once there).
+  formEndpoint: "https://formsubmit.co/ajax/choki@abit.bt",
   address: "Express Highway, 1101 Babesa Highway, Thimphu, Bhutan",
   website: "kdglobal.bt",
 };

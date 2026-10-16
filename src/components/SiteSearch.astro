@@ -1,0 +1,468 @@
+---
+// Site search: the header's search icon opens this dialog. The index (tours, destinations, blog articles, travel-info
+// pages and main pages) is built here at build time from the data files, so it never goes out of date.
+// Search runs in the browser: every word typed must appear in the title, summary or keywords.
+import { getImage } from "astro:assets";
+import type { ImageMetadata } from "astro";
+import Icon from "./Icon.astro";
+import { tours, tourHref, posts, postHref, tourCategories } from "../data/home";
+import { tourDetails } from "../data/tourDetails";
+import { destinationList } from "../data/destinations";
+import { guides, guideHref } from "../data/guides";
+import { about } from "../data/pages";
+
+// Links in this JSON aren't touched by the GitHub Pages link rewrite, so add the base path here
+const base = import.meta.env.BASE_URL.replace(/\/$/, "");
+const thumb = async (src: ImageMetadata) => (await getImage({ src, width: 112, height: 112, format: "webp" })).src;
+
+type Entry = { group: string; title: string; text: string; href: string; keys: string; img?: string };
+
+const tourEntries: Entry[] = await Promise.all(
+  tours.map(async (t) => {
+    const d = t.slug ? tourDetails[t.slug] : undefined;
+    return {
+      group: "Tours",
+      title: t.title.split(/:\s*/)[0],
+      text: `${t.days} days · ${t.category} · ${t.places.join(", ")}`,
+      href: tourHref(t),
+      keys: [t.title, t.category, t.city, ...t.places, ...(d?.highlights ?? [])].join(" "),
+      img: await thumb(t.image),
+    };
+  }),
+);
+const destinationEntries: Entry[] = await Promise.all(
+  destinationList.map(async (d) => ({
+    group: "Destinations",
+    title: d.name,
+    text: d.tagline,
+    href: `/destinations#${d.id}`,
+    keys: [d.region, d.bestFor, ...d.highlights].join(" "),
+    img: await thumb(d.image),
+  })),
+);
+const postEntries: Entry[] = await Promise.all(
+  posts.map(async (p) => ({ group: "Blog", title: p.title, text: p.excerpt, href: postHref(p), keys: p.category, img: await thumb(p.image) })),
+);
+const guideEntries: Entry[] = guides.map((g) => ({
+  group: "Travel information",
+  title: g.hero.title,
+  text: g.intro,
+  href: guideHref(g.slug),
+  keys: `${g.hero.kicker} ${g.meta.description}`,
+}));
+const pageEntries: Entry[] = [
+  { group: "Pages", title: "All tours", text: "Browse and filter every tour by type, destination and length.", href: "/tours", keys: tourCategories.join(" ") },
+  ...tourCategories.map((c) => ({ group: "Pages", title: `${c} tours`, text: `All our ${c.toLowerCase()} tours in Bhutan.`, href: `/tours?type=${c}`, keys: c })),
+  { group: "Pages", title: "Destinations", text: "Every valley we travel to, from Paro to Bumthang.", href: "/destinations", keys: "valleys places map" },
+  { group: "Pages", title: "About us", text: about.meta.description, href: "/about", keys: "team company story guides who we are" },
+  { group: "Pages", title: "Contact us", text: "Send an enquiry, call or visit our office in Thimphu.", href: "/contact", keys: "enquiry quote phone email whatsapp address book booking" },
+  { group: "Pages", title: "Blog", text: "Stories and travel tips from Bhutan.", href: "/blog", keys: "articles journal news" },
+];
+
+const index = [...tourEntries, ...destinationEntries, ...postEntries, ...guideEntries, ...pageEntries].map((e) => ({ ...e, href: `${base}${e.href}` }));
+const json = JSON.stringify(index).replace(/</g, "\\u003c");
+
+// Shown before anything is typed
+const suggestions = ["Tiger's Nest", "Trek", "Festival", "Punakha", "Visa", "Cranes"];
+---
+
+<dialog class="search" aria-labelledby="search-label" data-search>
+  <div class="search-panel">
+    <form class="search-bar" role="search" data-search-form>
+      <label id="search-label" for="site-search-input" class="sr-only">Search the site</label>
+      <Icon name="search" size={22} class="search-icon" />
+      <input
+        id="site-search-input"
+        type="search"
+        placeholder="Search tours, valleys, articles…"
+        autocomplete="off"
+        spellcheck="false"
+        enterkeyhint="search"
+        aria-controls="search-results"
+        data-search-input
+      />
+      <button type="button" class="search-close" aria-label="Close search" data-search-close><Icon name="x" size={22} /></button>
+    </form>
+
+    <div class="search-body">
+      <div class="search-suggest" data-search-suggest>
+        <p class="search-hint">Popular searches</p>
+        <ul class="chips">
+          {
+            suggestions.map((s) => (
+              <li>
+                <button type="button" class="chip" data-search-chip>
+                  {s}
+                </button>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+      <p class="search-status" role="status" aria-live="polite" data-search-status></p>
+      <div id="search-results" class="search-results" data-search-results></div>
+    </div>
+  </div>
+</dialog>
+
+<script type="application/json" id="search-index" set:html={json} />
+
+<script>
+  type Entry = { group: string; title: string; text: string; href: string; keys: string; img?: string };
+
+  const dialog = document.querySelector<HTMLDialogElement>("[data-search]");
+  const input = document.querySelector<HTMLInputElement>("[data-search-input]");
+  const results = document.querySelector<HTMLElement>("[data-search-results]");
+  const status = document.querySelector<HTMLElement>("[data-search-status]");
+  const suggest = document.querySelector<HTMLElement>("[data-search-suggest]");
+  const form = document.querySelector<HTMLFormElement>("[data-search-form]");
+  const entries: Entry[] = JSON.parse(document.getElementById("search-index")?.textContent || "[]");
+
+  // Case- and accent-insensitive; apostrophes ignored ("tigers nest" finds "Tiger's Nest")
+  const norm = (s: string) =>
+    s
+      .toLowerCase()
+      .normalize("NFD")
+      .replace(/[̀-ͯ]/g, "")
+      .replace(/['’]/g, "");
+  const docs = entries.map((e) => ({ e, title: norm(e.title), all: norm(`${e.title} ${e.text} ${e.keys} ${e.group}`) }));
+  const groupOrder = ["Tours", "Destinations", "Travel information", "Blog", "Pages"];
+
+  const esc = (s: string) => s.replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]!);
+  const mark = (text: string, terms: string[]) => {
+    let out = esc(text);
+    for (const t of terms) {
+      if (t.length < 2) continue;
+      // allow an apostrophe between any two letters, so "tigers" also marks "Tiger's"
+      const pattern = [...t.replace(/['’]/g, "")].map((c) => c.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")).join("(?:'|’)?");
+      out = out.replace(new RegExp(`(${pattern})`, "gi"), "<mark>$1</mark>");
+    }
+    return out;
+  };
+
+  const render = () => {
+    if (!input || !results || !status || !suggest) return;
+    const q = norm(input.value.trim());
+    const terms = q.split(/\s+/).filter(Boolean);
+    suggest.hidden = terms.length > 0;
+    if (!terms.length) {
+      results.innerHTML = "";
+      status.textContent = "";
+      return;
+    }
+    const hits = docs
+      .filter((d) => terms.every((t) => d.all.includes(t)))
+      .map((d) => ({ ...d, score: (d.title.startsWith(terms[0]) ? 3 : 0) + terms.filter((t) => d.title.includes(t)).length * 2 }))
+      .sort((a, b) => b.score - a.score);
+
+    status.textContent = hits.length ? `${hits.length} ${hits.length === 1 ? "result" : "results"}` : "";
+    if (!hits.length) {
+      results.innerHTML = `<div class="search-empty"><p>No results for “${esc(input.value.trim())}”.</p><p>Try another word, or <a href="${esc(document.querySelector<HTMLAnchorElement>("[data-search-contact]")?.href ?? "/contact")}">ask our team</a> — we plan custom trips too.</p></div>`;
+      return;
+    }
+    const raw = input.value.trim().split(/\s+/);
+    results.innerHTML = groupOrder
+      .map((g) => {
+        const list = hits.filter((h) => h.e.group === g).slice(0, 6);
+        if (!list.length) return "";
+        return `<section class="search-group"><h3>${g}</h3><ul>${list
+          .map(
+            ({ e }) =>
+              `<li><a href="${esc(e.href)}" class="search-hit">${
+                e.img ? `<img src="${esc(e.img)}" alt="" width="56" height="56" loading="lazy">` : `<span class="search-hit-icon" aria-hidden="true">›</span>`
+              }<span><strong>${mark(e.title, raw)}</strong><small>${mark(e.text, raw)}</small></span></a></li>`,
+          )
+          .join("")}</ul></section>`;
+      })
+      .join("");
+  };
+
+  const open = () => {
+    if (!dialog || dialog.open) return;
+    dialog.showModal();
+    document.documentElement.style.overflow = "hidden";
+    input?.focus();
+    input?.select();
+  };
+  const close = () => dialog?.open && dialog.close();
+
+  dialog?.addEventListener("close", () => (document.documentElement.style.overflow = ""));
+  // Click on the dimmed backdrop (outside the panel) closes
+  dialog?.addEventListener("click", (e) => e.target === dialog && close());
+  document.querySelector("[data-search-close]")?.addEventListener("click", close);
+  // Picking a result that points to the current page (e.g. #paro) should still close the dialog
+  results?.addEventListener("click", (e) => (e.target as Element).closest("a") && close());
+
+  // The header icon links to the homepage search bar without JS; with JS it opens this dialog
+  document.querySelectorAll<HTMLAnchorElement>("[data-search-open]").forEach((a) =>
+    a.addEventListener("click", (e) => {
+      e.preventDefault();
+      open();
+    }),
+  );
+  // Ctrl/⌘ + K or "/" opens search from anywhere (not while typing in a field)
+  document.addEventListener("keydown", (e) => {
+    const typing = (e.target as Element).closest("input, textarea, select, [contenteditable]");
+    if (((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "k") || (e.key === "/" && !typing)) {
+      e.preventDefault();
+      open();
+    }
+  });
+
+  input?.addEventListener("input", render);
+  document.querySelectorAll<HTMLButtonElement>("[data-search-chip]").forEach((chip) =>
+    chip.addEventListener("click", () => {
+      if (!input) return;
+      input.value = chip.textContent?.trim() ?? "";
+      render();
+      input.focus();
+    }),
+  );
+
+  // Enter opens the first result; arrow keys move between results and back to the field
+  form?.addEventListener("submit", (e) => {
+    e.preventDefault();
+    results?.querySelector<HTMLAnchorElement>("a.search-hit")?.click();
+  });
+  dialog?.addEventListener("keydown", (e) => {
+    if (e.key !== "ArrowDown" && e.key !== "ArrowUp") return;
+    const links = [...(results?.querySelectorAll<HTMLAnchorElement>("a.search-hit") ?? [])];
+    if (!links.length) return;
+    e.preventDefault();
+    const i = links.indexOf(document.activeElement as HTMLAnchorElement);
+    if (e.key === "ArrowDown") links[Math.min(i + 1, links.length - 1)].focus();
+    else if (i <= 0) input?.focus();
+    else links[i - 1].focus();
+  });
+</script>
+<a href="/contact" hidden data-search-contact></a>
+
+<style>
+  .search {
+    width: 100%;
+    max-width: 760px;
+    max-height: none;
+    margin: 0 auto;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: var(--text);
+    overflow: visible;
+  }
+  .search[open] {
+    animation: search-in 0.3s var(--ease);
+  }
+  .search::backdrop {
+    background: rgba(11, 61, 74, 0.6);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+  }
+  @keyframes search-in {
+    from {
+      opacity: 0;
+      transform: translateY(-16px);
+    }
+  }
+  .search-panel {
+    display: flex;
+    flex-direction: column;
+    max-height: calc(100dvh - 32px);
+    margin: 16px var(--gutter);
+    border-radius: var(--radius);
+    background: var(--white);
+    box-shadow: var(--shadow-lg);
+    overflow: hidden;
+  }
+  @media (min-width: 768px) {
+    .search-panel {
+      max-height: min(680px, calc(100dvh - 160px));
+      margin-top: 80px;
+    }
+  }
+
+  .search-bar {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 10px 10px 22px;
+    border-bottom: 1px solid var(--line);
+  }
+  .search-bar::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: -1px;
+    width: 72px;
+    height: 3px;
+    background: linear-gradient(90deg, var(--charcoal) 0 25%, var(--primary) 25% 50%, var(--accent) 50% 75%, var(--bluegray) 75% 100%);
+  }
+  .search-bar :global(.search-icon) {
+    flex: none;
+    color: var(--accent);
+  }
+  .search-bar input {
+    flex: 1;
+    min-width: 0;
+    height: 52px;
+    border: 0;
+    background: none;
+    font: inherit;
+    font-size: 18px;
+    color: var(--primary);
+    outline: none;
+  }
+  .search-bar input::placeholder {
+    color: var(--muted);
+  }
+  .search-bar input::-webkit-search-cancel-button {
+    display: none;
+  }
+  .search-close {
+    flex: none;
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    color: var(--primary);
+    transition:
+      background-color 0.25s,
+      color 0.25s;
+  }
+  .search-close:hover {
+    background: var(--soft);
+    color: var(--accent);
+  }
+
+  .search-body {
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    padding: 18px 22px 22px;
+  }
+  .search-hint,
+  .search-results :global(h3) {
+    margin-bottom: 10px;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+  .search-suggest[hidden] {
+    display: none;
+  }
+  .chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .chip {
+    min-height: 40px;
+    padding: 0 16px;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    background: var(--cloud-mist);
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--primary);
+    transition:
+      background-color 0.25s,
+      border-color 0.25s,
+      color 0.25s;
+  }
+  .chip:hover {
+    border-color: var(--accent);
+    background: var(--accent);
+    color: var(--white);
+  }
+  .search-status {
+    font-size: 13px;
+    color: var(--muted);
+  }
+  .search-status:empty {
+    display: none;
+  }
+  .search-status + .search-results {
+    margin-top: 12px;
+  }
+
+  .search-results :global(.search-group + .search-group) {
+    margin-top: 20px;
+  }
+  .search-results :global(ul) {
+    display: grid;
+    gap: 2px;
+  }
+  .search-results :global(.search-hit) {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 8px 10px;
+    margin-inline: -10px;
+    border-radius: var(--radius-sm);
+    color: var(--text);
+    transition: background-color 0.2s;
+  }
+  .search-results :global(.search-hit:hover),
+  .search-results :global(.search-hit:focus-visible) {
+    background: var(--cloud-mist);
+    outline: none;
+  }
+  .search-results :global(.search-hit:focus-visible) {
+    box-shadow: inset 0 0 0 2px var(--accent);
+  }
+  .search-results :global(img),
+  .search-results :global(.search-hit-icon) {
+    flex: none;
+    width: 56px;
+    height: 56px;
+    border-radius: 10px;
+    object-fit: cover;
+  }
+  .search-results :global(.search-hit-icon) {
+    display: grid;
+    place-items: center;
+    background: var(--soft);
+    color: var(--accent);
+    font-size: 26px;
+    line-height: 1;
+  }
+  .search-results :global(strong) {
+    display: block;
+    font-weight: 500;
+    color: var(--primary);
+    line-height: 1.3;
+  }
+  .search-results :global(small) {
+    display: -webkit-box;
+    margin-top: 2px;
+    font-size: 13px;
+    line-height: 1.45;
+    color: var(--muted);
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .search-results :global(mark) {
+    background: var(--accent-tint);
+    color: inherit;
+    border-radius: 3px;
+    padding: 0 1px;
+  }
+  .search-results :global(.search-empty) {
+    padding: 12px 0;
+    color: var(--muted);
+  }
+  .search-results :global(.search-empty a) {
+    color: var(--accent);
+    font-weight: 500;
+    text-decoration: underline;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .search[open] {
+      animation: none;
+    }
+  }
+</style>
