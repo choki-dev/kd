@@ -4,7 +4,9 @@ import { defineConfig, fontProviders } from "astro/config";
 // https://astro.build/config
 export default defineConfig({
   // Live domain (from the visiting card in the Brand Guidelines) — used for canonical and social-sharing image URLs
-  site: "https://kdglobal.bt",
+  // GitHub Pages preview (see .github/workflows/deploy.yml) overrides both: SITE_URL=https://choki-dev.github.io, BASE_PATH=/kd
+  site: process.env.SITE_URL || "https://kdglobal.bt",
+  base: process.env.BASE_PATH || "/",
 
   // Brand fonts (KD Global Brand Guidelines 2026, §05 Typography), downloaded at build time and served from this site
   // with metric-matched fallbacks. Used in BaseLayout via <Font />. Montserrat is the LOGO font only (it lives in the

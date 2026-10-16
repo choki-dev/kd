@@ -4,7 +4,9 @@ import Logo from "./Logo.astro";
 import { nav } from "../data/home";
 
 // Highlight the link of the page being viewed ("/about" etc.; hash links never match)
-const path = Astro.url.pathname.replace(/\/$/, "") || "/";
+// (GitHub Pages serves the site under a base path such as /kd: strip it so paths compare with the plain "/about" hrefs)
+const base = import.meta.env.BASE_URL.replace(/\/$/, "");
+const path = Astro.url.pathname.slice(base.length).replace(/\/$/, "") || "/";
 const current = (href?: string) => (href === path ? "page" : undefined);
 ---
 

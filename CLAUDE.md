@@ -245,4 +245,5 @@ src/
 
 ## Git / GitHub
 
+- **GitHub Pages (2026-10-16, on request):** `.github/workflows/deploy.yml` builds and deploys every push to `main` → https://choki-dev.github.io/kd/. It sets `SITE_URL`/`BASE_PATH=/kd` (read in astro.config.mjs; local builds and the kdglobal.bt domain are unaffected), then `scripts/prefix-base.mjs` prefixes the plain root links ("/tours" …) in dist HTML. Header strips the base before marking the current page. Testing locally in Git Bash needs `MSYS_NO_PATHCONV=1` or `/kd` turns into a Windows path. Needs Settings → Pages → Source: GitHub Actions (one-time, by the owner).
 - 2026-10-10: pushed to https://github.com/choki-dev/kd (branch `main`, remote `origin`). `.gitattributes` marks PDFs and images as binary (core.autocrlf=true on this machine had flagged the PDFs as text). `.kilo/` (stray agent worktree in src/pages) is gitignored.
