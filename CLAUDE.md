@@ -169,7 +169,7 @@ src/
    - Sentence-case headlines: hero slides, features, blog titles, "Discover Bhutan's most beloved places", "Follow us", "Read more", "Booking number", "Book now".
    - Logo usage already matched (full colour on white, white on Deep Horizon or photos, symbol as favicon).
    - **Not applied, needs the owner:** licensed Aeonik files; the guideline's "left-aligned headlines" (the site keeps centred section heads with the accent bar).
-15. **Real contact details (2026-10-08, from the guideline's visiting card, on request):** `site` in home.ts = phone +975 17754285, `phoneAlt` +975 77563215 (shown in the footer and on the Contact "Call us" card), email **kdglobal2026@gmail.com**, address "Express Highway, 1101 Babesa Highway, Thimphu, Bhutan", website kdglobal.bt. The map query is now Babesa Highway, Thimphu. `site: "https://kdglobal.bt"` is set in astro.config.mjs (canonical + OG image now output).
+15. **Real contact details (2026-10-08, from the guideline's visiting card, on request):** `site` in home.ts = phone +975 17754285, `phoneAlt` +975 77563215 (shown in the footer and on the Contact "Call us" card), email **gocoms@gobalcommerce.com** (changed on request 2026-10-19; was kdglobal2026@gmail.com), address "Changzamtog, Thimphu, Bhutan" (changed on request 2026-10-19; was Express Highway, 1101 Babesa Highway), website kdglobal.bt. The map query is Changzamtog, Thimphu. `site: "https://kdglobal.bt"` is set in astro.config.mjs (canonical + OG image now output).
 16. **Brand pattern on the CTA band (2026-10-08):** new `BrandPattern.astro`, an SVG of the guideline's cover/section-page arcs.
    - Geometry (measured from the PDF): identical circles of radius R, tangent to the top edge, each shifted R/4. Drawn back to front over Misty Horizon: gap (Morning Haze), Global Tide, gap, Deep Horizon, gap, Charcoal.
    - `CtaBand` shows it as a right-hand panel (38%) from 992px up, and as a 120–150px top strip below that.
@@ -235,13 +235,12 @@ src/
 - **Placeholder business data (from step 6), replace with real figures:** group sizes, durations, ratings / "(120)" review counts, photo/video counts, blog dates, and the testimonials (not shown now; written examples, not real guests). Do not launch with them.
 - **Destination tiles:** the Punakha (mask-dancer photo) and Trongsa (monk-at-door photo) pairings are a best guess. Confirm where those photos were taken.
 - **Tour itineraries are sample plans** written from general Bhutan knowledge (routes, passes, approx. altitudes). The owner should check them against their real programmes, and the inclusions too.
-- **Confirm the email:** the visiting card prints "kdglobal2026@**gamil**.com". The site uses @gmail.com on the assumption it's a typo (gamil.com is a known typo domain). Fix it in `site.email` if the card was right.
 - **About team bios** are short role descriptions written for the real staff (step 19). The owner can refine them, and add photos to `src/assets/images`.
-- **Contact page placeholders:** office hours (in `contact.hours`). The map points at Babesa Highway generally, not an exact office pin.
+- **Contact page placeholders:** office hours (in `contact.hours`). The map points at Changzamtog generally, not an exact office pin.
 - **Social links** are `#` (Footer + Contact "Follow our journeys"); they need the real profile URLs.
 - **New content to check (step 25):** the 6 travel-info pages, 3 new tour itineraries and 2 blog articles were written from general Bhutan knowledge. Check especially the **visa fee (US$40) and SDF rates (US$100 / US$50 children 6–12 / free under 6 / ₹1,200 Indian nationals)**, festival months, trek altitudes, and have the **Terms & conditions** reviewed (deposit, cancellation charges and payment methods are deliberately left to the booking confirmation).
-- **Contact form is in TEST mode (2026-10-16):** `site.formEndpoint` sends enquiries to choki@abit.bt (the developer) for testing. **Switch it back to kdglobal2026@gmail.com before launch.**
-- **Activate the contact form:** send one test enquiry from the live site, then click "Activate Form" in the email FormSubmit sends to kdglobal2026@gmail.com. If the email address changes, update `site.formEndpoint` too (and activate again).
+- **Contact form is in TEST mode (2026-10-16):** `site.formEndpoint` sends enquiries to choki@abit.bt (the developer) for testing. **Switch it to gocoms@gobalcommerce.com before launch.**
+- **Activate the contact form:** send one test enquiry from the live site, then click "Activate Form" in the email FormSubmit sends to gocoms@gobalcommerce.com. If the email address changes, update `site.formEndpoint` too (and activate again).
 - **Messenger:** `site.messenger` is a placeholder ("kdglobal"); set the real Facebook page username.
 - **Before launch:** `site:` is set to https://kdglobal.bt. Change it if the live site uses www or another domain.
 - **Logo PDF:** `KD_LOGO_.pdf` couldn't be rendered here (no poppler). If it contains extra brand rules (clear space, minimum size), check them.

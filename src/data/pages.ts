@@ -117,8 +117,8 @@ export const contact = {
     text: "Fill in the form and your email app will open with your enquiry ready to send. Fields marked * are required.",
     interests: ["Cultural tour", "Festival tour", "Trekking tour", "Luxury tour", "Spiritual / pilgrimage", "Nature & birding", "Not sure yet"],
   },
-  // Map of the office area (Babesa, Thimphu) — swap the query for the exact office pin if needed
-  mapSrc: "https://www.google.com/maps?q=Babesa+Highway,+Babesa,+Thimphu,+Bhutan&output=embed",
+  // Map of the office area (Changzamtog, Thimphu) — swap the query for the exact office pin if needed
+  mapSrc: "https://www.google.com/maps?q=Changzamtog,+Thimphu,+Bhutan&output=embed",
   faqs: [
     {
       q: "Do I need a visa to visit Bhutan?",
