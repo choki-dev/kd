@@ -1,10 +1,10 @@
 // Content for the About Us and Contact Us pages — edit text here, not in src/pages.
 import type { IconName } from "./home";
-import aboutHero from "../assets/images/buddha.jpg";
-import aboutStory from "../assets/images/Ben-Richards-Tourism-Bhutan-001 (1).jpg";
-import aboutGuide from "../assets/images/about-couple.jpg";
-import contactHero from "../assets/images/temple.jpg";
-import toursHero from "../assets/images/Snowman Race48.jpg";
+import aboutHero from "../assets/images/dochula-chortens-mist.jpg";
+import aboutStory from "../assets/images/dzong-courtyard.jpg";
+import aboutGuide from "../assets/images/kyichu-lhakhang.jpg";
+import contactHero from "../assets/images/thimphu-traffic-booth.jpg";
+import toursHero from "../assets/images/valley-prayer-flags.jpg";
 
 // ---------- About Us ----------
 export const about = {
@@ -18,7 +18,7 @@ export const about = {
     title: "Born in Bhutan, built around your journey",
     text: "We are a Thimphu-based team sharing the valleys, festivals and mountain trails of the kingdom we call home.",
     image: aboutHero,
-    alt: "Buddha Dordenma statue above the forested Thimphu valley",
+    alt: "The 108 chortens of Dochu La pass in the mist",
   },
   story: {
     eyebrow: "Kuzuzangpo la", // "hello" in Dzongkha — the page's one script accent
@@ -34,9 +34,9 @@ export const about = {
       "Support from arrival to departure",
     ],
     image: aboutStory,
-    alt: "Paro valley with Rinpung Dzong below rugged mountains",
+    alt: "Monk crossing a whitewashed dzong courtyard",
     imageSmall: aboutGuide,
-    altSmall: "Smiling Bhutanese elder in a traditional bamboo hat",
+    altSmall: "Kyichu Lhakhang, one of Bhutan's oldest temples, in Paro",
   },
   values: {
     title: "Why travel with us",
@@ -108,7 +108,7 @@ export const contact = {
     title: "Let's plan your Bhutan journey",
     text: "Questions about tours, festivals, visas or the SDF? Our team in Thimphu is happy to help.",
     image: contactHero,
-    alt: "Small white monastery on a forested hillside in Bhutan",
+    alt: "Traffic police pavilion on Thimphu's main street",
   },
   // Placeholder office hours — replace with the real ones
   hours: "Mon – Sat, 9:00 – 17:00 (Bhutan time, GMT+6)",
@@ -148,14 +148,14 @@ export const toursPage = {
   meta: {
     title: "Bhutan Tours — Cultural, Festival, Trekking & Luxury | KD Global",
     description:
-      "Browse KD Global's Bhutan tours: cultural journeys, tsechu festival trips, Himalayan treks, luxury holidays, pilgrimages and nature tours. Filter by type, destination and length.",
+      "Browse Bhutan tours by KD Global: cultural journeys, tsechu festivals, Himalayan treks, luxury holidays, pilgrimages and nature trips. Filter by type.",
   },
   hero: {
     kicker: "Our tours",
     title: "Find your journey through Bhutan",
     text: "Private, guided tours from short cultural breaks to high Himalayan treks — every itinerary can be tailored to you.",
     image: toursHero,
-    alt: "Glacial river winding through a green Himalayan valley under clouds",
+    alt: "Prayer flags strung across a forested valley",
   },
   // Duration filter buckets (days, inclusive)
   durations: [

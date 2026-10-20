@@ -11,6 +11,7 @@ import ChatWidget from "../../components/ChatWidget.astro";
 import Icon from "../../components/Icon.astro";
 import { site, tours, type IconName, type Tour } from "../../data/home";
 import { standardExcluded, standardIncluded, tourDetails, type TourDetail } from "../../data/tourDetails";
+import { absUrl, metaDescription, organizationId, shareImage } from "../../utils/seo";
 
 export const getStaticPaths = (() =>
   tours
@@ -49,9 +50,32 @@ const related = [
   ...tours.filter((t) => t !== tour && t.category === tour.category),
   ...tours.filter((t) => t !== tour && t.category !== tour.category && t.slug),
 ].slice(0, 3);
+
+const description = metaDescription(detail.overview[0]);
+const heroImage = detail.hero?.src ?? tour.image;
+
+// schema.org TouristTrip: the day-by-day plan as an itinerary, offered by KD Global (no price: rates are on request)
+const tripSchema = {
+  "@type": "TouristTrip",
+  name: tour.title,
+  description,
+  url: absUrl(`/tours/${tour.slug}`),
+  image: await shareImage(heroImage),
+  touristType: `${tour.category} travellers`,
+  provider: { "@id": organizationId },
+  itinerary: {
+    "@type": "ItemList",
+    numberOfItems: detail.itinerary.length,
+    itemListElement: detail.itinerary.map((d, i) => ({
+      "@type": "ListItem",
+      position: i + 1,
+      item: { "@type": "TouristAttraction", name: `Day ${i + 1}: ${d.title}`, description: d.text },
+    })),
+  },
+};
 ---
 
-<BaseLayout title={`${name} — ${tour.days}-Day Bhutan ${tour.category} Tour | KD Global`} description={`${detail.overview[0].slice(0, 150)}…`}>
+<BaseLayout title={`${name} — ${tour.days}-Day Bhutan ${tour.category} Tour | KD Global`} description={description} image={heroImage} imageAlt={detail.hero?.alt ?? tour.alt} schema={tripSchema}>
   <Header />
   <main id="main">
     <PageHero
@@ -59,7 +83,7 @@ const related = [
       kicker={`${tour.category} tour · ${tour.days} days`}
       title={name}
       text={subtitle}
-      image={detail.hero?.src ?? tour.image}
+      image={heroImage}
       alt={detail.hero?.alt ?? tour.alt}
       crumb={name}
       parents={[{ label: "Tours", href: "/tours" }]}

@@ -5,7 +5,7 @@
 Homepage for **KD Global Commerce & Services**, a Bhutan-based **travel & tours** company (earlier static versions of this site are in `D:\Website html\KD Global` and `D:\Website html\kd`).
 Built with **Astro 7.3 only**: Astro components, plain CSS and small vanilla-JS `<script>` blocks. No React, Vue, Svelte, Tailwind or UI/JS libraries, and no extra npm packages beyond `astro`.
 
-_Last updated: 2026-10-08_
+_Last updated: 2026-10-20_
 
 ## Run it
 
@@ -60,12 +60,13 @@ npm run preview   # serve dist/ — use another port if needed: npx astro previe
 ```
 astro.config.mjs            Fonts API (Montserrat); commented `site:` — set to the live domain before launch
 logo/                       brand source files (do not edit)
-public/                     favicon.png, apple-touch-icon.png
+public/                     favicon.png, apple-touch-icon.png, icon-192/512.png (arc mark, for site.webmanifest)
 src/
 ├─ data/home.ts             ALL homepage content + photo imports (edit content here, not in components)
-├─ assets/images/           site photos (Bhutan, supplied by the owner)
+├─ assets/images/           94 site photos from the owner's "D:\TCB Image" folder, compressed (max 2400px, mozjpeg q80), descriptive kebab-case names; each used in ONE slot (see step 28)
 ├─ assets/brand/            web logo files
-├─ layouts/BaseLayout.astro <head>: SEO/OG meta (OG image from slide1.jpg, only when `site` is set), font, skip link, scroll-reveal observer
+├─ layouts/BaseLayout.astro <head>: SEO/OG meta (props `image` = page photo for sharing, default slide1.jpg; `type`, `published`, `schema` = page JSON-LD), font preloads, skip link, scroll-reveal observer
+├─ utils/seo.ts             absUrl (site + base), metaDescription (≤160 chars), isoDate, shareImage, schema.org helpers (TravelAgency, BreadcrumbList, jsonLd)
 ├─ data/pages.ts            About Us + Contact Us content (hero, story, values, steps, FAQs, office hours, map URL)
 ├─ pages/index.astro        the homepage
 ├─ pages/about.astro        About Us: PageHero, story, values, how-we-plan steps, Meet our team, CTA band
@@ -78,6 +79,7 @@ src/
 ├─ pages/blog/[slug].astro  article template: PageHero (Home › Blog › title), byline + reading time, intro, blocks (h2/p/list/image/tip), sticky sidebar (In this article TOC, related tours, contact card), More stories
 ├─ data/blog.ts             blog page text + article bodies keyed by slug (block list) + readingMinutes()
 ├─ pages/[guide].astro      travel-info pages (visa & SDF, guidelines, festivals, trekking seasons, FAQs, terms) from data/guides.ts
+├─ pages/404.astro          Page not found (noindex, not in the sitemap): banner, quick links, the 3 featured tours
 ├─ pages/contact.astro      Contact Us: PageHero, 4 overlapping info cards, enquiry form (sent via FormSubmit to `site.email`, no backend), Google Maps embed, FAQ accordion
 ├─ styles/global.css        tokens, base, container/section, buttons, badges, reveal animation
 └─ components/              Header, Hero, SearchBar, TourTypes, FeaturedRetreats, BestSellingTours, TourCard,
@@ -228,12 +230,32 @@ src/
 
 26. **Destinations page redesigned (2026-10-16, on request "change destination page design totally"):** replaced the jump chips + alternating rows. Now: "Where we travel" head with a west → east route (round photo stops, dashed road, altitude; scrolls sideways on phones); a sticky scroll-spy bar under the header (active valley in Deep Horizon); valleys grouped into Western / Central Bhutan chapters (`regions` in destinations.ts); each valley = full-width photo (16:7 desktop, 16:9 tablet, 4:3 phone) with region pill, name and tagline, and a white card overlapping its bottom (text + buttons | Don't miss | facts); then a "The valleys at a glance" table (Morning Haze band; rows become cards under 768px). Data reordered into road order. **No numbers anywhere on the page** (route badges, bar chips, region "01 – 04" pills, outlined photo numbers and table circles removed on request, same day).
 
+27. **SEO + speed pass (2026-10-20, on request):**
+   - `sitemap.xml` + `robots.txt` are generated after each build by a small inline integration in astro.config.mjs (no npm package), using `site` + `base`; new pages appear automatically.
+   - Structured data (JSON-LD): TravelAgency on every page (+ WebSite on home), BreadcrumbList from PageHero, TouristTrip (with the day-by-day itinerary, no price) on tour pages, BlogPosting on articles, FAQPage on /faqs, Article on the other guides.
+   - Meta: og:url / og:locale / og:image size + alt, twitter image alt, article:published_time, robots max-image-preview; each inner page shares its own banner photo (1200×630 jpg). Long meta descriptions shortened (home, tours, blog, destinations); tour descriptions cut at a word boundary. Blog titles end "| KD Global".
+   - Speed: CSS inlined (`build.inlineStylesheets: "always"`, no render-blocking requests); unused font files dropped (General Sans 300, Playfair italic); preloads = General Sans 400/500 + Playfair + Parisienne (the banner title/tagline fonts); hero slides 2–3 load after the page `load` event (data-src, Hero.astro); logo gets a 360w size; "Read more" links carry sr-only post titles.
+   - Lighthouse mobile after: home 89–90 / 100 / 100 / 100 (real LCP ≈ FCP ≈ 0.3 s; the simulated 3.6 s is font-download modelling), tour + blog pages 96 / 100 / 100 / 100; desktop home 98 / 100 / 100 / 100.
+
+28. **New photo set from "D:\TCB Image", no repeats (2026-10-20, on request):**
+   - The folder has 131 files = 112 distinct photos (exact copies and smaller re-saves like "(1)"/"(2)" found by md5 + perceptual hash, plus a visual check). 94 were picked, compressed with sharp (941 MB → 35 MB) and copied in; the 27 old site photos were deleted (still in git history). The originals in D:\TCB Image are untouched.
+   - **Rule: every photo is used in one slot only.** The only sharing is an item's own photo: a tour's `image` on its TourCard (home, /tours, related tours) and its detail banner; a post's `image` on its cards and article banner; a valley's search thumbnail. New fields so nothing doubles on a page: `Tour.cover` (tall photo for the homepage "Handpicked" cards, set on the 3 featured tours) and `Destination.thumb` (round "road east" stop). Each tour gallery has 4 photos of its own; the Jomolhari / Druk Path `hero` overrides were removed (their card photos are wide now).
+   - Audit: no photo appears twice on any built page; all 94 are shown.
+   - (Superseded by step 29: banners are now AVIF + WebP.)
+
+29. **Image optimisation + image SEO (2026-10-20, on request):**
+   - Default encoder settings in astro.config.mjs `image.service.config`: WebP q72 effort 6, AVIF q55, JPEG q78 mozjpeg (a `quality` prop still wins). **After changing these, delete `node_modules/.astro/assets`**: Astro reuses cached files whose options look unchanged, so new defaults otherwise don't apply (the full rebuild takes ~2.5 min).
+   - Banners (homepage slide 1, PageHero) are `<Picture formats={["avif"]} fallbackFormat="webp">` (AVIF ~30% smaller; no JPEG copies). `picture:has(> .hero-img, > .page-hero-img) { display: contents }` in global.css keeps the old layout. Slides 2–3 stay deferred WebP.
+   - sitemap.xml now lists each page's content photos (`image:image`, every <img> with alt text; logos skipped) — 129 images.
+   - New: 404 page, `site.webmanifest` + 192/512 icons, BaseLayout `noindex` prop. "Handpicked" card `sizes` tightened.
+   - Lighthouse mobile: home 89, destinations 94, tour page 98 performance; 100 accessibility / best practices / SEO everywhere. Home 604 → 523 KB. (Headless `--screenshot` captures still often miss the banner photo; Lighthouse's `final-screenshot` audit is a reliable visual check.)
+
 **Lighthouse** (production build, before step 4): mobile 94 / 100 / 100 / 100, desktop 99 / 96 / 100 / 100.
 
 ## Open items (need the owner)
 
 - **Placeholder business data (from step 6), replace with real figures:** group sizes, durations, ratings / "(120)" review counts, photo/video counts, blog dates, and the testimonials (not shown now; written examples, not real guests). Do not launch with them.
-- **Destination tiles:** the Punakha (mask-dancer photo) and Trongsa (monk-at-door photo) pairings are a best guess. Confirm where those photos were taken.
+- **Photo locations to confirm (step 28):** the Destinations chapter photos for **Haa** (white prayer flags on a ridge), **Phobjikha** (meadow with a pond, File_021), **Trongsa** (dzong courtyard galleries, "2022-10-02 10.48.12") and the Haa route stop (river valley, Ben-Richards-048) are best guesses from the photos, as is the Druk Path card (Jichu Drake lake). Alt texts don't name a place where it isn't certain.
 - **Tour itineraries are sample plans** written from general Bhutan knowledge (routes, passes, approx. altitudes). The owner should check them against their real programmes, and the inclusions too.
 - **About team bios** are short role descriptions written for the real staff (step 19). The owner can refine them, and add photos to `src/assets/images`.
 - **Contact page placeholders:** office hours (in `contact.hours`). The map points at Changzamtog generally, not an exact office pin.
@@ -242,6 +264,7 @@ src/
 - **Contact form is in TEST mode (2026-10-16):** `site.formEndpoint` sends enquiries to choki@abit.bt (the developer) for testing. **Switch it to gocoms@gobalcommerce.com before launch.**
 - **Activate the contact form:** send one test enquiry from the live site, then click "Activate Form" in the email FormSubmit sends to gocoms@gobalcommerce.com. If the email address changes, update `site.formEndpoint` too (and activate again).
 - **Messenger:** `site.messenger` is a placeholder ("kdglobal"); set the real Facebook page username.
+- **After launch:** submit https://kdglobal.bt/sitemap.xml in Google Search Console. The GitHub Pages preview is indexable too (its canonicals point at github.io); add a noindex there if it stays public after launch.
 - **Before launch:** `site:` is set to https://kdglobal.bt. Change it if the live site uses www or another domain.
 - **Logo PDF:** `KD_LOGO_.pdf` couldn't be rendered here (no poppler). If it contains extra brand rules (clear space, minimum size), check them.
 

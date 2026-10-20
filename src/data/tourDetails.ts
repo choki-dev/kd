@@ -2,25 +2,42 @@
 // The itinerary must have exactly one entry per day of the tour (checked at build time).
 // Itineraries are sample plans written for the site — have the owner check them before launch.
 import type { ImageMetadata } from "astro";
-import tsechuMask from "../assets/images/about-temple.jpg";
-import monk from "../assets/images/bhutan.jpg";
-import elder from "../assets/images/about-couple.jpg";
-import taktsangFlags from "../assets/images/about-hiker.jpg";
-import butterLamps from "../assets/images/butterlamp.jpg";
-import paroDzong from "../assets/images/Ben-Richards-Tourism-Bhutan-001 (1).jpg";
-import thimphuDzong from "../assets/images/tdzong.jpg";
-import tashichho from "../assets/images/tashidzong.jpg";
-import ponies from "../assets/images/trek.jpg";
-import glacierValley from "../assets/images/Snowman Race48.jpg";
-import bumthangTemple from "../assets/images/Bumthang.jpg";
-import paroValley from "../assets/images/by Matt Dutile Paro 2 (1).jpg";
-import bridge from "../assets/images/bridge.jpg";
-import snowPeak from "../assets/images/snowtrek.jpg";
-import buddhaDordenma from "../assets/images/Thimphu 190723 by Amp Sripimanwat-53.jpg";
-import chelela from "../assets/images/chelela.jpg";
-import cranes from "../assets/images/Black Neck Cranes.jpg";
-import meadowPonies from "../assets/images/Bumthangtrek.jpg";
-import mistyTaktsang from "../assets/images/slide1.jpg";
+import punakhaValley from "../assets/images/punakha-valley-river.jpg";
+import khamsumChorten from "../assets/images/khamsum-yulley-chorten.jpg";
+import goldenChortens from "../assets/images/golden-chortens.jpg";
+import raftingDzong from "../assets/images/rafting-punakha-dzong.jpg";
+import tsechuDance from "../assets/images/paro-tsechu-dance.jpg";
+import festivalDancers from "../assets/images/festival-dancers.jpg";
+import festivalCrowd from "../assets/images/national-day-crowd.jpg";
+import thimphuLhakhang from "../assets/images/thimphu-lhakhang.jpg";
+import poniesBridge from "../assets/images/ponies-glacial-bridge.jpg";
+import peakClouds from "../assets/images/peak-in-clouds.jpg";
+import trekkerJump from "../assets/images/trekker-jump.jpg";
+import drukgyelDzong from "../assets/images/drukgyel-dzong.jpg";
+import dordenmaPines from "../assets/images/buddha-dordenma-pines.jpg";
+import luxuryVilla from "../assets/images/luxury-villa.jpg";
+import bhutaneseFood from "../assets/images/bhutanese-food.jpg";
+import dochulaChorten from "../assets/images/dochula-chorten-himalaya.jpg";
+import nationalMuseum from "../assets/images/national-museum-paro.jpg";
+import taktsangSunburst from "../assets/images/tigers-nest-sunburst.jpg";
+import paroTown from "../assets/images/paro-town.jpg";
+import dordenmaPlaza from "../assets/images/buddha-dordenma-plaza.jpg";
+import bumthangDzong from "../assets/images/bumthang-dzong-ridge.jpg";
+import farmhouse from "../assets/images/farmhouse-homestay.jpg";
+import tamzhing from "../assets/images/tamzhing-lhakhang.jpg";
+import mebarTsho from "../assets/images/mebar-tsho.jpg";
+import thimphuTshechu from "../assets/images/thimphu-tshechu.jpg";
+import textileAcademy from "../assets/images/royal-textile-academy.jpg";
+import marketPersimmons from "../assets/images/market-persimmons.jpg";
+import postalMuseum from "../assets/images/postal-museum.jpg";
+import thimphuLookout from "../assets/images/thimphu-valley-lookout.jpg";
+import birdOnBranch from "../assets/images/bird-on-branch.jpg";
+import forestChorten from "../assets/images/forest-chorten.jpg";
+import chortenMeadow from "../assets/images/chorten-meadow.jpg";
+import mistyValley from "../assets/images/misty-valley.jpg";
+import bullfinch from "../assets/images/red-headed-bullfinch.jpg";
+import wangdueDzong from "../assets/images/wangdue-dzong.jpg";
+import takins from "../assets/images/takins.jpg";
 
 type Photo = { src: ImageMetadata; alt: string };
 type Day = { title: string; text: string; overnight: string };
@@ -88,10 +105,10 @@ export const tourDetails: Record<string, TourDetail> = {
       { title: "Depart Paro", text: "Transfer to Paro airport for your onward flight. Tashi delek!", overnight: "—" },
     ],
     gallery: [
-      { src: bridge, alt: "Covered wooden cantilever bridge in Bhutan" },
-      { src: thimphuDzong, alt: "Tashichho Dzong and terraced fields in the Thimphu valley" },
-      { src: paroDzong, alt: "Paro valley with Rinpung Dzong below rugged mountains" },
-      { src: taktsangFlags, alt: "Taktsang monastery between prayer flags" },
+      { src: punakhaValley, alt: "The Punakha valley and its river between green hills" },
+      { src: khamsumChorten, alt: "Khamsum Yulley Namgyal Chorten above the Punakha valley" },
+      { src: goldenChortens, alt: "A row of small golden chortens" },
+      { src: raftingDzong, alt: "Rafting on the river below Punakha Dzong" },
     ],
   },
 
@@ -122,10 +139,10 @@ export const tourDetails: Record<string, TourDetail> = {
       { title: "Depart Paro", text: "Transfer to Paro airport for your onward flight.", overnight: "—" },
     ],
     gallery: [
-      { src: tsechuMask, alt: "Masked cham dancer in a colourful festival costume" },
-      { src: paroDzong, alt: "Paro valley with Rinpung Dzong below rugged mountains" },
-      { src: butterLamps, alt: "Rows of lit butter lamps in a temple" },
-      { src: tashichho, alt: "Tashichho Dzong lit up at dusk" },
+      { src: tsechuDance, alt: "Masked dancers at the Paro Tsechu festival" },
+      { src: festivalDancers, alt: "Festival dancers in yellow skirts spinning in a courtyard" },
+      { src: festivalCrowd, alt: "A festive crowd waving flags in Thimphu" },
+      { src: thimphuLhakhang, alt: "Temple with a prayer pole among trees in Thimphu" },
     ],
   },
 
@@ -162,12 +179,11 @@ export const tourDetails: Record<string, TourDetail> = {
       "Trekking cook, camp staff and pack ponies",
     ],
     excluded: [...standardExcluded, "Sleeping bag (can be hired in Paro)"],
-    hero: { src: ponies, alt: "Trekkers and pack ponies below a snow peak" },
     gallery: [
-      { src: snowPeak, alt: "Snow-capped Himalayan peak above a forested valley" },
-      { src: glacierValley, alt: "Glacial river winding through a green Himalayan valley under clouds" },
-      { src: paroValley, alt: "Paro valley seen from a forested hillside" },
-      { src: taktsangFlags, alt: "Taktsang monastery between prayer flags" },
+      { src: poniesBridge, alt: "Pack ponies crossing a bridge in a glacial valley" },
+      { src: peakClouds, alt: "Snow peak breaking through the clouds" },
+      { src: trekkerJump, alt: "Trekker leaping between rocks below snowy peaks" },
+      { src: drukgyelDzong, alt: "The ruins of Drukgyel Dzong at the start of the trek" },
     ],
   },
 
@@ -205,10 +221,10 @@ export const tourDetails: Record<string, TourDetail> = {
       "Hot stone bath and one spa treatment",
     ],
     gallery: [
-      { src: tashichho, alt: "Tashichho Dzong lit up at dusk" },
-      { src: bumthangTemple, alt: "Temple roofs framed by a window in Bumthang" },
-      { src: butterLamps, alt: "Rows of lit butter lamps in a temple" },
-      { src: paroValley, alt: "Paro valley seen from a forested hillside" },
+      { src: dordenmaPines, alt: "Buddha Dordenma statue seen through pine branches" },
+      { src: luxuryVilla, alt: "Lodge villa with a pool in a green valley" },
+      { src: bhutaneseFood, alt: "Bowls of Bhutanese dishes on a table by a painted window" },
+      { src: dochulaChorten, alt: "Golden-roofed chorten at Dochu La with the Himalaya behind" },
     ],
   },
 
@@ -234,10 +250,10 @@ export const tourDetails: Record<string, TourDetail> = {
       { title: "Depart Paro", text: "Transfer to Paro airport for your onward flight.", overnight: "—" },
     ],
     gallery: [
-      { src: taktsangFlags, alt: "Taktsang monastery between prayer flags" },
-      { src: butterLamps, alt: "Rows of lit butter lamps in a temple" },
-      { src: monk, alt: "Monk in red robes at a painted temple doorway" },
-      { src: paroDzong, alt: "Paro valley with Rinpung Dzong below rugged mountains" },
+      { src: nationalMuseum, alt: "The round Ta Dzong watchtower, home of the National Museum in Paro" },
+      { src: taktsangSunburst, alt: "Sun bursting over the cliff above Tiger's Nest" },
+      { src: paroTown, alt: "The main street of Paro town" },
+      { src: dordenmaPlaza, alt: "Buddha Dordenma statue and its plaza above Thimphu" },
     ],
   },
 
@@ -270,10 +286,10 @@ export const tourDetails: Record<string, TourDetail> = {
       { title: "Depart Paro", text: "Transfer to Paro airport for your onward flight.", overnight: "—" },
     ],
     gallery: [
-      { src: bumthangTemple, alt: "Temple roofs framed by a window in Bumthang" },
-      { src: elder, alt: "Smiling Bhutanese elder in a traditional bamboo hat" },
-      { src: monk, alt: "Monk in red robes at a painted temple doorway" },
-      { src: thimphuDzong, alt: "Tashichho Dzong and terraced fields in the Thimphu valley" },
+      { src: bumthangDzong, alt: "Dzong on a ridge above the Bumthang valley" },
+      { src: farmhouse, alt: "Stone farmhouse with a garden" },
+      { src: tamzhing, alt: "Tamzhing Lhakhang and its prayer flag pole in Bumthang" },
+      { src: mebarTsho, alt: "Mebar Tsho, the Burning Lake, in Bumthang" },
     ],
   },
 
@@ -302,10 +318,10 @@ export const tourDetails: Record<string, TourDetail> = {
       { title: "Depart Paro", text: "Transfer to Paro airport for your onward flight. Tashi delek!", overnight: "—" },
     ],
     gallery: [
-      { src: tashichho, alt: "Tashichho Dzong lit up at dusk" },
-      { src: buddhaDordenma, alt: "Buddha Dordenma statue above the Thimphu valley" },
-      { src: butterLamps, alt: "Rows of lit butter lamps in a temple" },
-      { src: paroDzong, alt: "Paro valley with Rinpung Dzong below rugged mountains" },
+      { src: thimphuTshechu, alt: "The Thimphu Tshechu crowd at Tashichho Dzong, seen from above" },
+      { src: textileAcademy, alt: "Woven textiles on display at the Royal Textile Academy" },
+      { src: marketPersimmons, alt: "Girl eating a persimmon at a Thimphu market stall" },
+      { src: postalMuseum, alt: "Vintage red jeep in the Bhutan Postal Museum" },
     ],
   },
 
@@ -340,12 +356,11 @@ export const tourDetails: Record<string, TourDetail> = {
       "Trekking cook, camp staff and pack ponies",
     ],
     excluded: [...standardExcluded, "Sleeping bag (can be hired in Paro)"],
-    hero: { src: glacierValley, alt: "Glacial river winding through a green Himalayan valley under clouds" },
     gallery: [
-      { src: ponies, alt: "Trekkers and pack ponies below a snow peak" },
-      { src: chelela, alt: "Prayer flags on a mountain pass at sunrise" },
-      { src: snowPeak, alt: "Snow-capped Himalayan peak above a forested valley" },
-      { src: mistyTaktsang, alt: "Monastery on a forested cliff in the mist" },
+      { src: thimphuLookout, alt: "View over the Thimphu valley from a hilltop" },
+      { src: birdOnBranch, alt: "Small bird on a bare branch against the sky" },
+      { src: forestChorten, alt: "Small chorten in a pine forest" },
+      { src: chortenMeadow, alt: "Walkers at a chorten gateway on a green hillside" },
     ],
   },
 
@@ -374,10 +389,10 @@ export const tourDetails: Record<string, TourDetail> = {
       { title: "Depart Paro", text: "Transfer to Paro airport for your onward flight.", overnight: "—" },
     ],
     gallery: [
-      { src: cranes, alt: "Two black-necked cranes in flight" },
-      { src: meadowPonies, alt: "Horses grazing in a meadow at the edge of a pine forest" },
-      { src: thimphuDzong, alt: "Tashichho Dzong and terraced fields in the Thimphu valley" },
-      { src: bridge, alt: "Covered wooden cantilever bridge in Bhutan" },
+      { src: mistyValley, alt: "Mist rising from a green valley" },
+      { src: bullfinch, alt: "Red-headed bullfinch on a branch" },
+      { src: wangdueDzong, alt: "Wangdue Phodrang Dzong on its ridge above the river" },
+      { src: takins, alt: "A family of takins, Bhutan's national animal" },
     ],
   },
 };

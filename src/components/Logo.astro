@@ -19,12 +19,12 @@ const alt = `${site.name} ${site.tagline}`;
 <a href="/" class:list={["logo", `logo-${variant}`, className]} aria-label={`${site.name} — home`}>
   {
     (variant === "color" || variant === "auto") && (
-      <Image src={logoColor} alt={variant === "auto" ? "" : alt} widths={[240, 480]} sizes="240px" loading="eager" class="logo-img logo-img-color" />
+      <Image src={logoColor} alt={variant === "auto" ? "" : alt} widths={[240, 360, 480]} sizes="(min-width: 860px) 230px, 200px" loading="eager" class="logo-img logo-img-color" />
     )
   }
   {
     (variant === "white" || variant === "auto") && (
-      <Image src={logoWhite} alt={alt} widths={[240, 480]} sizes="240px" loading="eager" class="logo-img logo-img-white" />
+      <Image src={logoWhite} alt={alt} widths={[240, 360, 480]} sizes="(min-width: 860px) 230px, 200px" loading="eager" class="logo-img logo-img-white" />
     )
   }
 </a>

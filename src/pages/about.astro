@@ -16,7 +16,7 @@ const { hero, story, values, steps, team, cta } = about;
 const initials = (name: string) => name.split(" ").map((w) => w[0]).join("").slice(0, 2).toUpperCase();
 ---
 
-<BaseLayout title={about.meta.title} description={about.meta.description}>
+<BaseLayout title={about.meta.title} description={about.meta.description} image={hero.image} imageAlt={hero.alt}>
   <Header />
   <main id="main">
     <PageHero {...hero} crumb="About Us" />

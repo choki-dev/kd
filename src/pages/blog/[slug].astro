@@ -10,6 +10,7 @@ import ChatWidget from "../../components/ChatWidget.astro";
 import Icon from "../../components/Icon.astro";
 import { postHref, posts, tourHref, tours, type Post } from "../../data/home";
 import { blogPage, postBodies, readingMinutes } from "../../data/blog";
+import { absUrl, isoDate, organizationId, shareImage } from "../../utils/seo";
 
 export const getStaticPaths = (() =>
   posts
@@ -35,9 +36,25 @@ const headings = body.blocks.filter((b) => b.type === "h2").map((b) => ({ text: 
 
 const related = body.relatedTours.map((slug) => tours.find((t) => t.slug === slug)).filter((t) => t !== undefined);
 const others = posts.filter((p) => p !== post);
+
+const published = isoDate(post.date);
+const articleSchema = {
+  "@type": "BlogPosting",
+  headline: post.title,
+  description: post.excerpt,
+  url: absUrl(postHref(post)),
+  mainEntityOfPage: absUrl(postHref(post)),
+  datePublished: published,
+  image: await shareImage(post.image),
+  articleSection: post.category,
+  inLanguage: "en",
+  timeRequired: `PT${minutes}M`,
+  author: { "@type": "Organization", name: blogPage.author, url: absUrl("/about") },
+  publisher: { "@id": organizationId },
+};
 ---
 
-<BaseLayout title={`${post.title} | KD Global Blog`} description={post.excerpt}>
+<BaseLayout title={`${post.title} | KD Global`} description={post.excerpt} image={post.image} imageAlt={post.alt} type="article" published={published} schema={articleSchema}>
   <Header />
   <main id="main">
     <PageHero

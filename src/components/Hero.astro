@@ -1,7 +1,12 @@
 ---
-import { Image } from "astro:assets";
+import { Picture, getImage } from "astro:assets";
 import Icon from "./Icon.astro";
 import { heroSlides, site, socials } from "../data/home";
+
+// Slides 2 and 3 are hidden at first, but the browser would still download them alongside slide 1 (they sit in the
+// viewport). Their URLs go in data- attributes instead and the script below loads them once the page has loaded.
+const imgSize = { width: 1920, height: 1080, widths: [640, 960, 1280, 1920] };
+const deferred = await Promise.all(heroSlides.map((s) => getImage({ src: s.image, ...imgSize })));
 ---
 
 <section class="hero" aria-roledescription="carousel" aria-label="Featured trips" data-hero>
@@ -16,17 +21,20 @@ import { heroSlides, site, socials } from "../data/home";
         aria-hidden={i === 0 ? "false" : "true"}
         data-slide
       >
-        <Image
-          src={s.image}
-          alt={s.alt}
-          width={1920}
-          height={1080}
-          widths={[640, 960, 1280, 1920]}
-          sizes="100vw"
-          loading={i === 0 ? "eager" : "lazy"}
-          fetchpriority={i === 0 ? "high" : "auto"}
-          class="hero-img"
-        />
+        {i === 0 ? (
+          <Picture src={s.image} formats={["avif"]} fallbackFormat="webp" alt={s.alt} {...imgSize} sizes="100vw" loading="eager" fetchpriority="high" class="hero-img" />
+        ) : (
+          <img
+            data-src={deferred[i].src}
+            data-srcset={deferred[i].srcSet.attribute}
+            alt={s.alt}
+            width={imgSize.width}
+            height={imgSize.height}
+            sizes="100vw"
+            decoding="async"
+            class="hero-img"
+          />
+        )}
         <div class="hero-overlay" />
         <div class="container hero-content">
           <p class="hero-kicker">{site.kicker}</p>
@@ -262,7 +270,18 @@ import { heroSlides, site, socials } from "../data/home";
     let timer: number | undefined;
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
+    // Load the deferred slide photos (see the frontmatter) after the page, or right away if a slide is shown first
+    const loadSlides = () =>
+      hero.querySelectorAll<HTMLImageElement>("img[data-src]").forEach((img) => {
+        img.srcset = img.dataset.srcset ?? "";
+        img.src = img.dataset.src ?? "";
+        img.removeAttribute("data-src");
+      });
+    if (document.readyState === "complete") loadSlides();
+    else window.addEventListener("load", loadSlides, { once: true });
+
     const show = (i: number) => {
+      loadSlides();
       index = (i + slides.length) % slides.length;
       slides.forEach((s, n) => {
         s.classList.toggle("is-active", n === index);

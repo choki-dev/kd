@@ -1,18 +1,18 @@
 // Blog page text (/blog) and the article bodies for posts that have a page (/blog/<slug>).
 // The post list itself (title, date, image, excerpt) is `posts` in src/data/home.ts.
 import type { ImageMetadata } from "astro";
-import blogHero from "../assets/images/slide3.jpg";
-import monkDoor from "../assets/images/bhutan.jpg";
-import taktsangFlags from "../assets/images/about-hiker.jpg";
-import tsechuMask from "../assets/images/about-temple.jpg";
-import valleyMeadow from "../assets/images/Bumthangtrek.jpg";
-import snowPeak from "../assets/images/snowtrek.jpg";
+import blogHero from "../assets/images/dzong-eaves-night.jpg";
+import templeGate from "../assets/images/jambay-lhakhang-gate.jpg";
+import taktsangCliff from "../assets/images/tigers-nest-cliff.jpg";
+import maskedDancer from "../assets/images/masked-dancer-drum.jpg";
+import phobjikhaFlags from "../assets/images/phobjikha-prayer-flags.jpg";
+import snowPeak from "../assets/images/snow-peak-autumn.jpg";
 
 export const blogPage = {
   meta: {
     title: "Bhutan Travel Blog — Culture, Festivals & Trekking Tips | KD Global",
     description:
-      "Stories and practical tips from KD Global's team in Thimphu: temple etiquette, festivals, wildlife, trekking seasons and how to make the most of your trip to Bhutan.",
+      "Bhutan travel stories and tips from our Thimphu team: temple etiquette, festivals, black-necked cranes, trekking seasons and making the most of your trip.",
   },
   hero: {
     kicker: "Our blog",
@@ -60,7 +60,7 @@ export const postBodies: Record<string, { intro: string; blocks: Block[]; relate
         type: "p",
         text: "Walk around chortens (stupas), temples and mani walls in a clockwise direction, keeping them on your right. Prayer wheels are also turned clockwise — give each one a gentle spin as you pass, and you send its prayers out into the world.",
       },
-      { type: "image", src: monkDoor, alt: "Monk in red robes at a painted temple doorway", caption: "Temple doorways are often beautifully painted — admire them from outside, then follow your guide's lead inside." },
+      { type: "image", src: templeGate, alt: "Stone path leading to the painted gateway of Jambay Lhakhang in Bumthang", caption: "Temple gateways are often beautifully painted — admire them from outside, then follow your guide's lead inside." },
 
       { type: "h2", text: "Photography: ask first" },
       {
@@ -94,14 +94,14 @@ export const postBodies: Record<string, { intro: string; blocks: Block[]; relate
         type: "p",
         text: "If you'd like to leave an offering at the altar, a small banknote is customary. A monk may pour a little holy water into your right palm: sip a drop, then pass the rest of your hand lightly over your head as a blessing.",
       },
-      { type: "image", src: taktsangFlags, alt: "Taktsang monastery between prayer flags", caption: "At Taktsang (Tiger's Nest) visitors leave cameras and bags in lockers before entering the temples." },
+      { type: "image", src: taktsangCliff, alt: "Taktsang (Tiger's Nest) monastery on its cliff above a forested valley", caption: "At Taktsang (Tiger's Nest) visitors leave cameras and bags in lockers before entering the temples." },
 
       { type: "h2", text: "At a tsechu festival" },
       {
         type: "p",
         text: "Tsechus are religious festivals as much as celebrations, and the masked dances are performed as blessings. Dress respectfully, never walk across the dance ground, and sit with the crowd around the edge of the courtyard. The masked atsara clowns may tease you — it's all in good fun, so laugh along.",
       },
-      { type: "image", src: tsechuMask, alt: "Masked cham dancer in a colourful festival costume", caption: "Each masked dance tells a story — ask your guide what it means." },
+      { type: "image", src: maskedDancer, alt: "Masked cham dancer with a drum at a tsechu festival", caption: "Each masked dance tells a story — ask your guide what it means." },
 
       { type: "h2", text: "Your guide is there to help" },
       {
@@ -121,7 +121,7 @@ export const postBodies: Record<string, { intro: string; blocks: Block[]; relate
       { type: "tip", title: "Festival", text: "The Black-Necked Crane Festival is held at Gangtey Goenpa every 11 November." },
       { type: "h2", text: "Where to watch" },
       { type: "list", items: ["Crane Information Centre (telescopes)", "Gangtey Nature Trail", "Valley road at dawn"] },
-      { type: "image", src: valleyMeadow, alt: "Horses grazing in a meadow at the edge of a pine forest", caption: "Along the Gangtey Nature Trail." },
+      { type: "image", src: phobjikhaFlags, alt: "Prayer flags and a white chorten in the Phobjikha valley", caption: "Prayer flags line the walking trails around the valley." },
       { type: "h2", text: "Visit responsibly" },
       { type: "list", items: ["Keep your distance and stay on paths", "No flash, no drones", "Stay in local lodges"] },
       { type: "h2", text: "Getting there" },
@@ -138,7 +138,7 @@ export const postBodies: Record<string, { intro: string; blocks: Block[]; relate
       { type: "tip", title: "Best season", text: "October to December for clear skies." },
       { type: "h2", text: "The prayer flags" },
       { type: "p", text: "Coloured flags carry prayers on the wind; white ones honour loved ones. Walk among them quietly." },
-      { type: "image", src: snowPeak, alt: "Snow-capped Himalayan peak above a forested valley", caption: "Clear mornings reveal the high peaks." },
+      { type: "image", src: snowPeak, alt: "Snow-capped Himalayan peak beyond autumn leaves", caption: "Clear mornings reveal the high peaks." },
       { type: "h2", text: "Down into Haa" },
       { type: "p", text: "Continue to the quiet Haa valley and its White and Black Temples." },
       { type: "h2", text: "Bring" },

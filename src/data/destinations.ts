@@ -1,14 +1,22 @@
 // Destinations page content (/destinations). Altitudes and drive times are approximate.
 // Tour counts on the page come from `places` on each tour in src/data/home.ts.
 import type { ImageMetadata } from "astro";
-import destinationsHero from "../assets/images/tdzong.jpg";
-import paroValleyImg from "../assets/images/by Matt Dutile Paro 2 (1).jpg";
-import thimphuImg from "../assets/images/Thimphu 190723 by Amp Sripimanwat-53.jpg";
-import punakhaImg from "../assets/images/Ben-Richards-Tourism-Bhutan-044.jpg";
-import trongsaImg from "../assets/images/bhutan.jpg";
-import bumthangImg from "../assets/images/Bumthang.jpg";
-import phobjikhaImg from "../assets/images/Black Neck Cranes.jpg";
-import haaImg from "../assets/images/chelela.jpg";
+// Each valley has two different photos: `image` (the big chapter photo) and `thumb` (its round stop on the route).
+import destinationsHero from "../assets/images/misty-valley-farmhouse.jpg";
+import paroImg from "../assets/images/paro-dzong-river.jpg";
+import paroThumb from "../assets/images/rinpung-dzong.jpg";
+import haaImg from "../assets/images/prayer-flags-ridge.jpg";
+import haaThumb from "../assets/images/haa-river-valley.jpg";
+import thimphuImg from "../assets/images/tashichho-dzong-valley.jpg";
+import thimphuThumb from "../assets/images/memorial-chorten.jpg";
+import punakhaImg from "../assets/images/punakha-dzong-morning.jpg";
+import punakhaThumb from "../assets/images/punakha-rice-fields.jpg";
+import phobjikhaImg from "../assets/images/phobjikha-meadow.jpg";
+import phobjikhaThumb from "../assets/images/phobjikha-monk-mask.jpg";
+import trongsaImg from "../assets/images/dzong-galleries.jpg";
+import trongsaThumb from "../assets/images/grey-langur.jpg";
+import bumthangImg from "../assets/images/bumthang-dzong-forest.jpg";
+import bumthangThumb from "../assets/images/kurje-lhakhang.jpg";
 
 export type Destination = {
   id: string; // anchor on the page (#paro); also the ?place= value is `name`
@@ -22,20 +30,21 @@ export type Destination = {
   highlights: string[];
   image: ImageMetadata;
   alt: string;
+  thumb: ImageMetadata; // round photo on the "road east" route (decorative, so no alt)
 };
 
 export const destinationsPage = {
   meta: {
     title: "Bhutan Destinations — Paro, Thimphu, Punakha, Bumthang & More | KD Global",
     description:
-      "Explore Bhutan's valleys with KD Global: Paro and Tiger's Nest, the capital Thimphu, Punakha's great dzong, Trongsa, Bumthang's ancient temples, Phobjikha's cranes and the Haa valley.",
+      "Explore Bhutan's valleys: Paro and Tiger's Nest, the capital Thimphu, Punakha Dzong, Haa, Phobjikha's cranes, Trongsa and the ancient temples of Bumthang.",
   },
   hero: {
     kicker: "Destinations",
     title: "Explore the valleys of Bhutan",
     text: "From the cliffside monasteries of Paro to the crane valley of Phobjikha — every valley has its own story, festival and landscape.",
     image: destinationsHero,
-    alt: "Tashichho Dzong and terraced fields in the Thimphu valley",
+    alt: "Farmhouse on a terraced hillside above a valley filled with mist",
   },
   intro: {
     title: "Where would you like to go?",
@@ -74,8 +83,9 @@ export const destinationList: Destination[] = [
     access: "International airport",
     bestFor: "Hiking, history, festivals",
     highlights: ["Taktsang (Tiger's Nest) monastery", "Rinpung Dzong and the Paro Tsechu festival", "Kyichu Lhakhang, one of Bhutan's oldest temples", "National Museum in the Ta Dzong watchtower"],
-    image: paroValleyImg,
-    alt: "Paro valley seen from a forested hillside",
+    image: paroImg,
+    alt: "Dzong above the Paro river among autumn trees",
+    thumb: paroThumb,
   },
   {
     id: "haa",
@@ -88,7 +98,8 @@ export const destinationList: Destination[] = [
     bestFor: "Off-the-beaten-path, homestays, hiking",
     highlights: ["Chele La pass and its prayer flags", "Lhakhang Karpo and Lhakhang Nagpo", "Traditional farmhouse homestays", "Views of Jomolhari on clear days"],
     image: haaImg,
-    alt: "Prayer flags at Chele La pass at sunrise",
+    alt: "White prayer flags on a ridge above a wide valley",
+    thumb: haaThumb,
   },
   {
     id: "thimphu",
@@ -101,7 +112,8 @@ export const destinationList: Destination[] = [
     bestFor: "Culture, crafts, city life",
     highlights: ["Tashichho Dzong, seat of the government", "Buddha Dordenma overlooking the valley", "Memorial Chorten and Changangkha Lhakhang", "Weekend market and traditional arts school"],
     image: thimphuImg,
-    alt: "Buddha Dordenma statue overlooking Thimphu valley",
+    alt: "Tashichho Dzong in the green Thimphu valley",
+    thumb: thimphuThumb,
   },
   {
     id: "punakha",
@@ -114,7 +126,8 @@ export const destinationList: Destination[] = [
     bestFor: "Culture, village walks, rafting",
     highlights: ["Punakha Dzong at the meeting of two rivers", "Dochu La pass and its 108 chortens", "Chimi Lhakhang, the fertility temple", "Long prayer-flag suspension bridge"],
     image: punakhaImg,
-    alt: "Traveller crossing a suspension bridge hung with prayer flags",
+    alt: "Punakha Dzong by the river on a misty morning",
+    thumb: punakhaThumb,
   },
   {
     id: "phobjikha",
@@ -127,7 +140,8 @@ export const destinationList: Destination[] = [
     bestFor: "Wildlife, nature trails, birding",
     highlights: ["Black-necked cranes (late Oct – Feb)", "Gangtey Monastery above the valley", "Gangtey Nature Trail through pine forest", "Crane festival at Gangtey in November"],
     image: phobjikhaImg,
-    alt: "Black-necked cranes in flight",
+    alt: "Grassy valley with a small chorten reflected in a pond",
+    thumb: phobjikhaThumb,
   },
   {
     id: "trongsa",
@@ -140,7 +154,8 @@ export const destinationList: Destination[] = [
     bestFor: "History, architecture, scenic drives",
     highlights: ["Trongsa Dzong above the Mangde Chhu gorge", "Ta Dzong watchtower museum", "Crossing Pele La pass", "Chendebji Chorten on the way"],
     image: trongsaImg,
-    alt: "Monk in red robes at a painted temple doorway",
+    alt: "Carved wooden galleries around a dzong courtyard",
+    thumb: trongsaThumb,
   },
   {
     id: "bumthang",
@@ -153,6 +168,7 @@ export const destinationList: Destination[] = [
     bestFor: "Temples, farm stays, gentle hikes",
     highlights: ["Jambay Lhakhang and Kurjey Lhakhang", "Membartsho, the Burning Lake", "Tang and Ura village walks", "Local cheese, honey and apple orchards"],
     image: bumthangImg,
-    alt: "Temple roofs framed by a window in Bumthang",
+    alt: "Dzong in the forested hills of Bumthang under low cloud",
+    thumb: bumthangThumb,
   },
 ];

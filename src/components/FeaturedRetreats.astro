@@ -19,12 +19,12 @@ import { featuredRetreats, tourHref } from "../data/home";
           <li class="retreat-slide" data-reveal style={`--reveal-delay:${i * 100}ms`}>
             <article class="retreat">
               <Image
-                src={t.image}
-                alt={t.alt}
+                src={t.cover?.src ?? t.image}
+                alt={t.cover?.alt ?? t.alt}
                 width={760}
                 height={1000}
                 widths={[320, 480, 640, 760]}
-                sizes="(min-width: 1200px) 380px, (min-width: 992px) 30vw, (min-width: 576px) 60vw, 84vw"
+                sizes="(min-width: 1200px) 380px, (min-width: 992px) 30vw, (min-width: 576px) 56vw, 78vw"
                 loading="lazy"
                 class="retreat-img"
               />

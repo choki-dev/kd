@@ -26,7 +26,7 @@ if (chapters.reduce((s, c) => s + c.items.length, 0) !== destinationList.length)
 }
 ---
 
-<BaseLayout title={destinationsPage.meta.title} description={destinationsPage.meta.description}>
+<BaseLayout title={destinationsPage.meta.title} description={destinationsPage.meta.description} image={hero.image} imageAlt={hero.alt}>
   <Header />
   <main id="main">
     <PageHero {...hero} crumb="Destinations" />
@@ -51,7 +51,7 @@ if (chapters.reduce((s, c) => s + c.items.length, 0) !== destinationList.length)
                 <li class="stop">
                   <a href={`#${d.id}`} class="stop-link">
                     <span class="stop-photo">
-                      <Image src={d.image} alt="" width={176} height={176} widths={[96, 176]} sizes="88px" class="stop-img" />
+                      <Image src={d.thumb} alt="" width={176} height={176} widths={[96, 176]} sizes="88px" class="stop-img" />
                     </span>
                     <span class="stop-name">{d.name}</span>
                     <span class="stop-alt">{d.altitude.replace("About ", "")}</span>

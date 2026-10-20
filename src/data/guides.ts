@@ -3,12 +3,12 @@
 // Content is a list of blocks, like the blog articles. Kept deliberately short (owner asked for minimal text, 2026-10-16).
 // Written from general Bhutan travel knowledge: fees, dates and rules change, so have the owner check them before launch.
 import type { ImageMetadata } from "astro";
-import monkBridge from "../assets/images/about-us.png";
-import paroValley from "../assets/images/Ben-Richards-Tourism-Bhutan-001 (1).jpg";
-import tsechu from "../assets/images/tsechu.jpg";
-import trekPonies from "../assets/images/trek.jpg";
-import buddhaDordenma from "../assets/images/Thimphu 190723 by Amp Sripimanwat-53.jpg";
-import mistyTaktsang from "../assets/images/slide1.jpg";
+import prayerFlagBridge from "../assets/images/prayer-flag-bridge.jpg";
+import paroValley from "../assets/images/paro-valley-morning.jpg";
+import festival from "../assets/images/dechenphu-festival.jpg";
+import glacialValley from "../assets/images/glacial-river-valley.jpg";
+import buddhaDordenma from "../assets/images/buddha-dordenma-prayer-flags.jpg";
+import seaOfClouds from "../assets/images/sea-of-clouds.jpg";
 
 export type GuideBlock =
   | { type: "p"; text: string }
@@ -55,8 +55,8 @@ export const guides: Guide[] = [
       kicker: "Before you travel",
       title: "Bhutan visa & SDF",
       text: "We handle the paperwork for you.",
-      image: monkBridge,
-      alt: "Monk with a red umbrella on a wooden bridge in morning mist",
+      image: prayerFlagBridge,
+      alt: "Walking across a suspension bridge hung with prayer flags",
     },
     updated: "Rates checked October 2026",
     intro: "Every visitor needs a visa or entry permit, and most pay a daily fee. Send us your passport copy — we do the rest.",
@@ -99,7 +99,7 @@ export const guides: Guide[] = [
       title: "Travel guidelines",
       text: "The essentials, in brief.",
       image: paroValley,
-      alt: "Paro valley with Rinpung Dzong below rugged mountains",
+      alt: "Morning haze over the Paro valley and its fields",
     },
     intro: "Bhutan is safe and easy to travel with a local guide. A few things to know before you go.",
     blocks: [
@@ -131,8 +131,8 @@ export const guides: Guide[] = [
       kicker: "Masked dances & blessings",
       title: "Festival calendar",
       text: "Plan your trip around a tsechu.",
-      image: tsechu,
-      alt: "Masked dancers performing before a crowd at a tsechu festival",
+      image: festival,
+      alt: "Masked dancers in yellow skirts at a festival in Bhutan",
     },
     intro: "Dates follow the lunar calendar and change each year. Ask us for exact dates.",
     blocks: [
@@ -172,8 +172,8 @@ export const guides: Guide[] = [
       kicker: "Into the Himalaya",
       title: "Trekking seasons",
       text: "When to go and which trek to choose.",
-      image: trekPonies,
-      alt: "Trekkers and pack ponies below a snow peak",
+      image: glacialValley,
+      alt: "Glacial river winding through a green Himalayan valley under clouds",
     },
     intro: "Spring and autumn are best. Here's how the year looks on the trail.",
     blocks: [
@@ -227,7 +227,7 @@ export const guides: Guide[] = [
       title: "FAQs",
       text: "Quick answers. Can't find yours? Just ask.",
       image: buddhaDordenma,
-      alt: "Buddha Dordenma statue above the Thimphu valley",
+      alt: "Buddha Dordenma statue above the Thimphu valley, seen past prayer flags",
     },
     intro: "The questions we're asked most.",
     blocks: [{ type: "faq", items: faqAll }],
@@ -245,8 +245,8 @@ export const guides: Guide[] = [
       kicker: "Booking with us",
       title: "Terms & conditions",
       text: "Please read before booking.",
-      image: mistyTaktsang,
-      alt: "Taktsang monastery on its cliff in the mist",
+      image: seaOfClouds,
+      alt: "Sun over a sea of clouds between dark mountain ridges",
     },
     updated: "Last updated October 2026",
     intro: "These terms apply to all trips arranged by KD Global Commerce & Services, Thimphu. Your booking confirmation gives the details for your trip.",

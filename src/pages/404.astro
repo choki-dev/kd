@@ -1,0 +1,106 @@
+---
+// "Page not found" — served by the host for any unknown URL (404.html). Kept out of search results and the sitemap.
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Header from "../components/Header.astro";
+import PageHero from "../components/PageHero.astro";
+import TourCard from "../components/TourCard.astro";
+import Footer from "../components/Footer.astro";
+import ChatWidget from "../components/ChatWidget.astro";
+import Icon from "../components/Icon.astro";
+import { featuredRetreats, type IconName } from "../data/home";
+import heroImage from "../assets/images/chorten-forest-hill.jpg";
+
+const links: { label: string; href: string; icon: IconName }[] = [
+  { label: "All tours", href: "/tours", icon: "compass" },
+  { label: "Destinations", href: "/destinations", icon: "map-pin" },
+  { label: "Travel blog", href: "/blog", icon: "file-text" },
+  { label: "Contact us", href: "/contact", icon: "mail" },
+];
+---
+
+<BaseLayout title="Page not found | KD Global" description="The page you were looking for could not be found. Explore our Bhutan tours, destinations and travel tips instead." noindex>
+  <Header />
+  <main id="main">
+    <PageHero
+      kicker="Page not found"
+      title="This trail doesn't lead anywhere"
+      text="The page may have moved or the link may be mistyped. Let's get you back on the road."
+      image={heroImage}
+      alt="Khamsum Yulley Namgyal Chorten on a forested hillside"
+      crumb="Page not found"
+    />
+
+    <section class="section" aria-labelledby="lost-title">
+      <div class="container">
+        <header class="section-head">
+          <span class="script-accent">Keep exploring</span>
+          <h2 id="lost-title" class="section-title">Where would you like to go?</h2>
+        </header>
+        <ul class="lost-links">
+          {
+            links.map((l) => (
+              <li>
+                <a href={l.href} class="lost-link">
+                  <Icon name={l.icon} size={20} />
+                  {l.label}
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+        <div class="lost-tours">
+          {featuredRetreats.map((t) => <TourCard tour={t} />)}
+        </div>
+      </div>
+    </section>
+  </main>
+  <Footer />
+  <ChatWidget />
+</BaseLayout>
+
+<style>
+  .lost-links {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 12px;
+    margin: 0 0 56px;
+    padding: 0;
+    list-style: none;
+  }
+  .lost-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 22px;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    background: #fff;
+    color: var(--primary);
+    font-weight: 500;
+    transition:
+      background-color 0.25s var(--ease),
+      color 0.25s var(--ease),
+      border-color 0.25s var(--ease);
+  }
+  .lost-link:hover,
+  .lost-link:focus-visible {
+    border-color: var(--accent);
+    background: var(--accent);
+    color: #fff;
+  }
+  .lost-tours {
+    display: grid;
+    gap: 24px;
+  }
+  @media (min-width: 768px) {
+    .lost-tours {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  @media (min-width: 992px) {
+    .lost-tours {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+</style>

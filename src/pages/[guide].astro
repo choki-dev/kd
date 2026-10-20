@@ -12,6 +12,7 @@ import ChatWidget from "../components/ChatWidget.astro";
 import Icon from "../components/Icon.astro";
 import { guideHref, guides, type Guide } from "../data/guides";
 import { site } from "../data/home";
+import { absUrl } from "../utils/seo";
 
 export const getStaticPaths = (() => guides.map((guide) => ({ params: { guide: guide.slug }, props: { guide } }))) satisfies GetStaticPaths;
 
@@ -23,10 +24,20 @@ const { guide } = Astro.props;
 const slugify = (s: string) => s.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
 const headings = guide.blocks.filter((b) => b.type === "h2").map((b) => ({ text: b.text, id: slugify(b.text) }));
 const others = guides.filter((g) => g !== guide);
+
+// FAQ blocks → schema.org FAQPage; other guides are plain articles
+const faqs = guide.blocks.flatMap((b) => (b.type === "faq" ? b.items : []));
+const schema = faqs.length
+  ? {
+      "@type": "FAQPage",
+      url: absUrl(guideHref(guide.slug)),
+      mainEntity: faqs.map((f) => ({ "@type": "Question", name: f.q, acceptedAnswer: { "@type": "Answer", text: f.a } })),
+    }
+  : { "@type": "Article", headline: guide.hero.title, description: guide.meta.description, url: absUrl(guideHref(guide.slug)), inLanguage: "en" };
 const tel = site.phone.replace(/[^\d+]/g, "");
 ---
 
-<BaseLayout title={guide.meta.title} description={guide.meta.description}>
+<BaseLayout title={guide.meta.title} description={guide.meta.description} image={guide.hero.image} imageAlt={guide.hero.alt} schema={schema}>
   <Header />
   <main id="main">
     <PageHero {...guide.hero} crumb={guide.label} />

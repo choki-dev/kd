@@ -17,7 +17,7 @@ const minutes = (slug?: string) => (slug && postBodies[slug] ? readingMinutes(po
 const featuredMinutes = minutes(featured.slug);
 ---
 
-<BaseLayout title={blogPage.meta.title} description={blogPage.meta.description}>
+<BaseLayout title={blogPage.meta.title} description={blogPage.meta.description} image={blogPage.hero.image} imageAlt={blogPage.hero.alt}>
   <Header />
   <main id="main">
     <PageHero {...blogPage.hero} crumb="Blog" />
@@ -40,7 +40,7 @@ const featuredMinutes = minutes(featured.slug);
             </p>
             <h3 class="featured-title serif-title"><a href={postHref(featured)}>{featured.title}</a></h3>
             <p class="excerpt">{featured.excerpt}</p>
-            <a href={postHref(featured)} class="btn btn-primary">Read article <Icon name="arrow-right" size={18} /></a>
+            <a href={postHref(featured)} class="btn btn-primary">Read article<span class="sr-only">: {featured.title}</span> <Icon name="arrow-right" size={18} /></a>
           </div>
         </article>
 
@@ -68,8 +68,8 @@ const featuredMinutes = minutes(featured.slug);
                         <h3 class="card-title">{p.slug ? <a href={postHref(p)}>{p.title}</a> : p.title}</h3>
                         <p class="excerpt">{p.excerpt}</p>
                         {p.slug ? (
-                          <a href={postHref(p)} class="read-more" aria-label={`Read more: ${p.title}`}>
-                            Read more <Icon name="arrow-right" size={16} />
+                          <a href={postHref(p)} class="read-more">
+                            Read more<span class="sr-only">: {p.title}</span> <Icon name="arrow-right" size={16} />
                           </a>
                         ) : (
                           <p class="soon-note">Article coming soon</p>

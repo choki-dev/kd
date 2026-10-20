@@ -21,7 +21,7 @@ const typeCount = (c: string) => tours.filter((t) => t.category === c).length;
 const durationCount = (min: number, max: number) => tours.filter((t) => t.days >= min && t.days <= max).length;
 ---
 
-<BaseLayout title={toursPage.meta.title} description={toursPage.meta.description}>
+<BaseLayout title={toursPage.meta.title} description={toursPage.meta.description} image={hero.image} imageAlt={hero.alt}>
   <Header />
   <main id="main">
     <PageHero {...hero} crumb="Tours" />

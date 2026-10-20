@@ -23,7 +23,7 @@ const cards: { icon: IconName; title: string; value: string; href?: string; valu
 ];
 ---
 
-<BaseLayout title={contact.meta.title} description={contact.meta.description}>
+<BaseLayout title={contact.meta.title} description={contact.meta.description} image={hero.image} imageAlt={hero.alt}>
   <Header />
   <main id="main">
     <PageHero {...hero} crumb="Contact Us" overlap />

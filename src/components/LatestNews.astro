@@ -37,8 +37,8 @@ import { postHref, posts } from "../data/home";
                 <h3 class="post-title">
                   <a href={postHref(p)}>{p.title}</a>
                 </h3>
-                <a href={postHref(p)} class="read-more" aria-label={`Read more: ${p.title}`}>
-                  Read more <Icon name="arrow-right" size={16} />
+                <a href={postHref(p)} class="read-more">
+                  Read more<span class="sr-only">: {p.title}</span> <Icon name="arrow-right" size={16} />
                 </a>
               </div>
             </article>

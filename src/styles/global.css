@@ -388,3 +388,9 @@ ul {
   color: var(--accent);
   margin-bottom: 6px;
 }
+
+/* Banner photos are <picture> (AVIF + WebP, see Hero / PageHero): the wrapper takes no box, so the absolutely
+   positioned <img> lays out exactly as a plain <img> would inside the flex banner */
+picture:has(> .hero-img, > .page-hero-img) {
+  display: contents;
+}
