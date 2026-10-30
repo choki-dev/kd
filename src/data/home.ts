@@ -65,15 +65,14 @@ export type IconName =
   | "search" | "chevron-down" | "chevron-right" | "menu" | "x" | "plane"
   | "tent" | "flashlight" | "mountain" | "compass" | "sailboat" | "palm" | "cable-car" | "map-pin" | "calendar"
   | "users" | "quote" | "minus" | "plus" | "star" | "image" | "video" | "clock" | "phone" | "mail" | "award"
-  | "file-text" | "arrow-left" | "arrow-right" | "arrow-up" | "building" | "facebook" | "linkedin" | "youtube"
+  | "file-text" | "arrow-left" | "arrow-right" | "arrow-up" | "building" | "facebook" | "youtube"
   | "instagram" | "whatsapp" | "check" | "temple" | "festival" | "hiking" | "diamond" | "meditation" | "forest";
 
-// Real profiles from the owner (2026-10-30; share-tracking parameters dropped). X (Twitter) removed on request.
-// LinkedIn and Instagram are still "#" placeholders. External links open in a new tab (Footer, Hero, Contact).
+// Real profiles from the owner (2026-10-30; share-tracking parameters dropped). X (Twitter) and LinkedIn removed on
+// request. Instagram is still a "#" placeholder. External links open in a new tab (Footer, Hero, Contact).
 export const socials: { label: string; icon: IconName; href: string }[] = [
   { label: "Facebook", icon: "facebook", href: "https://www.facebook.com/share/1EXek6Vjrz/" },
   { label: "YouTube", icon: "youtube", href: "https://www.youtube.com/@kdglobalcommerceservices" },
-  { label: "LinkedIn", icon: "linkedin", href: "#" },
   { label: "Instagram", icon: "instagram", href: "#" },
 ];
 
