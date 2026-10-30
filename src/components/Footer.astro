@@ -1,7 +1,7 @@
 ---
 import Icon from "./Icon.astro";
 import Logo from "./Logo.astro";
-import { credit, footerLinks, site, socials } from "../data/home";
+import { credit, footerLinks, site, socialLinkAttrs, socials } from "../data/home";
 
 const year = new Date().getFullYear();
 ---
@@ -17,7 +17,7 @@ const year = new Date().getFullYear();
           {
             socials.map((s) => (
               <li>
-                <a href={s.href} class="social" aria-label={s.label}>
+                <a {...socialLinkAttrs(s.href)} class="social" aria-label={s.label}>
                   <Icon name={s.icon} size={16} />
                 </a>
               </li>
@@ -35,10 +35,6 @@ const year = new Date().getFullYear();
           <li>
             <span class="sq"><Icon name="building" size={20} /></span>
             <span><small>Office address</small>{site.address}</span>
-          </li>
-          <li>
-            <span class="sq"><Icon name="phone" size={20} /></span>
-            <span><small>Booking numbers</small><a href={`tel:${site.phone.replace(/[^\d+]/g, "")}`}>{site.phone}</a><a href={`tel:${site.phoneAlt.replace(/[^\d+]/g, "")}`}>{site.phoneAlt}</a></span>
           </li>
           <li>
             <span class="sq"><Icon name="mail" size={20} /></span>
@@ -175,7 +171,7 @@ const year = new Date().getFullYear();
     color: var(--accent-tint);
   }
   .contact-list span > a {
-    display: block; /* two phone numbers stack */
+    display: block;
   }
 
   .link-cols {

@@ -5,7 +5,7 @@
 Homepage for **KD Global Commerce & Services**, a Bhutan-based **travel & tours** company (earlier static versions of this site are in `D:\Website html\KD Global` and `D:\Website html\kd`).
 Built with **Astro 7.3 only**: Astro components, plain CSS and small vanilla-JS `<script>` blocks. No React, Vue, Svelte, Tailwind or UI/JS libraries, and no extra npm packages beyond `astro`.
 
-_Last updated: 2026-10-20_
+_Last updated: 2026-10-30_
 
 ## Run it
 
@@ -80,7 +80,7 @@ src/
 ├─ data/blog.ts             blog page text + article bodies keyed by slug (block list) + readingMinutes()
 ├─ pages/[guide].astro      travel-info pages (visa & SDF, guidelines, festivals, trekking seasons, FAQs, terms) from data/guides.ts
 ├─ pages/404.astro          Page not found (noindex, not in the sitemap): banner, quick links, the 3 featured tours
-├─ pages/contact.astro      Contact Us: PageHero, 4 overlapping info cards, enquiry form (sent via FormSubmit to `site.email`, no backend), Google Maps embed, FAQ accordion
+├─ pages/contact.astro      Contact Us: PageHero, 4 overlapping info cards, enquiry form (sent via Web3Forms, `site.formEndpoint` + `site.formAccessKey`, no backend), Google Maps embed, FAQ accordion
 ├─ styles/global.css        tokens, base, container/section, buttons, badges, reveal animation
 └─ components/              Header, Hero, SearchBar, TourTypes, FeaturedRetreats, BestSellingTours, TourCard,
                             PopularDestinations, VacationAbout, Testimonials, BrandLogos, LatestNews, Footer, SiteSearch,
@@ -111,7 +111,7 @@ src/
    - deep teal with the white logo and socials
    - Contact us, and "About us" link columns
    - bottom bar: © on the left, and on the right the credit "Website Designed And Developed by **aBit Private Limited**" (`credit` in home.ts; the company name links to https://abit.bt in a new tab, on request 2026-10-16; it replaced the Terms of use / Privacy policy / FAQs links on request, 2026-10-14). The bar is in the same Deep Horizon as the footer since 2026-10-13 (on request; was charcoal), split off by a thin divider that lines up with the one under the logo row
-13. **Chat widget** (`ChatWidget.astro`, every page, bottom right; replaced the back-to-top button on request 2026-10-16): round button with a pulse ring that alternates WhatsApp green / Messenger blue (static green for reduced motion) opens a small chat card (Deep Horizon header with the arc-mark favicon, "Kuzuzangpo la!" bubble, "Chat on WhatsApp" → `wa.me/<site.whatsapp>` with a pre-filled message, "Chat on Messenger" → `m.me/<site.messenger>`; Messenger added on request the same day). Closes on Esc / outside click. Number in `site.whatsapp` (home.ts; +975 17936364, from the owner), colours `--whatsapp(-dark)` / `--messenger(-dark)` in global.css.
+13. **Chat widget** (`ChatWidget.astro`, every page, bottom right; replaced the back-to-top button on request 2026-10-16): round button with a pulse ring that alternates WhatsApp green / Messenger blue (static green for reduced motion) opens a small chat card (Deep Horizon header with the arc-mark favicon, "Kuzuzangpo la!" bubble, "Chat on WhatsApp" → `wa.me/<site.whatsapp>` with a pre-filled message, "Chat on Messenger" → `m.me/<site.messenger>`; Messenger added on request the same day). Closes on Esc / outside click. Number in `site.whatsapp` (home.ts; +61 415 535 826, from the owner 2026-10-20; was +975 17936364), colours `--whatsapp(-dark)` / `--messenger(-dark)` in global.css.
 
 ## History (what was done, in order — 2026-10-07 / 08)
 
@@ -171,7 +171,7 @@ src/
    - Sentence-case headlines: hero slides, features, blog titles, "Discover Bhutan's most beloved places", "Follow us", "Read more", "Booking number", "Book now".
    - Logo usage already matched (full colour on white, white on Deep Horizon or photos, symbol as favicon).
    - **Not applied, needs the owner:** licensed Aeonik files; the guideline's "left-aligned headlines" (the site keeps centred section heads with the accent bar).
-15. **Real contact details (2026-10-08, from the guideline's visiting card, on request):** `site` in home.ts = phone +975 17754285, `phoneAlt` +975 77563215 (shown in the footer and on the Contact "Call us" card), email **gocoms@gobalcommerce.com** (changed on request 2026-10-19; was kdglobal2026@gmail.com), address "Changzamtog, Thimphu, Bhutan" (changed on request 2026-10-19; was Express Highway, 1101 Babesa Highway), website kdglobal.bt. The map query is Changzamtog, Thimphu. `site: "https://kdglobal.bt"` is set in astro.config.mjs (canonical + OG image now output).
+15. **Real contact details (2026-10-08, from the guideline's visiting card, on request):** `site` in home.ts. **Since 2026-10-20 (on request) the only number is WhatsApp +61 415 535 826 (`site.whatsapp`)**: every number on the site (homepage "Book on WhatsApp" box, Contact "WhatsApp us" card, tour booking card, info-page sidebar, chat widget, JSON-LD) links to it via `whatsappHref()` in home.ts, with a `whatsapp` icon in Icon.astro; the +975 call numbers (`phone`, `phoneAlt`) were deleted and the footer has no number, email **office@kdgocoms.com** (changed on request 2026-10-20; before that gocoms@gobalcommerce.com and kdglobal2026@gmail.com), address "Changzamtog, Thimphu, Bhutan" (changed on request 2026-10-19; was Express Highway, 1101 Babesa Highway), website kdgocoms.com (changed on request 2026-10-20; was kdglobal.bt). The map query is Changzamtog, Thimphu. `site: "https://kdgocoms.com"` is set in astro.config.mjs (canonical + OG image now output).
 16. **Brand pattern on the CTA band (2026-10-08):** new `BrandPattern.astro`, an SVG of the guideline's cover/section-page arcs.
    - Geometry (measured from the PDF): identical circles of radius R, tangent to the top edge, each shifted R/4. Drawn back to front over Misty Horizon: gap (Morning Haze), Global Tide, gap, Deep Horizon, gap, Charcoal.
    - `CtaBand` shows it as a right-hand panel (38%) from 992px up, and as a 120–150px top strip below that.
@@ -250,6 +250,22 @@ src/
    - New: 404 page, `site.webmanifest` + 192/512 icons, BaseLayout `noindex` prop. "Handpicked" card `sizes` tightened.
    - Lighthouse mobile: home 89, destinations 94, tour page 98 performance; 100 accessibility / best practices / SEO everywhere. Home 604 → 523 KB. (Headless `--screenshot` captures still often miss the banner photo; Lighthouse's `final-screenshot` audit is a reliable visual check.)
 
+30. **Pre-launch speed + SEO check (2026-10-20, on request):**
+   - Contact: the Google Map iframe has `data-src` and loads only within 300px of the viewport (IntersectionObserver; `<noscript>` fallback). Native lazy loading started it on page open on phones. Page weight 704 → 232 KB.
+   - TourCard `widths` now 320/480/560/640/720/800 (closer match on phones; /tours 581 → 528 KB).
+   - /tours has a visually hidden h2 "All Bhutan tours" (heading order h1 → h2 → h3).
+   - Titles shortened to about 60 characters (tours, destinations, blog, FAQs, festival calendar, travel guidelines). Tour pages: "<Name>: N-Day Bhutan Tour | KD Global". Blog articles drop "| KD Global" when the headline is over 48 characters.
+   - Audit of dist: one h1 per page, unique titles + descriptions, canonicals all in sitemap.xml, OG/Twitter tags, valid JSON-LD, alt + width/height on every img, no broken internal links.
+   - Lighthouse mobile: home 90, tours 92, destinations 94, contact 93, tour page 98 performance; 100 accessibility / best practices / SEO on all.
+
+31. **Speed for the live host (2026-10-20, on request "still takes time to open"):**
+   - Live host: Apache in Chicago (198.23.51.25). From Bhutan one round trip is ~0.42 s and a new connection ~1.2 s, so bytes and request count matter more than server speed. The server is fast; the distance is the cost. A CDN (e.g. Cloudflare, free) would remove most of it; needs the owner's DNS access.
+   - **All photos are AVIF + WebP fallback** via `src/components/Photo.astro` (`<Picture formats={["avif"]} fallbackFormat="webp">`, same props as `<Image />`). Use `<Photo>` for new photos; logos stay `<Image>`. `picture { display: contents }` in global.css keeps layouts unchanged.
+   - Encoder defaults: AVIF 45 (was 55), WebP 64 (was 72; fallback only). AVIF 45 looked identical to WebP 72 in a side-by-side crop and is ~35% smaller.
+   - `public/.htaccess` (copied into dist): 301 http → https and www → bare domain (both served 200 before = duplicate content), 1-year immutable cache for `/_astro/`, 1 week for icons, 10 min for pages, Brotli/gzip for text, AVIF/WOFF2 MIME types, `ErrorDocument 404 /404.html`. All blocks in IfModule.
+   - Lighthouse mobile after: home 92 (413 KB, was 523), tours 96 (377, was 528), destinations 97 (294, was 383), about 96, tour page 98, blog 96; 100 accessibility / best practices / SEO.
+   - Upload zip: `D:\Website html\kdgocoms-upload-2026-10-20.zip` (dist contents incl. .htaccess; made with Windows tar, forward-slash paths). Upload it into the web root and extract.
+
 **Lighthouse** (production build, before step 4): mobile 94 / 100 / 100 / 100, desktop 99 / 96 / 100 / 100.
 
 ## Open items (need the owner)
@@ -259,16 +275,15 @@ src/
 - **Tour itineraries are sample plans** written from general Bhutan knowledge (routes, passes, approx. altitudes). The owner should check them against their real programmes, and the inclusions too.
 - **About team bios** are short role descriptions written for the real staff (step 19). The owner can refine them, and add photos to `src/assets/images`.
 - **Contact page placeholders:** office hours (in `contact.hours`). The map points at Changzamtog generally, not an exact office pin.
-- **Social links** are `#` (Footer + Contact "Follow our journeys"); they need the real profile URLs.
+- **Social links (2026-10-30, on request):** Facebook (facebook.com/share/1EXek6Vjrz) and YouTube (@kdglobalcommerceservices) are real and open in a new tab (`socialLinkAttrs()` in home.ts); they're also in the TravelAgency JSON-LD `sameAs`. X (Twitter) removed (and its `x-social` icon, replaced by `youtube`). **LinkedIn and Instagram are still `#`**; they need real URLs or removal.
 - **New content to check (step 25):** the 6 travel-info pages, 3 new tour itineraries and 2 blog articles were written from general Bhutan knowledge. Check especially the **visa fee (US$40) and SDF rates (US$100 / US$50 children 6–12 / free under 6 / ₹1,200 Indian nationals)**, festival months, trek altitudes, and have the **Terms & conditions** reviewed (deposit, cancellation charges and payment methods are deliberately left to the booking confirmation).
-- **Contact form is in TEST mode (2026-10-16):** `site.formEndpoint` sends enquiries to choki@abit.bt (the developer) for testing. **Switch it to gocoms@gobalcommerce.com before launch.**
-- **Activate the contact form:** send one test enquiry from the live site, then click "Activate Form" in the email FormSubmit sends to gocoms@gobalcommerce.com. If the email address changes, update `site.formEndpoint` too (and activate again).
+- **Contact form uses Web3Forms (2026-10-30, on request; replaces FormSubmit from step 7):** JSON POST to `https://api.web3forms.com/submit` with `access_key` (`site.formAccessKey`, public by design), `subject`, `from_name`, `name`, `email` (Reply-To), `message`, and the `botcheck` honeypot. Enquiries go to the inbox registered with that key in the owner's Web3Forms account (no activation step). Send one test enquiry after deploying.
 - **Messenger:** `site.messenger` is a placeholder ("kdglobal"); set the real Facebook page username.
-- **After launch:** submit https://kdglobal.bt/sitemap.xml in Google Search Console. The GitHub Pages preview is indexable too (its canonicals point at github.io); add a noindex there if it stays public after launch.
-- **Before launch:** `site:` is set to https://kdglobal.bt. Change it if the live site uses www or another domain.
+- **After launch:** submit https://kdgocoms.com/sitemap.xml in Google Search Console. The GitHub Pages preview is indexable too (its canonicals point at github.io); add a noindex there if it stays public after launch.
+- **Live domain (2026-10-20, from the owner):** `site:` is https://kdgocoms.com (no www). If the host serves www, redirect it to the bare domain.
 - **Logo PDF:** `KD_LOGO_.pdf` couldn't be rendered here (no poppler). If it contains extra brand rules (clear space, minimum size), check them.
 
 ## Git / GitHub
 
-- **GitHub Pages (2026-10-16, on request):** `.github/workflows/deploy.yml` builds every push to `main` and publishes `dist` to the **`gh-pages` branch** (peaceiris/actions-gh-pages) → https://choki-dev.github.io/kd/. It sets `SITE_URL`/`BASE_PATH=/kd` (read in astro.config.mjs; local builds and the kdglobal.bt domain are unaffected), then `scripts/prefix-base.mjs` prefixes the plain root links ("/tours" …) in dist HTML. Header strips the base before marking the current page. Testing locally in Git Bash needs `MSYS_NO_PATHCONV=1` or `/kd` turns into a Windows path. Pages source = the gh-pages branch (set up by a first manual push of that branch).
+- **GitHub Pages (2026-10-16, on request):** `.github/workflows/deploy.yml` builds every push to `main` and publishes `dist` to the **`gh-pages` branch** (peaceiris/actions-gh-pages) → https://choki-dev.github.io/kd/. It sets `SITE_URL`/`BASE_PATH=/kd` (read in astro.config.mjs; local builds and the kdgocoms.com domain are unaffected), then `scripts/prefix-base.mjs` prefixes the plain root links ("/tours" …) in dist HTML. Header strips the base before marking the current page. Testing locally in Git Bash needs `MSYS_NO_PATHCONV=1` or `/kd` turns into a Windows path. Pages source = the gh-pages branch (set up by a first manual push of that branch).
 - 2026-10-10: pushed to https://github.com/choki-dev/kd (branch `main`, remote `origin`). `.gitattributes` marks PDFs and images as binary (core.autocrlf=true on this machine had flagged the PDFs as text). `.kilo/` (stray agent worktree in src/pages) is gitignored.

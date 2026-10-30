@@ -1,10 +1,9 @@
 ---
 // Floating chat widget (bottom-right corner, every page). Replaced the back-to-top button on request (2026-10-16).
 // The round button opens a small chat card with WhatsApp and Messenger buttons.
-import { site } from "../data/home";
+import { site, whatsappHref } from "../data/home";
 
-const greeting = "Hello KD Global, I would like to plan a trip to Bhutan.";
-const whatsappHref = `https://wa.me/${site.whatsapp.replace(/\D/g, "")}?text=${encodeURIComponent(greeting)}`;
+const waHref = whatsappHref();
 const messengerHref = `https://m.me/${site.messenger}`;
 
 // Brand glyphs (Simple Icons, 24 × 24)
@@ -31,7 +30,7 @@ const closePath = "M18 6 6 18M6 6l12 12";
       <p class="chat-bubble">Kuzuzangpo la! 👋<br />How can we help you plan your trip to Bhutan?</p>
     </div>
     <div class="chat-actions">
-      <a class="chat-btn chat-btn-wa" href={whatsappHref} target="_blank" rel="noopener">
+      <a class="chat-btn chat-btn-wa" href={waHref} target="_blank" rel="noopener">
         <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="currentColor" d={whatsappGlyph} /></svg>
         Chat on WhatsApp
       </a>

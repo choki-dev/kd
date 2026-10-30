@@ -1,5 +1,5 @@
 ---
-import { Image } from "astro:assets";
+import Photo from "./Photo.astro";
 import Icon from "./Icon.astro";
 import { tourTypes, tourTypesImage } from "../data/home";
 
@@ -18,7 +18,7 @@ const filled = (i: number) => (Math.floor(i / 2) + (i % 2)) % 2 === 0;
     <!-- ≥992px: cards | tall photo | cards. Below: photo on top, cards 2 / 1 per row. Each card links to /tours with that type preselected. -->
     <div class="types-grid">
       <div class="types-media" data-reveal>
-        <Image
+        <Photo
           src={tourTypesImage.src}
           alt={tourTypesImage.alt}
           width={760}

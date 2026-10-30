@@ -26,7 +26,7 @@ const durationCount = (min: number, max: number) => tours.filter((t) => t.days >
   <main id="main">
     <PageHero {...hero} crumb="Tours" />
 
-    <section class="section listing" aria-label="Tour list">
+    <section class="section listing" aria-labelledby="tour-list-title">
       <div class="container listing-grid">
         <!-- Filters (a collapsible panel on small screens) -->
         <aside class="filters" aria-label="Filter tours">
@@ -87,6 +87,7 @@ const durationCount = (min: number, max: number) => tours.filter((t) => t.days >
 
         <!-- Results -->
         <div class="results">
+          <h2 id="tour-list-title" class="sr-only">All Bhutan tours</h2>
           <div class="toolbar">
             <p class="result-count" aria-live="polite" data-count>Showing {tours.length} of {tours.length} tours</p>
             <label class="sort">

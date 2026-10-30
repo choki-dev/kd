@@ -1,6 +1,6 @@
 // All homepage content lives here — edit text, links and photos without touching the components.
 // Photos live in src/assets/images (the owner's Bhutan photos from "D:\TCB Image", compressed to max 2400px);
-// Astro's <Image /> resizes and converts them to WebP. Each photo is used in ONE place on the site (owner's request,
+// Astro resizes them and serves AVIF with a WebP fallback (components/Photo.astro). Each photo is used in ONE place on the site (owner's request,
 // 2026-10-20); only a tour's or post's own photo is shared, between its card and its own page banner.
 import type { ImageMetadata } from "astro";
 import slide1 from "../assets/images/tigers-nest-golden-light.jpg";
@@ -44,34 +44,42 @@ export const site = {
   title: "KD Global — Bhutan Tours, Treks & Festival Holidays",
   description:
     "Private Bhutan tours from Thimphu: cultural journeys, tsechu festivals, Himalayan treks and luxury trips, with licensed guides and your visa and SDF handled.",
-  // Contact details from the visiting card in the Brand Guidelines 2026 (p. 24).
-  phone: "+975 17754285", // main number: header/booking boxes
-  phoneAlt: "+975 77563215", // second number on the card
-  whatsapp: "+975 17936364", // floating WhatsApp chat button (number from the owner, 2026-10-16)
+  // The only contact number (from the owner, 2026-10-20): every number on the site is a WhatsApp chat link to it,
+  // via whatsappHref() below. The earlier +975 call numbers were removed on request.
+  whatsapp: "+61 415 535 826",
   messenger: "kdglobal", // Facebook page username for the Messenger chat button (m.me/<username>) — PLACEHOLDER, replace with the real page
-  email: "gocoms@gobalcommerce.com",
-  // Contact-form delivery (no backend): FormSubmit forwards each enquiry to this inbox. The first enquiry sends an
-  // activation email to the inbox; click "Activate Form" once, and every enquiry after that arrives normally.
-  // TEMPORARY (2026-10-16): enquiries go to the developer's inbox for testing. Switch back to
-  // "https://formsubmit.co/ajax/gocoms@gobalcommerce.com" before launch (and activate it once there).
-  formEndpoint: "https://formsubmit.co/ajax/choki@abit.bt",
+  email: "office@kdgocoms.com",
+  // Contact-form delivery (no backend): Web3Forms emails each enquiry to the inbox registered with this access key
+  // (from the owner, 2026-10-30; was FormSubmit). The key is public by design, so it is fine in the page source.
+  formEndpoint: "https://api.web3forms.com/submit",
+  formAccessKey: "d40839ae-191e-4196-af2b-d278e337a6f5",
   address: "Changzamtog, Thimphu, Bhutan",
-  website: "kdglobal.bt",
+  website: "kdgocoms.com",
 };
+
+/** WhatsApp chat link to `site.whatsapp`, optionally with a pre-filled message. */
+export const whatsappHref = (text = "Hello KD Global, I would like to plan a trip to Bhutan.") =>
+  `https://wa.me/${site.whatsapp.replace(/\D/g, "")}?text=${encodeURIComponent(text)}`;
 
 export type IconName =
   | "search" | "chevron-down" | "chevron-right" | "menu" | "x" | "plane"
   | "tent" | "flashlight" | "mountain" | "compass" | "sailboat" | "palm" | "cable-car" | "map-pin" | "calendar"
   | "users" | "quote" | "minus" | "plus" | "star" | "image" | "video" | "clock" | "phone" | "mail" | "award"
-  | "file-text" | "arrow-left" | "arrow-right" | "arrow-up" | "building" | "facebook" | "linkedin" | "x-social"
-  | "instagram" | "check" | "temple" | "festival" | "hiking" | "diamond" | "meditation" | "forest";
+  | "file-text" | "arrow-left" | "arrow-right" | "arrow-up" | "building" | "facebook" | "linkedin" | "youtube"
+  | "instagram" | "whatsapp" | "check" | "temple" | "festival" | "hiking" | "diamond" | "meditation" | "forest";
 
+// Real profiles from the owner (2026-10-30; share-tracking parameters dropped). X (Twitter) removed on request.
+// LinkedIn and Instagram are still "#" placeholders. External links open in a new tab (Footer, Hero, Contact).
 export const socials: { label: string; icon: IconName; href: string }[] = [
-  { label: "Facebook", icon: "facebook", href: "#" },
+  { label: "Facebook", icon: "facebook", href: "https://www.facebook.com/share/1EXek6Vjrz/" },
+  { label: "YouTube", icon: "youtube", href: "https://www.youtube.com/@kdglobalcommerceservices" },
   { label: "LinkedIn", icon: "linkedin", href: "#" },
-  { label: "X (Twitter)", icon: "x-social", href: "#" },
   { label: "Instagram", icon: "instagram", href: "#" },
 ];
+
+/** Props for a social link: external profiles open in a new tab. */
+export const socialLinkAttrs = (href: string) =>
+  href.startsWith("http") ? { href, target: "_blank", rel: "noopener" } : { href };
 
 // ---------- Header ----------
 export type NavItem = { label: string; href?: string; children?: { label: string; href: string }[] };

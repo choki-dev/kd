@@ -35,7 +35,7 @@ export type Destination = {
 
 export const destinationsPage = {
   meta: {
-    title: "Bhutan Destinations — Paro, Thimphu, Punakha, Bumthang & More | KD Global",
+    title: "Bhutan Destinations: Paro, Thimphu, Punakha | KD Global",
     description:
       "Explore Bhutan's valleys: Paro and Tiger's Nest, the capital Thimphu, Punakha Dzong, Haa, Phobjikha's cranes, Trongsa and the ancient temples of Bumthang.",
   },

@@ -389,8 +389,8 @@ ul {
   margin-bottom: 6px;
 }
 
-/* Banner photos are <picture> (AVIF + WebP, see Hero / PageHero): the wrapper takes no box, so the absolutely
-   positioned <img> lays out exactly as a plain <img> would inside the flex banner */
-picture:has(> .hero-img, > .page-hero-img) {
+/* Photos are <picture> (AVIF + WebP, see Photo / Hero / PageHero): the wrapper takes no box, so each <img> lays out
+   exactly as a plain <img> would (absolute banners, grid/flex cards, aspect-ratio boxes) */
+picture {
   display: contents;
 }

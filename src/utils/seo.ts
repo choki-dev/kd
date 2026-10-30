@@ -1,10 +1,10 @@
 // SEO helpers: absolute URLs (with the base path) and schema.org structured data (JSON-LD).
 import type { ImageMetadata } from "astro";
 import { getImage } from "astro:assets";
-import { site } from "../data/home";
+import { site, socials } from "../data/home";
 
 const base = import.meta.env.BASE_URL.replace(/\/$/, "");
-const origin = import.meta.env.SITE; // e.g. https://kdglobal.bt (set in astro.config.mjs)
+const origin = import.meta.env.SITE; // e.g. https://kdgocoms.com (set in astro.config.mjs)
 
 /** Absolute URL for a root path ("/tours") or an already-based asset URL ("/_astro/…", "/kd/_astro/…").
  *  Page paths get a trailing slash, like the built pages and their canonical URLs ("/tours/"). */
@@ -41,7 +41,7 @@ export const organizationSchema = () => ({
   url: absUrl("/"),
   logo: absUrl("/apple-touch-icon.png"),
   email: site.email,
-  telephone: site.phone.replace(/\s/g, ""),
+  telephone: site.whatsapp.replace(/\s/g, ""),
   address: {
     "@type": "PostalAddress",
     addressLocality: "Thimphu",
@@ -49,12 +49,13 @@ export const organizationSchema = () => ({
     addressCountry: "BT",
   },
   areaServed: { "@type": "Country", name: "Bhutan" },
-  contactPoint: [site.phone, site.phoneAlt].map((n) => ({
+  contactPoint: {
     "@type": "ContactPoint",
-    telephone: n.replace(/\s/g, ""),
+    telephone: site.whatsapp.replace(/\s/g, ""),
     contactType: "reservations",
     availableLanguage: ["English"],
-  })),
+  },
+  sameAs: socials.map((s) => s.href).filter((href) => href.startsWith("http")), // real profiles only, not "#"
 });
 
 /** BreadcrumbList from Home → parents → current page. */

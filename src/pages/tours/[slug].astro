@@ -1,7 +1,7 @@
 ---
 // Tour detail page — one per tour with a `slug` (src/data/home.ts); details in src/data/tourDetails.ts.
 import type { GetStaticPaths } from "astro";
-import { Image } from "astro:assets";
+import Photo from "../../components/Photo.astro";
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import Header from "../../components/Header.astro";
 import PageHero from "../../components/PageHero.astro";
@@ -9,7 +9,7 @@ import TourCard from "../../components/TourCard.astro";
 import Footer from "../../components/Footer.astro";
 import ChatWidget from "../../components/ChatWidget.astro";
 import Icon from "../../components/Icon.astro";
-import { site, tours, type IconName, type Tour } from "../../data/home";
+import { site, tours, whatsappHref, type IconName, type Tour } from "../../data/home";
 import { standardExcluded, standardIncluded, tourDetails, type TourDetail } from "../../data/tourDetails";
 import { absUrl, metaDescription, organizationId, shareImage } from "../../utils/seo";
 
@@ -75,7 +75,7 @@ const tripSchema = {
 };
 ---
 
-<BaseLayout title={`${name} — ${tour.days}-Day Bhutan ${tour.category} Tour | KD Global`} description={description} image={heroImage} imageAlt={detail.hero?.alt ?? tour.alt} schema={tripSchema}>
+<BaseLayout title={`${name}: ${tour.days}-Day Bhutan Tour | KD Global`} description={description} image={heroImage} imageAlt={detail.hero?.alt ?? tour.alt} schema={tripSchema}>
   <Header />
   <main id="main">
     <PageHero
@@ -204,9 +204,9 @@ const tripSchema = {
                 detail.gallery.map((g, i) => (
                   <li>
                     {i === 0 ? (
-                      <Image src={g.src} alt={g.alt} width={1200} height={600} widths={[640, 960, 1200]} sizes="(min-width: 992px) 760px, 92vw" loading="lazy" class="gallery-img" />
+                      <Photo src={g.src} alt={g.alt} width={1200} height={600} widths={[640, 960, 1200]} sizes="(min-width: 992px) 760px, 92vw" loading="lazy" class="gallery-img" />
                     ) : (
-                      <Image src={g.src} alt={g.alt} width={480} height={480} widths={[320, 480]} sizes="(min-width: 992px) 250px, 46vw" loading="lazy" class="gallery-img" />
+                      <Photo src={g.src} alt={g.alt} width={480} height={480} widths={[320, 480]} sizes="(min-width: 992px) 250px, 46vw" loading="lazy" class="gallery-img" />
                     )}
                   </li>
                 ))
@@ -228,8 +228,8 @@ const tripSchema = {
               <li><Icon name="map-pin" size={18} /> Starts and ends in Paro</li>
             </ul>
             <a href={enquire} class="btn btn-primary book-btn">Enquire about this tour <Icon name="arrow-right" size={18} /></a>
-            <a href={`tel:${site.phone.replace(/[^\d+]/g, "")}`} class="book-call">
-              <Icon name="phone" size={18} /> Or call {site.phone}
+            <a href={whatsappHref(`Hello KD Global, I would like to know more about the ${name} tour.`)} class="book-call" target="_blank" rel="noopener">
+              <Icon name="whatsapp" size={18} /> Or WhatsApp {site.whatsapp}
             </a>
           </div>
           <div class="tailor">

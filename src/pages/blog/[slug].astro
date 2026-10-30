@@ -1,7 +1,7 @@
 ---
 // Blog article — one page per post with a `slug` (src/data/home.ts); the body is in src/data/blog.ts.
 import type { GetStaticPaths } from "astro";
-import { Image } from "astro:assets";
+import Photo from "../../components/Photo.astro";
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import Header from "../../components/Header.astro";
 import PageHero from "../../components/PageHero.astro";
@@ -54,7 +54,7 @@ const articleSchema = {
 };
 ---
 
-<BaseLayout title={`${post.title} | KD Global`} description={post.excerpt} image={post.image} imageAlt={post.alt} type="article" published={published} schema={articleSchema}>
+<BaseLayout title={post.title.length > 48 ? post.title : `${post.title} | KD Global`} description={post.excerpt} image={post.image} imageAlt={post.alt} type="article" published={published} schema={articleSchema}>
   <Header />
   <main id="main">
     <PageHero
@@ -111,7 +111,7 @@ const articleSchema = {
                 );
               return (
                 <figure class="figure">
-                  <Image src={b.src} alt={b.alt} width={1000} height={620} widths={[480, 760, 1000]} sizes="(min-width: 992px) 720px, 92vw" loading="lazy" class="figure-img" />
+                  <Photo src={b.src} alt={b.alt} width={1000} height={620} widths={[480, 760, 1000]} sizes="(min-width: 992px) 720px, 92vw" loading="lazy" class="figure-img" />
                   <figcaption>{b.caption}</figcaption>
                 </figure>
               );
@@ -148,7 +148,7 @@ const articleSchema = {
                   {related.map((t) => (
                     <li>
                       <a href={tourHref(t)} class="mini">
-                        <Image src={t.image} alt="" width={160} height={160} widths={[80, 160]} sizes="80px" loading="lazy" class="mini-img" />
+                        <Photo src={t.image} alt="" width={160} height={160} widths={[80, 160]} sizes="80px" loading="lazy" class="mini-img" />
                         <span>
                           <strong>{t.title.split(/:\s*/)[0]}</strong>
                           <small>
@@ -185,7 +185,7 @@ const articleSchema = {
               {others.map((p, i) => (
                 <li data-reveal style={`--reveal-delay:${i * 100}ms`}>
                   <a href={postHref(p)} class="more-card">
-                    <Image src={p.image} alt="" width={640} height={420} widths={[320, 480, 640]} sizes="(min-width: 768px) 45vw, 92vw" loading="lazy" class="more-img" />
+                    <Photo src={p.image} alt="" width={640} height={420} widths={[320, 480, 640]} sizes="(min-width: 768px) 45vw, 92vw" loading="lazy" class="more-img" />
                     <span class="more-body">
                       <small>
                         {p.category} · {p.slug ? p.date : "Coming soon"}

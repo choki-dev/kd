@@ -10,7 +10,7 @@ import snowPeak from "../assets/images/snow-peak-autumn.jpg";
 
 export const blogPage = {
   meta: {
-    title: "Bhutan Travel Blog — Culture, Festivals & Trekking Tips | KD Global",
+    title: "Bhutan Travel Blog: Culture & Trekking Tips | KD Global",
     description:
       "Bhutan travel stories and tips from our Thimphu team: temple etiquette, festivals, black-necked cranes, trekking seasons and making the most of your trip.",
   },

@@ -2,7 +2,7 @@
 // Travel-info pages linked from the footer (visa & SDF, travel guidelines, festival calendar, trekking seasons, FAQs, terms).
 // Content lives in src/data/guides.ts as a list of blocks; this template renders them with an "On this page" sidebar.
 import type { GetStaticPaths } from "astro";
-import { Image } from "astro:assets";
+import Photo from "../components/Photo.astro";
 import BaseLayout from "../layouts/BaseLayout.astro";
 import Header from "../components/Header.astro";
 import PageHero from "../components/PageHero.astro";
@@ -11,7 +11,7 @@ import Footer from "../components/Footer.astro";
 import ChatWidget from "../components/ChatWidget.astro";
 import Icon from "../components/Icon.astro";
 import { guideHref, guides, type Guide } from "../data/guides";
-import { site } from "../data/home";
+import { site, whatsappHref } from "../data/home";
 import { absUrl } from "../utils/seo";
 
 export const getStaticPaths = (() => guides.map((guide) => ({ params: { guide: guide.slug }, props: { guide } }))) satisfies GetStaticPaths;
@@ -34,7 +34,6 @@ const schema = faqs.length
       mainEntity: faqs.map((f) => ({ "@type": "Question", name: f.q, acceptedAnswer: { "@type": "Answer", text: f.a } })),
     }
   : { "@type": "Article", headline: guide.hero.title, description: guide.meta.description, url: absUrl(guideHref(guide.slug)), inLanguage: "en" };
-const tel = site.phone.replace(/[^\d+]/g, "");
 ---
 
 <BaseLayout title={guide.meta.title} description={guide.meta.description} image={guide.hero.image} imageAlt={guide.hero.alt} schema={schema}>
@@ -134,7 +133,7 @@ const tel = site.phone.replace(/[^\d+]/g, "");
                 );
               return (
                 <figure class="figure">
-                  <Image src={b.src} alt={b.alt} width={1000} height={620} widths={[480, 760, 1000]} sizes="(min-width: 992px) 720px, 92vw" loading="lazy" class="figure-img" />
+                  <Photo src={b.src} alt={b.alt} width={1000} height={620} widths={[480, 760, 1000]} sizes="(min-width: 992px) 720px, 92vw" loading="lazy" class="figure-img" />
                   <figcaption>{b.caption}</figcaption>
                 </figure>
               );
@@ -175,7 +174,7 @@ const tel = site.phone.replace(/[^\d+]/g, "");
             <h2 class="side-title">Still have a question?</h2>
             <p>Our team in Thimphu is happy to help.</p>
             <a href="/contact" class="btn btn-light">Contact us <Icon name="arrow-right" size={16} /></a>
-            <a href={`tel:${tel}`} class="side-call"><Icon name="phone" size={16} /> {site.phone}</a>
+            <a href={whatsappHref()} class="side-call" target="_blank" rel="noopener"><Icon name="whatsapp" size={16} /> {site.whatsapp}</a>
           </div>
         </aside>
       </div>

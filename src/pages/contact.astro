@@ -7,16 +7,12 @@ import PageHero from "../components/PageHero.astro";
 import Footer from "../components/Footer.astro";
 import ChatWidget from "../components/ChatWidget.astro";
 import Icon from "../components/Icon.astro";
-import { site, socials, type IconName } from "../data/home";
+import { site, socialLinkAttrs, socials, whatsappHref, type IconName } from "../data/home";
 import { contact } from "../data/pages";
 
 const { hero, form, faqs } = contact;
-const tel = site.phone.replace(/[^\d+]/g, "");
-
-// Second phone number shows under the first on the "Call us" card
-const telAlt = site.phoneAlt.replace(/[^\d+]/g, "");
-const cards: { icon: IconName; title: string; value: string; href?: string; value2?: string; href2?: string }[] = [
-  { icon: "phone", title: "Call us", value: site.phone, href: `tel:${tel}`, value2: site.phoneAlt, href2: `tel:${telAlt}` },
+const cards: { icon: IconName; title: string; value: string; href?: string }[] = [
+  { icon: "whatsapp", title: "WhatsApp us", value: site.whatsapp, href: whatsappHref() },
   { icon: "mail", title: "Email us", value: site.email, href: `mailto:${site.email}` },
   { icon: "building", title: "Visit our office", value: site.address },
   { icon: "clock", title: "Office hours", value: contact.hours },
@@ -37,8 +33,7 @@ const cards: { icon: IconName; title: string; value: string; href?: string; valu
               <li class="info-card" data-reveal style={`--reveal-delay:${i * 80}ms`}>
                 <span class="info-icon"><Icon name={c.icon} size={26} strokeWidth={1.5} /></span>
                 <h2>{c.title}</h2>
-                {c.href ? <a href={c.href}>{c.value}</a> : <p>{c.value}</p>}
-                {c.value2 && c.href2 && <a href={c.href2}>{c.value2}</a>}
+                {c.href ? <a href={c.href} target={c.href.startsWith("https:") ? "_blank" : undefined} rel={c.href.startsWith("https:") ? "noopener" : undefined}>{c.value}</a> : <p>{c.value}</p>}
               </li>
             ))
           }
@@ -54,9 +49,9 @@ const cards: { icon: IconName; title: string; value: string; href?: string; valu
           <h2 id="form-title" class="section-title">{form.title}</h2>
           <p class="form-intro">{form.text}</p>
 
-          <form class="form" data-enquiry data-email={site.email} data-endpoint={site.formEndpoint} novalidate>
-            <!-- Spam trap for bots (FormSubmit drops submissions that fill it); hidden from people and screen readers -->
-            <input type="text" name="_honey" tabindex="-1" autocomplete="off" aria-hidden="true" class="honey" />
+          <form class="form" data-enquiry data-email={site.email} data-endpoint={site.formEndpoint} data-access-key={site.formAccessKey} novalidate>
+            <!-- Spam trap for bots (Web3Forms drops submissions that fill it); hidden from people and screen readers -->
+            <input type="text" name="botcheck" tabindex="-1" autocomplete="off" aria-hidden="true" class="honey" />
             <div class="row">
               <label class="fld">
                 <span>Full name *</span>
@@ -109,8 +104,10 @@ const cards: { icon: IconName; title: string; value: string; href?: string; valu
         </div>
 
         <aside class="side" data-reveal style="--reveal-delay:120ms">
+          <!-- The map (~450 KB of Google scripts) loads only when it nears the screen; see the script below -->
           <div class="map">
-            <iframe src={contact.mapSrc} title={`Map: ${site.address}`} loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+            <iframe data-src={contact.mapSrc} title={`Map: ${site.address}`} loading="lazy" referrerpolicy="no-referrer-when-downgrade" data-map></iframe>
+            <noscript><iframe src={contact.mapSrc} title={`Map: ${site.address}`} loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe></noscript>
           </div>
           <div class="side-card">
             <h2>Follow our journeys</h2>
@@ -119,7 +116,7 @@ const cards: { icon: IconName; title: string; value: string; href?: string; valu
               {
                 socials.map((s) => (
                   <li>
-                    <a href={s.href} aria-label={s.label}>
+                    <a {...socialLinkAttrs(s.href)} aria-label={s.label}>
                       <Icon name={s.icon} size={18} />
                     </a>
                   </li>
@@ -502,7 +499,22 @@ const cards: { icon: IconName; title: string; value: string; href?: string; valu
 </style>
 
 <script>
-  // Enquiry form: validate, then send it through FormSubmit (site.formEndpoint) to the company inbox.
+  // Map: set the iframe src once it is within 300px of the viewport (native lazy loading starts far earlier on phones)
+  const map = document.querySelector<HTMLIFrameElement>("[data-map]");
+  if (map?.dataset.src) {
+    const load = () => (map.src = map.dataset.src!);
+    if ("IntersectionObserver" in window) {
+      const io = new IntersectionObserver((entries) => {
+        if (entries.some((e) => e.isIntersecting)) {
+          io.disconnect();
+          load();
+        }
+      }, { rootMargin: "300px 0px" });
+      io.observe(map);
+    } else load();
+  }
+
+  // Enquiry form: validate, then send it through Web3Forms (site.formEndpoint + site.formAccessKey) to the company inbox.
   // If sending fails, the error message offers a direct email link.
   const form = document.querySelector<HTMLFormElement>("[data-enquiry]");
   const error = document.querySelector<HTMLElement>("[data-form-error]");
@@ -554,13 +566,13 @@ const cards: { icon: IconName; title: string; value: string; href?: string; valu
         method: "POST",
         headers: { "Content-Type": "application/json", Accept: "application/json" },
         body: JSON.stringify({
-          _subject: subject,
-          _template: "box",
-          _captcha: "false",
-          _honey: get("_honey"),
+          access_key: form.dataset.accessKey,
+          subject,
+          from_name: "KD Global website",
+          botcheck: get("botcheck"),
           name: get("name"),
-          email: get("email"), // FormSubmit sets this as Reply-To, so "Reply" in the inbox answers the visitor
-          enquiry: body,
+          email: get("email"), // Web3Forms sets this as Reply-To, so "Reply" in the inbox answers the visitor
+          message: body,
         }),
       });
       const result = await res.json().catch(() => ({}));

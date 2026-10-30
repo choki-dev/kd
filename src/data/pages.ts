@@ -146,7 +146,7 @@ export const contact = {
 // ---------- Tours ----------
 export const toursPage = {
   meta: {
-    title: "Bhutan Tours — Cultural, Festival, Trekking & Luxury | KD Global",
+    title: "Bhutan Tours: Cultural, Festival & Trekking | KD Global",
     description:
       "Browse Bhutan tours by KD Global: cultural journeys, tsechu festivals, Himalayan treks, luxury holidays, pilgrimages and nature trips. Filter by type.",
   },

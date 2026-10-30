@@ -1,5 +1,5 @@
 ---
-import { Image } from "astro:assets";
+import Photo from "./Photo.astro";
 import Icon from "./Icon.astro";
 import { featuredRetreats, tourHref } from "../data/home";
 ---
@@ -18,7 +18,7 @@ import { featuredRetreats, tourHref } from "../data/home";
         featuredRetreats.map((t, i) => (
           <li class="retreat-slide" data-reveal style={`--reveal-delay:${i * 100}ms`}>
             <article class="retreat">
-              <Image
+              <Photo
                 src={t.cover?.src ?? t.image}
                 alt={t.cover?.alt ?? t.alt}
                 width={760}

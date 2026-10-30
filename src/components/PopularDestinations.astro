@@ -1,5 +1,5 @@
 ---
-import { Image } from "astro:assets";
+import Photo from "./Photo.astro";
 import Icon from "./Icon.astro";
 import { destinations } from "../data/home";
 import { destinationList } from "../data/destinations";
@@ -28,7 +28,7 @@ const sizes = {
           <li class={`tile tile-${d.area}`} data-reveal style={`--reveal-delay:${i * 80}ms`}>
             <a href={`/destinations#${d.area}`} class="tile-link">
               {/* decorative: the link is named by the valley name, so screen readers don't hear the photo description first */}
-              <Image
+              <Photo
                 src={d.image}
                 alt=""
                 width={sizes[d.area].w}

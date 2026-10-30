@@ -1,7 +1,7 @@
 ---
 // Blog list: newest post as a large featured card, then the rest in a grid.
 // Posts without a `slug` (no article yet) are shown as "Coming soon" and aren't links.
-import { Image } from "astro:assets";
+import Photo from "../../components/Photo.astro";
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import Header from "../../components/Header.astro";
 import PageHero from "../../components/PageHero.astro";
@@ -29,7 +29,7 @@ const featuredMinutes = minutes(featured.slug);
         <!-- Featured (newest) post -->
         <article class="featured" data-reveal>
           <a href={postHref(featured)} class="featured-media" tabindex="-1" aria-hidden="true">
-            <Image src={featured.image} alt="" width={900} height={640} widths={[480, 720, 900]} sizes="(min-width: 992px) 600px, 92vw" loading="eager" class="featured-img" />
+            <Photo src={featured.image} alt="" width={900} height={640} widths={[480, 720, 900]} sizes="(min-width: 992px) 600px, 92vw" loading="eager" class="featured-img" />
           </a>
           <div class="featured-body">
             <span class="eyebrow">Latest article</span>
@@ -57,7 +57,7 @@ const featuredMinutes = minutes(featured.slug);
                   <li data-reveal style={`--reveal-delay:${i * 100}ms`}>
                     <article class:list={["card", { soon: !p.slug }]}>
                       <div class="card-media">
-                        <Image src={p.image} alt={p.alt} width={800} height={560} widths={[360, 560, 800]} sizes="(min-width: 992px) 380px, (min-width: 640px) 45vw, 92vw" loading="lazy" class="card-img" />
+                        <Photo src={p.image} alt={p.alt} width={800} height={560} widths={[360, 560, 800]} sizes="(min-width: 992px) 380px, (min-width: 640px) 45vw, 92vw" loading="lazy" class="card-img" />
                         <span class="tag tag-on-img">{p.category}</span>
                         {!p.slug && <span class="soon-badge">Coming soon</span>}
                       </div>

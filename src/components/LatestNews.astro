@@ -1,5 +1,5 @@
 ---
-import { Image } from "astro:assets";
+import Photo from "./Photo.astro";
 import Icon from "./Icon.astro";
 import { postHref, posts } from "../data/home";
 ---
@@ -18,7 +18,7 @@ import { postHref, posts } from "../data/home";
           <li data-reveal style={`--reveal-delay:${i * 100}ms`}>
             <article class="post">
               <a href={postHref(p)} class="post-media" tabindex="-1" aria-hidden="true">
-                <Image
+                <Photo
                   src={p.image}
                   alt=""
                   width={800}

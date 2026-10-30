@@ -1,6 +1,6 @@
 ---
 // Reusable tour card (best-selling grid). `data-category` drives the filter tabs.
-import { Image } from "astro:assets";
+import Photo from "./Photo.astro";
 import Icon from "./Icon.astro";
 import { tourHref, type Tour } from "../data/home";
 
@@ -15,12 +15,12 @@ const name = tour.title.split(/:\s*/)[0];
 
 <article class="tour-card" data-category={tour.category}>
   <div class="tour-media">
-    <Image
+    <Photo
       src={tour.image}
       alt={tour.alt}
       width={800}
       height={800}
-      widths={[320, 480, 640, 800]}
+      widths={[320, 480, 560, 640, 720, 800]}
       sizes="(min-width: 1200px) 380px, (min-width: 992px) 30vw, (min-width: 768px) 45vw, 92vw"
       loading="lazy"
       class="tour-img"

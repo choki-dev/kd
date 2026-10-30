@@ -1,7 +1,7 @@
 ---
-import { Image } from "astro:assets";
+import Photo from "./Photo.astro";
 import Icon from "./Icon.astro";
-import { site, vacation } from "../data/home";
+import { site, vacation, whatsappHref } from "../data/home";
 ---
 
 <section id="about" class="section vacation" aria-labelledby="vacation-title">
@@ -27,11 +27,11 @@ import { site, vacation } from "../data/home";
       </ul>
 
       <div class="booking">
-        <a href={`tel:${site.phone.replace(/[^\d+]/g, "")}`} class="booking-phone">
-          <span class="phone-icon"><Icon name="phone" size={22} /></span>
+        <a href={whatsappHref()} class="booking-phone" target="_blank" rel="noopener">
+          <span class="phone-icon"><Icon name="whatsapp" size={22} /></span>
           <span>
-            <small>Booking number</small>
-            <strong>{site.phone}</strong>
+            <small>Book on WhatsApp</small>
+            <strong>{site.whatsapp}</strong>
           </span>
         </a>
         <a href="#search" class="btn btn-primary">Book now</a>
@@ -41,7 +41,7 @@ import { site, vacation } from "../data/home";
     <!-- Two overlapping circular photos -->
     <div class="vacation-media" data-reveal style="--reveal-delay:120ms">
       <div class="circle circle-lg">
-        <Image
+        <Photo
           src={vacation.imageLarge.src}
           alt={vacation.imageLarge.alt}
           width={900}
@@ -52,7 +52,7 @@ import { site, vacation } from "../data/home";
         />
       </div>
       <div class="circle circle-sm">
-        <Image
+        <Photo
           src={vacation.imageSmall.src}
           alt={vacation.imageSmall.alt}
           width={600}

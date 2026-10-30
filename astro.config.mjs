@@ -6,10 +6,12 @@ import { defineConfig, fontProviders } from "astro/config";
 // URLs use `site` + `base`, so the GitHub Pages preview and the live domain each get correct absolute links.
 // Each page also lists its content photos (image sitemap, for Google Images): every <img> with alt text, skipping the
 // logos, partner logos and search thumbnails; the largest srcset entry is used.
+/** @returns {import("astro").AstroIntegration} */
 function sitemap() {
   let siteUrl = "";
   let origin = "";
   const skip = /\/_astro\/(kd-logo|kd-logo-white|abto|bhutan-airlines|bhutan-believe|department-of-tourism|drukair|hrab)\./;
+  /** @param {URL} file @returns {Promise<string[]>} */
   const pageImages = async (file) => {
     let html = "";
     try {
@@ -21,18 +23,19 @@ function sitemap() {
     for (const [tag] of html.matchAll(/<img\b[^>]*>/g)) {
       if (!/\balt="[^"]+"/.test(tag)) continue; // decorative images (alt="") are not content
       const set = tag.match(/\b(?:data-)?srcset="([^"]+)"/)?.[1];
-      const src = set ? set.split(", ").at(-1).split(" ")[0] : tag.match(/\b(?:data-)?src="([^"]+)"/)?.[1];
+      const src = set ? set.split(", ").at(-1)?.split(" ")[0] : tag.match(/\b(?:data-)?src="([^"]+)"/)?.[1];
       if (src && src.includes("/_astro/") && !skip.test(src)) found.add(new URL(src, origin).href);
     }
     return [...found];
   };
-  const esc = (s) => s.replace(/&/g, "&amp;");
+  const esc = (/** @type {string} */ s) => s.replace(/&/g, "&amp;");
   return {
     name: "kd-sitemap",
     hooks: {
       "astro:config:done": ({ config }) => {
-        siteUrl = new URL(config.base.replace(/\/?$/, "/"), config.site).href; // e.g. https://kdglobal.bt/ or …/kd/
-        origin = new URL(config.site).origin;
+        const site = /** @type {string} */ (config.site); // always set below
+        siteUrl = new URL(config.base.replace(/\/?$/, "/"), site).href; // e.g. https://kdgocoms.com/ or …/kd/
+        origin = new URL(site).origin;
       },
       "astro:build:done": async ({ dir, pages, logger }) => {
         const paths = pages
@@ -60,21 +63,23 @@ function sitemap() {
 export default defineConfig({
   // Live domain (from the visiting card in the Brand Guidelines) — used for canonical and social-sharing image URLs
   // GitHub Pages preview (see .github/workflows/deploy.yml) overrides both: SITE_URL=https://choki-dev.github.io, BASE_PATH=/kd
-  site: process.env.SITE_URL || "https://kdglobal.bt",
+  site: process.env.SITE_URL || "https://kdgocoms.com",
   base: process.env.BASE_PATH || "/",
   integrations: [sitemap()],
 
   // The site CSS is small (~6 KB gzipped per page), so it is inlined into each page: no render-blocking stylesheet requests
   build: { inlineStylesheets: "always" },
 
-  // Default encoder settings for every <Image />/<Picture /> (a `quality` prop still wins). WebP 72 at maximum effort is
-  // visually the same as the default 80 for these photos and noticeably smaller; banners also get AVIF (PageHero, Hero).
+  // Default encoder settings for every <Image />/<Picture /> (a `quality` prop still wins). Photos are AVIF with a WebP
+  // fallback (components/Photo.astro, Hero, PageHero). AVIF 45 looked the same as WebP 72 side by side and is about a
+  // third smaller (2026-10-20); WebP is only the fallback for old browsers now. After changing these, delete
+  // node_modules/.astro/assets so cached files are re-encoded.
   image: {
     service: {
       entrypoint: "astro/assets/services/sharp",
       config: {
-        webp: { quality: 72, effort: 6 },
-        avif: { quality: 55, effort: 4 },
+        webp: { quality: 64, effort: 6 },
+        avif: { quality: 45, effort: 4 },
         jpeg: { quality: 78, mozjpeg: true },
       },
     },

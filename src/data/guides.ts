@@ -91,7 +91,7 @@ export const guides: Guide[] = [
     slug: "travel-guidelines",
     label: "Travel guidelines",
     meta: {
-      title: "Bhutan Travel Guidelines — Etiquette, Health, Money & Packing | KD Global",
+      title: "Bhutan Travel Guidelines & Etiquette | KD Global",
       description: "Practical tips for travelling in Bhutan: what to pack, money and phones, altitude and health, temple etiquette and responsible travel.",
     },
     hero: {
@@ -124,7 +124,7 @@ export const guides: Guide[] = [
     slug: "festival-calendar",
     label: "Festival calendar",
     meta: {
-      title: "Bhutan Festival Calendar — Tsechus and Celebrations by Month | KD Global",
+      title: "Bhutan Festival Calendar: Tsechus by Month | KD Global",
       description: "When Bhutan's tsechu festivals take place: Paro, Thimphu, Punakha, Bumthang, the Black-Necked Crane Festival and more.",
     },
     hero: {
@@ -219,7 +219,7 @@ export const guides: Guide[] = [
     slug: "faqs",
     label: "FAQs",
     meta: {
-      title: "Bhutan Travel FAQs — Visas, Costs, Guides and Planning | KD Global",
+      title: "Bhutan Travel FAQs: Visas, Costs & Planning | KD Global",
       description: "Answers to common questions about travelling to Bhutan with KD Global: visas and the SDF, when to go, guides, fitness and booking.",
     },
     hero: {

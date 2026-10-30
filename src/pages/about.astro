@@ -1,6 +1,6 @@
 ---
 // About Us page. Content lives in src/data/pages.ts.
-import { Image } from "astro:assets";
+import Photo from "../components/Photo.astro";
 import BaseLayout from "../layouts/BaseLayout.astro";
 import Header from "../components/Header.astro";
 import PageHero from "../components/PageHero.astro";
@@ -25,8 +25,8 @@ const initials = (name: string) => name.split(" ").map((w) => w[0]).join("").sli
     <section class="section story" aria-labelledby="story-title">
       <div class="container story-grid">
         <div class="story-media" data-reveal>
-          <Image src={story.image} alt={story.alt} width={1079} height={720} widths={[480, 760, 1079]} sizes="(min-width: 992px) 560px, 92vw" loading="lazy" class="story-img" />
-          <Image src={story.imageSmall} alt={story.altSmall} width={480} height={480} widths={[240, 480]} sizes="(min-width: 992px) 220px, 40vw" loading="lazy" class="story-img-small" />
+          <Photo src={story.image} alt={story.alt} width={1079} height={720} widths={[480, 760, 1079]} sizes="(min-width: 992px) 560px, 92vw" loading="lazy" class="story-img" />
+          <Photo src={story.imageSmall} alt={story.altSmall} width={480} height={480} widths={[240, 480]} sizes="(min-width: 992px) 220px, 40vw" loading="lazy" class="story-img-small" />
         </div>
         <div class="story-text" data-reveal style="--reveal-delay:120ms">
           <span class="script-accent">{story.eyebrow}</span>
@@ -103,7 +103,7 @@ const initials = (name: string) => name.split(" ").map((w) => w[0]).join("").sli
             team.members.map((m, i) => (
               <li class="member" data-reveal style={`--reveal-delay:${i * 80}ms`}>
                 {m.photo ? (
-                  <Image src={m.photo} alt={`Portrait of ${m.name}`} width={320} height={320} widths={[160, 320]} sizes="140px" loading="lazy" class="member-photo" />
+                  <Photo src={m.photo} alt={`Portrait of ${m.name}`} width={320} height={320} widths={[160, 320]} sizes="140px" loading="lazy" class="member-photo" />
                 ) : (
                   <span class="member-photo member-initials" aria-hidden="true">{initials(m.name)}</span>
                 )}

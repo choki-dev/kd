@@ -1,0 +1,12 @@
+---
+// Site photo: <picture> with AVIF first and a WebP fallback. AVIF is about a third smaller than WebP at the same look,
+// which matters on the long round trip to the US host. Takes the same props as Astro's <Image />; the <picture>
+// wrapper has `display: contents` (global.css), so the <img> lays out exactly like a plain one.
+// Logos stay on <Image /> (small files with sharp edges).
+import type { ComponentProps } from "astro/types";
+import { Picture } from "astro:assets";
+
+type Props = ComponentProps<typeof Picture>;
+---
+
+<Picture formats={["avif"]} fallbackFormat="webp" {...Astro.props} />

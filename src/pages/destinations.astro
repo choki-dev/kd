@@ -2,7 +2,7 @@
 // Destinations page (redesigned 2026-10-16): "the road east" route of all valleys, a sticky scroll-spy bar,
 // one cinematic chapter per valley grouped by region, and an at-a-glance comparison table.
 // Content in src/data/destinations.ts. "View tours" links open the Tours page filtered by that place (?place=<name>).
-import { Image } from "astro:assets";
+import Photo from "../components/Photo.astro";
 import BaseLayout from "../layouts/BaseLayout.astro";
 import Header from "../components/Header.astro";
 import PageHero from "../components/PageHero.astro";
@@ -51,7 +51,7 @@ if (chapters.reduce((s, c) => s + c.items.length, 0) !== destinationList.length)
                 <li class="stop">
                   <a href={`#${d.id}`} class="stop-link">
                     <span class="stop-photo">
-                      <Image src={d.thumb} alt="" width={176} height={176} widths={[96, 176]} sizes="88px" class="stop-img" />
+                      <Photo src={d.thumb} alt="" width={176} height={176} widths={[96, 176]} sizes="88px" class="stop-img" />
                     </span>
                     <span class="stop-name">{d.name}</span>
                     <span class="stop-alt">{d.altitude.replace("About ", "")}</span>
@@ -96,7 +96,7 @@ if (chapters.reduce((s, c) => s + c.items.length, 0) !== destinationList.length)
               {c.items.map((d, i) => (
                 <article id={d.id} class="dest" aria-labelledby={`${d.id}-title`}>
                   <div class="dest-media" data-reveal>
-                    <Image
+                    <Photo
                       src={d.image}
                       alt={d.alt}
                       width={1600}

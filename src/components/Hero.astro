@@ -1,7 +1,7 @@
 ---
 import { Picture, getImage } from "astro:assets";
 import Icon from "./Icon.astro";
-import { heroSlides, site, socials } from "../data/home";
+import { heroSlides, site, socialLinkAttrs, socials } from "../data/home";
 
 // Slides 2 and 3 are hidden at first, but the browser would still download them alongside slide 1 (they sit in the
 // viewport). Their URLs go in data- attributes instead and the script below loads them once the page has loaded.
@@ -53,7 +53,7 @@ const deferred = await Promise.all(heroSlides.map((s) => getImage({ src: s.image
       {
         socials.map((s) => (
           <li>
-            <a href={s.href} class="social-circle" aria-label={s.label}>
+            <a {...socialLinkAttrs(s.href)} class="social-circle" aria-label={s.label}>
               <Icon name={s.icon} size={16} />
             </a>
           </li>
