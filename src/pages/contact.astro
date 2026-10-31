@@ -50,8 +50,10 @@ const cards: { icon: IconName; title: string; value: string; href?: string }[] =
           <p class="form-intro">{form.text}</p>
 
           <form class="form" data-enquiry data-email={site.email} data-endpoint={site.formEndpoint} data-access-key={site.formAccessKey} novalidate>
-            <!-- Spam trap for bots (Web3Forms drops submissions that fill it); hidden from people and screen readers -->
-            <input type="text" name="botcheck" tabindex="-1" autocomplete="off" aria-hidden="true" class="honey" />
+            <!-- Spam trap for bots (Web3Forms drops submissions that tick it); hidden from people and screen readers.
+                 A checkbox, not a text box: browser autofill and password managers can fill a hidden text box, and
+                 Web3Forms then rejects a real visitor's enquiry as spam ("Honeypot Error"). Same as yangkhil.com. -->
+            <input type="checkbox" name="botcheck" tabindex="-1" autocomplete="off" aria-hidden="true" class="honey" />
             <div class="row">
               <label class="fld">
                 <span>Full name *</span>
@@ -544,18 +546,8 @@ const cards: { icon: IconName; title: string; value: string; href?: string }[] =
 
     const d = new FormData(form);
     const get = (k: string) => String(d.get(k) ?? "").trim();
-    const body = [
-      `Name: ${get("name")}`,
-      `Email: ${get("email")}`,
-      `Phone / WhatsApp: ${get("phone") || "-"}`,
-      `Country: ${get("country") || "-"}`,
-      `Tour interest: ${get("interest")}`,
-      `Travel month: ${get("month") || "-"}`,
-      `Travellers: ${get("travellers") || "-"}`,
-      "",
-      get("message"),
-    ].join("\n");
     const subject = `Bhutan tour enquiry — ${get("name")}`;
+    const trap = form.querySelector<HTMLInputElement>("input[name=botcheck]");
 
     sending = true;
     if (ok) ok.hidden = true;
@@ -569,10 +561,16 @@ const cards: { icon: IconName; title: string; value: string; href?: string }[] =
           access_key: form.dataset.accessKey,
           subject,
           from_name: "KD Global website",
-          botcheck: get("botcheck"),
+          // Each detail is its own field, so Web3Forms lists them as a table in the email (as on yangkhil.com)
           name: get("name"),
           email: get("email"), // Web3Forms sets this as Reply-To, so "Reply" in the inbox answers the visitor
-          message: body,
+          "Phone / WhatsApp": get("phone") || "Not given",
+          Country: get("country") || "Not given",
+          "Tour interest": get("interest"),
+          "Travel month": get("month") || "Not given",
+          Travellers: get("travellers") || "Not given",
+          message: get("message"),
+          botcheck: trap?.checked ?? false,
         }),
       });
       const result = await res.json().catch(() => ({}));
